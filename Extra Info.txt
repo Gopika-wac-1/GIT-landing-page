@@ -1,0 +1,351 @@
+# Task: Build a Pixel-Perfect HTML Landing Page from Figma
+
+Act as a **Senior Front-End Developer** with strong expertise in HTML5, CSS3, Vanilla JavaScript, responsive web design, and Figma-to-code implementation.
+
+Your task is to implement a new, standalone HTML landing page that accurately reproduces the provided Figma design.
+
+The **Figma design is the only source of truth for all UI and visual decisions.** Do not redesign, simplify, reinterpret, or modify any part of the original design.
+
+## 1. Figma Design Reference
+
+**Desktop Design:**
+
+https://www.figma.com/design/8lVHysRLMjz2RN0h76p4Xi/GREGORIAN-INSTITUTE-OF-TECHNOLOGY?node-id=130-3985&m=dev
+
+Before starting implementation:
+- Inspect the complete Figma frame and all its sections.
+- Identify the section structure, layout, typography, colors, images, icons, buttons, spacing, borders, shadows, and other visual properties.
+- Inspect reusable components and repeated design patterns.
+- Identify and export the required images and icons.
+- Understand the overall page structure before writing code.
+
+Do not skip any sections or visual elements.
+
+If any Figma element, measurement, asset, or design detail is unclear or inaccessible, ask me for clarification. **Do not proceed with assumptions.**
+
+## 2. Project Structure
+
+Create a new standalone HTML landing page with separate HTML, CSS, JavaScript, and assets.
+
+Follow a clean structure similar to:
+
+```text
+project/
+│
+├── index.html
+├── css/
+│   └── style.css
+├── js/
+│   └── script.js
+└── assets/
+    ├── images/
+    └── icons/
+```
+
+Adapt the structure if necessary, but keep the files organized and easy to maintain.
+
+Use only:
+- HTML5
+- CSS3
+- Vanilla JavaScript
+
+Do not introduce React, Bootstrap, Tailwind, or other frameworks unless explicitly approved.
+
+## 3. HTML Structure and Naming Conventions
+
+### Section-based architecture
+
+Every major page section must:
+- Use a semantic `<section>` tag.
+- Have a unique `id`.
+- Have a unique section-level class.
+- Use section-specific class names for its child elements.
+
+Follow the BEM naming convention.
+
+Example:
+
+```html
+<section id="hero" class="hero-section">
+  <div class="hero-section__container">
+    <h1 class="section-title hero-section__title">
+      ...
+    </h1>
+
+    <p class="section-description hero-section__description">
+      ...
+    </p>
+
+    <a href="#" class="button hero-section__button">
+      ...
+    </a>
+  </div>
+</section>
+```
+
+### Global reusable classes
+
+For commonly repeated elements with similar styling, create reusable global classes.
+
+Examples:
+- `.container`
+- `.button`
+- `.section-title`
+- `.section-subtitle`
+- `.section-description`
+- `.section-label`
+
+Requirements:
+- Reuse global classes wherever elements share the same design properties.
+- Avoid unnecessary CSS duplication.
+- When a global component needs section-specific customization, use CSS custom properties instead of duplicating its styles.
+- Section-specific classes should handle unique layout and styling requirements.
+- Avoid generic class names that may cause unintended style conflicts.
+
+## 4. CSS Architecture and Organization
+
+Create a separate `style.css` file.
+
+**Important: CSS must be organized section by section, following the exact section class names used in the HTML.**
+
+Follow this structure:
+
+```css
+/* ==========================================
+   1. GLOBAL VARIABLES / DESIGN TOKENS
+========================================== */
+
+/* CSS variables */
+
+/* ==========================================
+   2. GLOBAL RESET & BASE STYLES
+========================================== */
+
+/* Reset, typography, body */
+
+/* ==========================================
+   3. GLOBAL REUSABLE COMPONENTS
+========================================== */
+
+/* Container, buttons, titles, descriptions */
+
+/* ==========================================
+   4. HEADER SECTION
+========================================== */
+
+/* Header styles */
+
+/* ==========================================
+   5. HERO SECTION
+========================================== */
+
+/* Hero styles */
+
+/* ==========================================
+   6. ABOUT SECTION
+========================================== */
+
+/* About styles */
+
+/* ==========================================
+   7. REMAINING SECTIONS
+========================================== */
+
+/* Continue based on the actual Figma section order */
+
+/* ==========================================
+   8. RESPONSIVE STYLES
+========================================== */
+
+/* Tablet */
+
+/* Mobile */
+```
+
+### CSS organization rules
+
+- Each section must have its own clearly separated CSS block.
+- Mention the corresponding HTML section name in a comment before its styles.
+- Keep section-specific styles grouped together.
+- Do not scatter styles belonging to the same section across unrelated parts of the stylesheet.
+- Keep global styles separate from section-specific styles.
+- Avoid duplicate selectors and conflicting declarations.
+- Maintain consistent formatting and indentation.
+- Use meaningful CSS custom properties for reusable values.
+
+### CSS Variables
+
+Define centralized design tokens inside `:root`.
+
+Include variables for:
+- Primary, secondary, and accent colors.
+- Background and text colors.
+- Font families and font weights.
+- Font sizes and line heights.
+- Spacing values.
+- Container widths.
+- Border colors and radii.
+- Shadows.
+- Common button properties.
+
+Example:
+
+```css
+:root {
+  /* Colors */
+  --color-primary: #000000;
+  --color-secondary: #ffffff;
+  --color-text-primary: #222222;
+  --color-text-secondary: #666666;
+
+  /* Typography */
+  --font-primary: Arial, sans-serif;
+
+  /* Layout */
+  --container-width: 1440px;
+  --section-spacing: 80px;
+
+  /* Components */
+  --button-radius: 8px;
+}
+```
+
+These are examples only. Extract and use the actual values from Figma.
+
+For section-specific customization of reusable elements, use CSS variables.
+
+Example:
+
+```css
+.hero-section {
+  --section-title-color: var(--color-primary);
+  --section-button-background: var(--color-accent);
+}
+```
+
+Do not hardcode repeated values unnecessarily.
+
+## 5. Responsive Design
+
+Currently, only the desktop Figma reference is available. Use the desktop design as the foundation for creating a basic, practical responsive layout.
+
+The page must be compatible with:
+- Large desktop screens.
+- Standard desktop screens.
+- Small desktop and laptop screens.
+- Tablets.
+- Mobile devices.
+
+Requirements:
+- Preserve the original desktop design as closely as possible.
+- Use fluid layouts wherever appropriate.
+- Use CSS Grid and Flexbox for adaptable layouts.
+- Adjust typography, spacing, padding, and image dimensions based on viewport width.
+- Stack columns vertically when required on smaller screens.
+- Ensure images maintain their aspect ratios.
+- Prevent overlapping content and text overflow.
+- Maintain visual hierarchy and readability across screen sizes.
+- Do not introduce unnecessary design elements or animations.
+
+Use appropriate media queries and organize responsive styles clearly.
+
+**Critical requirements:**
+- No horizontal scrolling at any viewport width.
+- No content extending beyond the viewport.
+- No broken or overlapping layouts.
+- The page must remain compatible across desktop, tablet, and mobile devices.
+
+Since mobile and tablet references are unavailable, do not invent a completely different mobile design. Make only the responsive adjustments necessary to accommodate smaller screens.
+
+## 6. Images and Icons
+
+- Use the exact images and icons from Figma wherever available.
+- Export and organize assets inside the assets directory.
+- Use descriptive filenames based on section names or content.
+- Preserve original aspect ratios and image quality.
+- Avoid stretching or distorting images.
+- Use SVG for icons whenever available.
+- Do not replace original assets with unrelated images, emojis, or text-based icons.
+- Do not use placeholder images in the final implementation.
+
+If an asset cannot be accessed, report it instead of silently substituting another asset.
+
+## 7. JavaScript and Interactions
+
+- Use Vanilla JavaScript only for interactions required by the design.
+- Implement visible interactive elements where applicable.
+- Ensure buttons, navigation, menus, sliders, and other interactive elements work as expected.
+- Avoid unnecessary dependencies and external libraries.
+- Do not add functionality or animations that are not required by the design.
+
+## 8. Code Quality
+
+- Use semantic HTML5.
+- Follow consistent BEM naming conventions.
+- Keep HTML, CSS, and JavaScript separate.
+- Write clean, reusable, and maintainable code.
+- Avoid unnecessary absolute positioning.
+- Avoid excessive `!important` declarations.
+- Avoid duplicate CSS and redundant HTML.
+- Use appropriate heading hierarchy.
+- Include meaningful `alt` attributes for images.
+- Ensure links and buttons use appropriate semantic elements.
+
+## 9. Visual QA and Validation
+
+After implementation, compare the completed page against the original Figma design.
+
+Validate:
+- Section order and dimensions.
+- Container widths and alignment.
+- Typography, font sizes, and line heights.
+- Colors and backgrounds.
+- Image dimensions and positioning.
+- Button styles and dimensions.
+- Margins and padding.
+- Borders, shadows, and border radii.
+- Overall visual hierarchy.
+
+Test at multiple viewport sizes and fix any:
+- Horizontal overflow.
+- Unexpected whitespace.
+- Text wrapping issues.
+- Image distortion.
+- Alignment problems.
+- Overlapping elements.
+- Responsive layout issues.
+
+Prioritize pixel-perfect accuracy for the desktop implementation.
+
+## 10. Final Deliverables
+
+Provide:
+1. New `index.html` landing page.
+2. Separate `css/style.css`.
+3. Separate `js/script.js`, if JavaScript is required.
+4. Organized image and icon assets.
+5. Centralized CSS variables for design tokens.
+6. Section-based HTML and CSS architecture.
+7. Responsive layouts for desktop, tablet, and mobile.
+8. Final visual QA summary.
+
+## 11. Strict Implementation Rules
+
+1. Figma is the only source of truth for UI.
+2. Do not redesign or reinterpret the design.
+3. Do not skip any section or visual element.
+4. Every major section must have a unique ID and class.
+5. All section-specific elements must follow the section's BEM naming convention.
+6. Reuse global classes for common elements such as buttons and titles.
+7. Use CSS variables for colors and reusable design properties.
+8. Keep each section's CSS together under a clearly named comment.
+9. Keep global, section-specific, and responsive styles organized separately.
+10. Do not introduce unnecessary frameworks, libraries, or animations.
+11. Ensure there is no horizontal scrolling on any device.
+12. Do not make assumptions when design details are unclear.
+
+**Implementation priority:**
+
+Figma accuracy → Clean HTML structure → Organized section-based CSS → Reusable global classes → Centralized CSS variables → Responsive compatibility → Visual QA.
+
+Start by inspecting the complete Figma design and preparing the implementation plan. Ask me about any unclear requirements before proceeding with the implementation.

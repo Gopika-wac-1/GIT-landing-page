@@ -1,0 +1,3980 @@
+/* ==========================================
+   1. GLOBAL VARIABLES / DESIGN TOKENS
+   (values extracted from Figma node 130:3985)
+========================================== */
+
+:root {
+  /* Colors — brand */
+  --color-primary: #153772;
+  /* navy: buttons, labels, dark sections */
+  --color-accent-start: #16aee5;
+  /* "Enter Now" gradient */
+  --color-accent-end: #1bbcc2;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Colors — text */
+  --color-text-heading: #110c2d;
+  --color-text-body: #595959;
+  --color-text-muted: #737477;
+  --color-text-label: #777777;
+  --color-text-placeholder: #8e8e93;
+  --color-text-white-muted: rgba(255, 255, 255, 0.74);
+  --color-text-soft: rgba(0, 0, 0, 0.7);
+
+  /* Colors — surfaces */
+  --color-bg-light: #f6f6f6;
+  --color-bg-input: #f6f7f9;
+  --color-bg-map: #f0f0f0;
+  --color-bg-circulars: rgba(16, 86, 206, 0.24);
+
+  /* Colors — borders */
+  --color-border-header: #e8e8e8;
+  --color-border-logo: #737477;
+  --color-border-card-button: #ececec;
+  --color-border-input: #acb8cc;
+  --color-border-list: #e0e0e0;
+  --color-border-map: #e2e2e2;
+  --color-border-chip-light: rgba(21, 55, 114, 0.12);
+  --color-border-circulars: rgba(226, 230, 238, 0.08);
+  --color-border-link-light: #e2e6ee;
+  --color-divider: rgba(194, 194, 194, 0.54);
+
+  /* Typography — families */
+  --font-primary: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-heading: "Canela Trial", "Canela", "Playfair Display", Georgia, serif;
+  --font-display: "Playfair Display", Georgia, serif;
+
+  /* Typography — weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Typography — sizes */
+  --font-size-xs: 14px;
+  --font-size-sm: 16px;
+  --font-size-md: 18px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+  --font-size-hero: 80px;
+  --font-size-display: 64px;
+  --font-size-section-title: 48px;
+  --font-size-stat: 62px;
+  --font-size-card-title: 34px;
+
+  /* Typography — line heights */
+  --line-height-body: 28.8px;
+  --line-height-relaxed: 1.85;
+  --line-height-hero: 84px;
+  --line-height-display: 1.08;
+
+  /* Letter spacing */
+  --tracking-label: 1.68px;
+  --tracking-display: -0.64px;
+
+  /* Layout */
+  --container-width: 1424px;
+  --container-gutter: 40px;
+  --section-padding-y: 120px;
+  --hero-min-height: 899px;
+  --header-height: 120px;
+  /* sticky header (used for anchor offset) */
+
+  /* Components */
+  --button-height: 54px;
+  --button-padding-x: 24px;
+  --button-padding-y: 14px;
+  --button-gap: 8px;
+  --button-font-size: 16px;
+  --button-sweep-duration: 0.35s;
+  --radius-pill: 100px;
+  --radius-circle: 50%;
+  --icon-size: 24px;
+
+  /* Logo frames (partners / recruiters) */
+  --logo-scale: 1;
+
+  /* Motion */
+  --transition-base: 0.2s ease;
+}
+
+/* ==========================================
+   2. GLOBAL RESET & BASE STYLES
+========================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-height);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body);
+  color: var(--color-text-heading);
+  background-color: var(--color-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+svg,
+iframe {
+  display: block;
+  max-width: 100%;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+address {
+  font-style: normal;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: var(--font-weight-regular);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-start);
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   3. GLOBAL REUSABLE COMPONENTS
+========================================== */
+
+/* --- Container --- */
+.container {
+  width: 100%;
+  max-width: calc(var(--container-width) + var(--container-gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--container-gutter);
+}
+
+/* --- Icon (single-colour SVG used as a mask so it follows currentColor) --- */
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  background-color: currentColor;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Icons are inlined as data URIs: mask-image is fetched in CORS mode, so external
+   SVG files are blocked when the page is opened via file://.
+   Sources: assets/icons/arrow-outward.svg, arrow-forward.svg */
+.icon--arrow-outward {
+  --icon-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16 8.4L7.1 17.3C6.917 17.483 6.683 17.575 6.4 17.575C6.117 17.575 5.883 17.483 5.7 17.3C5.517 17.117 5.425 16.883 5.425 16.6C5.425 16.317 5.517 16.083 5.7 15.9L14.6 7H7C6.717 7 6.479 6.904 6.288 6.713C6.096 6.521 6 6.283 6 6C6 5.717 6.096 5.479 6.288 5.288C6.479 5.096 6.717 5 7 5H17C17.283 5 17.521 5.096 17.713 5.288C17.904 5.479 18 5.717 18 6V16C18 16.283 17.904 16.521 17.713 16.713C17.521 16.904 17.283 17 17 17C16.717 17 16.479 16.904 16.288 16.713C16.096 16.521 16 16.283 16 16V8.4Z'/%3E%3C/svg%3E");
+}
+
+.icon--arrow-forward {
+  --icon-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M13.988 10.231L3.499 10.231C3.283 10.231 3.092 10.148 2.925 9.981C2.758 9.814 2.675 9.622 2.675 9.406C2.675 9.19 2.758 8.999 2.925 8.832C3.092 8.665 3.283 8.581 3.499 8.581L13.988 8.581L9.51 4.103C9.343 3.936 9.259 3.74 9.259 3.514C9.259 3.288 9.343 3.091 9.51 2.925C9.677 2.758 9.873 2.674 10.099 2.674C10.325 2.674 10.522 2.758 10.688 2.925L16.581 8.817C16.748 8.984 16.831 9.18 16.831 9.406C16.831 9.632 16.748 9.829 16.581 9.996L10.688 15.888C10.522 16.055 10.325 16.139 10.099 16.139C9.873 16.139 9.677 16.055 9.51 15.888C9.343 15.721 9.259 15.525 9.259 15.299C9.259 15.073 9.343 14.877 9.51 14.71L13.988 10.231Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: var(--icon-image);
+  mask-image: var(--icon-image);
+}
+
+/* --- Outward arrow: hover swap (old arrow exits up-right, new one enters from bottom-left) ---
+   The span is a clipped viewport; ::before and ::after are two copies of the arrow.
+   Only `transform` is animated (GPU-composited) so the motion stays smooth. */
+.icon--arrow-outward {
+  position: relative;
+  background-color: transparent;
+  /* Clip all sides; --icon-clip-x lets rotated icons (e.g. footer) overflow sideways */
+  clip-path: inset(0 calc(-1 * var(--icon-clip-x, 0px)));
+}
+
+.icon--arrow-outward::before,
+.icon--arrow-outward::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  -webkit-mask: var(--icon-image) center / contain no-repeat;
+  mask: var(--icon-image) center / contain no-repeat;
+  transform: translate3d(0, 0, 0) rotate(var(--icon-rotate, 0deg));
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.icon--arrow-outward::after {
+  transform: translate3d(-100%, 100%, 0) rotate(var(--icon-rotate, 0deg));
+}
+
+:is(a, button):focus-visible .icon--arrow-outward::before {
+  transform: translate3d(100%, -100%, 0) rotate(var(--icon-rotate, 0deg));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :is(a, button):hover .icon--arrow-outward::before {
+    transform: translate3d(100%, -100%, 0) rotate(var(--icon-rotate, 0deg));
+  }
+}
+
+:is(a, button):focus-visible .icon--arrow-outward::after {
+  transform: translate3d(0, 0, 0) rotate(var(--icon-rotate, 0deg));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :is(a, button):hover .icon--arrow-outward::after {
+    transform: translate3d(0, 0, 0) rotate(var(--icon-rotate, 0deg));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+
+  .icon--arrow-outward::before,
+  .icon--arrow-outward::after {
+    transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+}
+
+/* --- Section "View All": header button on tablet/desktop; full-width button
+   under the content on mobile (the --bottom copy, shown in the ≤576px block) --- */
+.button.section-view-all--bottom {
+  display: none;
+}
+
+/* --- Section heading group (label + title) --- */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 34px;
+}
+
+.section-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.section-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: normal;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--section-label-color, var(--color-primary));
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: var(--section-title-size, var(--font-size-section-title));
+  font-weight: var(--font-weight-regular);
+  line-height: var(--section-title-line-height, 48px);
+  letter-spacing: var(--section-title-tracking, normal);
+  color: var(--section-title-color, var(--color-text-heading));
+}
+
+.display-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--display-title-line-height, var(--line-height-display));
+  letter-spacing: var(--tracking-display);
+  color: var(--display-title-color, var(--color-primary));
+}
+
+.section-description {
+  font-size: var(--section-description-size, var(--font-size-sm));
+  line-height: var(--section-description-line-height, var(--line-height-body));
+  color: var(--section-description-color, var(--color-text-body));
+}
+
+/* --- Buttons --- */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--button-gap);
+  min-height: var(--button-height);
+  padding: var(--button-padding-y) var(--button-padding-x);
+  font-size: var(--button-font-size);
+  font-weight: var(--font-weight-medium);
+  line-height: normal;
+  white-space: nowrap;
+  color: var(--button-color, var(--color-white));
+  background: var(--button-background, transparent);
+  border: 1px solid var(--button-border-color, transparent);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: color var(--button-sweep-duration) ease, border-color var(--button-sweep-duration) ease;
+}
+
+/* Hover sweep: fill grows left → right on hover, retracts right → left on leave.
+   Each variant sets --button-hover-fill / --button-hover-color / --button-hover-border. */
+.button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--button-hover-fill, var(--color-primary));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--button-sweep-duration) ease;
+}
+
+.button:focus-visible {
+  color: var(--button-hover-color, var(--color-white));
+  border-color: var(--button-hover-border, var(--button-border-color, transparent));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button:hover {
+    color: var(--button-hover-color, var(--color-white));
+    border-color: var(--button-hover-border, var(--button-border-color, transparent));
+  }
+}
+
+.button:focus-visible::before {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button:hover::before {
+    transform: scaleX(1);
+  }
+}
+
+/* Navy button → white sweep, navy text (border stays navy) */
+.button--primary {
+  --button-background: var(--color-primary);
+  --button-border-color: var(--color-primary);
+  --button-color: var(--color-white);
+  --button-hover-fill: var(--color-white);
+  --button-hover-color: var(--color-primary);
+}
+
+/* Navy outline → navy sweep, white text */
+.button--outline {
+  --button-border-color: var(--color-primary);
+  --button-color: var(--color-primary);
+  --button-hover-fill: var(--color-primary);
+  --button-hover-color: var(--color-white);
+}
+
+/* White outline (dark backgrounds) → white sweep, navy text */
+.button--outline-light {
+  --button-border-color: var(--color-white);
+  --button-color: var(--color-white);
+  --button-hover-fill: var(--color-white);
+  --button-hover-color: var(--color-primary);
+}
+
+/* Cyan gradient → navy sweep, white text */
+.button--gradient {
+  --button-background: linear-gradient(to right, var(--color-accent-start), var(--color-accent-end));
+  --button-color: var(--color-white);
+  --button-hover-fill: var(--color-primary);
+  --button-hover-color: var(--color-white);
+  border: 0;
+}
+
+/* White card button → navy sweep, white text, navy border */
+.button--block {
+  --button-background: var(--color-white);
+  --button-border-color: var(--color-border-card-button);
+  --button-color: var(--color-primary);
+  --button-hover-fill: var(--color-primary);
+  --button-hover-color: var(--color-white);
+  --button-hover-border: var(--color-primary);
+  width: 100%;
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .button,
+  .button::before {
+    transition: none;
+  }
+}
+
+/* --- Text button (label + arrow, no frame) --- */
+.text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: normal;
+  color: var(--text-button-color, var(--color-primary));
+  transition: opacity var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .text-button:hover {
+    opacity: 0.75;
+  }
+}
+
+/* --- Underlined text link with small arrow --- */
+.text-link {
+  --icon-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--text-link-gap, 4px);
+  padding-bottom: var(--text-link-padding-bottom, 4px);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--text-link-line-height, 26px);
+  white-space: nowrap;
+  color: var(--text-link-color, var(--color-primary));
+  border-bottom: 1px solid var(--text-link-border-color, var(--color-primary));
+  transition: opacity var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .text-link:hover {
+    opacity: 0.75;
+  }
+}
+
+/* --- Pill chip --- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  font-size: var(--chip-font-size, var(--font-size-sm));
+  font-weight: var(--font-weight-medium);
+  line-height: normal;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--chip-color, var(--color-white));
+  background: var(--chip-background, transparent);
+  border: 1px solid var(--chip-border-color, transparent);
+  border-radius: var(--radius-pill);
+}
+
+/* --- Swiper sliders ---
+   Swiper's CSS gives .swiper auto side margins; inside a flex column that turns
+   off stretching and the slider sizes to its own content (runaway width).
+   An explicit width keeps every slider tied to its container. */
+.institutions-section__slider,
+.campus-life-section__slider,
+.testimonials-section__slider {
+  width: 100%;
+  min-width: 0;
+}
+
+/* --- Logo frame (Figma frame with the logo cropped inside) ---
+   Frame: 172.8 × 100 by default (per-logo --logo-frame-width/-height from Figma),
+   scaled by --logo-scale on smaller screens. The image is placed with the Figma
+   crop values (--logo-x/-y/-width/-height, % of the frame), so the crop scales
+   with the frame. The images are the exact source files used in Figma. */
+.logo-frame {
+  position: relative;
+  flex-shrink: 0;
+  width: calc(var(--logo-frame-width, 172.8px) * var(--logo-scale));
+  height: calc(var(--logo-frame-height, 100px) * var(--logo-scale));
+  overflow: hidden;
+}
+
+.logo-frame__image {
+  position: absolute;
+  left: var(--logo-x, 0%);
+  top: var(--logo-y, 0%);
+  width: var(--logo-width, 100%);
+  height: var(--logo-height, 100%);
+  max-width: none;
+  object-fit: cover;
+}
+
+/* ==========================================
+   4. HEADER SECTION  (#utility-bar / .utility-bar, #site-header / .site-header)
+========================================== */
+
+/* --- Utility bar (scrolls away) --- */
+.utility-bar {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.utility-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-block: 16px;
+}
+
+.utility-bar__list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 12px;
+}
+
+.utility-bar__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-body);
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.utility-bar__item+.utility-bar__item::before {
+  content: "";
+  width: 1px;
+  height: 13px;
+  background-color: var(--color-white);
+}
+
+.utility-bar__muted {
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-white-muted);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .utility-bar__link:hover {
+    text-decoration: underline;
+  }
+}
+
+/* --- Main header bar (sticks to the top on scroll) --- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.site-header__main {
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-border-header);
+}
+
+.site-header__main-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 119px;
+  padding-block: 8px;
+}
+
+.site-header__brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.site-header__logo-wrap {
+  padding-right: 11.2px;
+  border-right: 1px solid var(--color-border-logo);
+}
+
+.site-header__logo {
+  width: 170px;
+  height: 65px;
+  object-fit: contain;
+}
+
+.site-header__nba-wrap {
+  padding-left: 16px;
+}
+
+.site-header__nba {
+  width: 69px;
+  height: 64px;
+  object-fit: contain;
+}
+
+/* ==========================================
+   5. HERO SECTION  (#hero / .hero-section)
+========================================== */
+
+.hero-section {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: var(--hero-min-height);
+  overflow: hidden;
+  color: var(--color-white);
+  background-color: var(--color-primary);
+}
+
+.hero-section__media {
+  position: absolute;
+  inset: 0;
+}
+
+/* <picture> wrapper fills the media box so the image's 100% height resolves */
+.hero-section__picture {
+  display: block;
+  height: 100%;
+}
+
+.hero-section__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 71.7%;
+}
+
+.hero-section__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(11.385deg, rgba(0, 0, 0, 0.76) 22.742%, rgba(0, 0, 0, 0) 51.106%);
+}
+
+.hero-section__container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  padding-top: 120px;
+  padding-bottom: 83px;
+  padding-left: calc(var(--container-gutter) + 1px);
+}
+
+.hero-section__content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 896px;
+}
+
+.hero-section__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-hero);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-hero);
+  text-transform: capitalize;
+}
+
+.hero-section__description {
+  max-width: 801px;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+}
+
+.hero-section__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 852px;
+}
+
+/* Figma "Glass" effect, frost radius 10 → CSS blur(10px) (matched visually against Figma render) */
+.hero-section__chip {
+  --chip-background: rgba(255, 255, 255, 0.1);
+  --chip-border-color: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.hero-section__chip--more {
+  --chip-background: transparent;
+  --chip-border-color: var(--color-white);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.hero-section__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+/* ==========================================
+   6. INSTITUTIONS SECTION  (#institutions / .institutions-section)
+========================================== */
+
+.institutions-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-white);
+}
+
+/* Desktop: 4-column grid (Figma). ≤1199.98px: Swiper slider (see js/main.js).
+   The grid is also the no-JS fallback; Swiper's flex track only applies once initialised. */
+.institutions-section__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.institutions-section__slider.swiper-initialized .institutions-section__grid {
+  display: flex;
+  gap: 0;
+}
+
+.institutions-section__card.swiper-slide {
+  height: auto;
+}
+
+.institutions-section__card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-light);
+}
+
+.institutions-section__media {
+  position: relative;
+  aspect-ratio: 320.71 / 242.91;
+  overflow: hidden;
+}
+
+.institutions-section__media--shade::after,
+.institutions-section__media--shade-strong::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to bottom, rgba(4, 4, 4, 0) 50.266%, rgba(0, 0, 0, 0.6));
+}
+
+.institutions-section__media--shade-strong::after {
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 54.771%, rgba(0, 0, 0, 0.67));
+}
+
+.institutions-section__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+a.institutions-section__media {
+  display: block;
+  color: inherit;
+}
+
+/* Image link: slow zoom-in on hover (pointer devices only). The card's
+   media box clips the scaled image so the card size never changes. */
+@media (hover: hover) and (pointer: fine) {
+
+  .institutions-section__media:hover .institutions-section__image,
+  .institutions-section__card:has(.button:hover) .institutions-section__image {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .institutions-section__image {
+    transition: none;
+  }
+}
+
+.institutions-section__image--bottom {
+  object-position: center bottom;
+}
+
+.institutions-section__image--right {
+  object-position: 100% 0;
+}
+
+.institutions-section__body {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px;
+  max-width: calc(283px + 48px);
+}
+
+.institutions-section__meta {
+  margin-bottom: 6px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: 32px;
+  color: var(--color-text-body);
+}
+
+.institutions-section__title {
+  margin-bottom: 8px;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: 32px;
+  color: var(--color-text-heading);
+}
+
+.institutions-section__description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  font-size: var(--font-size-xs);
+  line-height: 24.8px;
+  color: var(--color-text-body);
+}
+
+.institutions-section__footer {
+  margin-top: auto;
+  padding: 0 24px 24px;
+}
+
+/* ==========================================
+   7. ABOUT SECTION  (#about / .about-section)
+========================================== */
+
+.about-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-bg-light);
+}
+
+.about-section__container {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.about-section__intro {
+  display: flex;
+  align-items: center;
+  gap: 80px;
+}
+
+.about-section__media {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 502px;
+}
+
+.about-section__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-section__story {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 42px;
+  flex: 0 1 637px;
+  min-width: 0;
+}
+
+.about-section__text {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.about-section__heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.about-section__heading .section-label {
+  padding-inline: 4px;
+}
+
+.about-section__title {
+  max-width: 544px;
+}
+
+.about-section__paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about-section__stats {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.about-section__stat {
+  width: 300px;
+  padding: 35px 40px 35px 0;
+}
+
+.about-section__stat:last-child {
+  width: 260px;
+  padding-right: 0;
+}
+
+.about-section__stat-value {
+  margin-bottom: 4px;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-stat);
+  line-height: var(--font-size-stat);
+  white-space: nowrap;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+  /* equal-width digits keep the counter from jittering */
+}
+
+.about-section__stat-label {
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-body);
+  color: var(--color-primary);
+}
+
+.about-section__stat-label--semibold {
+  font-weight: var(--font-weight-semibold);
+}
+
+.about-section__stat-text {
+  max-width: 260px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid var(--color-black);
+  line-height: var(--line-height-body);
+  color: var(--color-text-heading);
+}
+
+/* ==========================================
+   8. WELCOME SECTION  (#welcome / .welcome-section)
+========================================== */
+
+.welcome-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-white);
+}
+
+.welcome-section__container {
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;
+}
+
+.welcome-section__content {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 710px;
+  padding-block: 47px;
+}
+
+.welcome-section__heading,
+.welcome-section__text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.welcome-section__description {
+  --section-description-size: var(--font-size-md);
+  --section-description-line-height: var(--line-height-relaxed);
+  --section-description-color: var(--color-text-muted);
+  max-width: 620px;
+}
+
+.welcome-section__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 427px;
+}
+
+.welcome-section__chip {
+  --chip-background: var(--color-bg-light);
+  --chip-border-color: var(--color-border-chip-light);
+  --chip-color: var(--color-primary);
+  --chip-font-size: var(--font-size-xs);
+  transition: background-color var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .welcome-section__chip:hover {
+    background-color: var(--color-white);
+  }
+}
+
+.welcome-section__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  flex: 0 0 700px;
+  max-width: 700px;
+}
+
+.welcome-section__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 42px;
+  background-color: var(--color-bg-light);
+}
+
+.welcome-section__icon {
+  width: 42px;
+  height: 42px;
+}
+
+.welcome-section__card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.welcome-section__card-label {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-body);
+  color: var(--color-black);
+}
+
+.welcome-section__card-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-card-title);
+  line-height: 1.3;
+  color: var(--color-primary);
+}
+
+.welcome-section__card-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.welcome-section__card-description--narrow {
+  max-width: 244px;
+}
+
+/* Whole card is the link: hovering anywhere on it drives the label + arrow */
+@media (hover: hover) and (pointer: fine) {
+  .welcome-section__card:hover .text-button {
+    opacity: 0.75;
+  }
+}
+
+/* --- Card hover: background turns white, navy bar sweeps along the bottom,
+   icon floats up. The card itself never moves, so the hover area stays stable. */
+.welcome-section__card {
+  --card-hover-duration: 0.45s;
+  --card-hover-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  isolation: isolate;
+  transition: background-color var(--card-hover-duration) var(--card-hover-ease);
+}
+
+/* Border layer: drawn on a pseudo-element so it never changes the card's size */
+.welcome-section__card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--color-primary);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--card-hover-duration) var(--card-hover-ease);
+}
+
+.welcome-section__card:focus-visible::before {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .welcome-section__card:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Bottom accent bar: grows left → right, retracts on leave */
+.welcome-section__card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background-color: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+  transition: transform var(--card-hover-duration) var(--card-hover-ease);
+}
+
+.welcome-section__card .welcome-section__icon {
+  transition: transform var(--card-hover-duration) var(--card-hover-ease);
+}
+
+.welcome-section__card:focus-visible {
+  background-color: var(--color-white);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .welcome-section__card:hover {
+    background-color: var(--color-white);
+  }
+}
+
+.welcome-section__card:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .welcome-section__card:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+.welcome-section__card:focus-visible .welcome-section__icon {
+  transform: translateY(-4px) scale(1.06);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .welcome-section__card:hover .welcome-section__icon {
+    transform: translateY(-4px) scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .welcome-section__card,
+  .welcome-section__card::before,
+  .welcome-section__card::after,
+  .welcome-section__card .welcome-section__icon {
+    transition: none;
+  }
+}
+
+.welcome-section__card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   9. NEWS SECTION  (#news / .news-section)
+========================================== */
+
+.news-section {
+  --section-label-color: var(--color-white);
+  --section-title-color: var(--color-white);
+  padding-block: var(--section-padding-y);
+  color: var(--color-white);
+  background-color: var(--color-primary);
+}
+
+.news-section__container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.news-section__body {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+.news-section__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 40px;
+}
+
+.news-section__tab {
+  padding-block: 12px;
+  font-size: var(--font-size-lg);
+  line-height: normal;
+  white-space: nowrap;
+  color: var(--color-white);
+  border-bottom: 2px solid transparent;
+  transition: border-color var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .news-section__tab:hover {
+    border-bottom-color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+.news-section__tab--active {
+  font-weight: var(--font-weight-medium);
+  border-bottom-color: var(--color-white);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .news-section__tab--active:hover {
+    font-weight: var(--font-weight-medium);
+    border-bottom-color: var(--color-white);
+  }
+}
+
+.news-section__grid {
+  display: flex;
+  gap: 24px;
+  height: 666px;
+}
+
+/* Tab panels — inactive panels are removed from layout; the active one fades in */
+.news-section__panel[hidden] {
+  display: none;
+}
+
+.news-section__panel:focus-visible {
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .news-section__panel {
+    animation: news-panel-in 0.35s ease;
+  }
+}
+
+@keyframes news-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.news-section__side {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.news-section__card {
+  --news-shade-height: 361px;
+  --news-shade-color: rgba(12, 12, 15, 0.64);
+  --news-tint: transparent;
+  position: relative;
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--color-white);
+}
+
+/* Side cards: top and bottom (shade values from Figma) */
+.news-section__card--side-top {
+  --news-shade-height: 192px;
+  --news-shade-color: rgba(12, 12, 15, 0.56);
+}
+
+.news-section__card--side-bottom {
+  --news-shade-height: 168px;
+  --news-shade-color: rgba(12, 12, 15, 0.72);
+  --news-tint: rgba(0, 0, 0, 0.08);
+}
+
+.news-section__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Hover zoom uses the standalone `scale` property so it stacks on top of any
+     crop `transform` (e.g. .news-section__image--zoom) instead of replacing it. */
+  scale: 1;
+  backface-visibility: hidden;
+  will-change: scale;
+  transition: scale 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.news-section__card:focus-visible .news-section__image {
+  scale: 1.03;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .news-section__card:hover .news-section__image {
+    scale: 1.03;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .news-section__image {
+    transition: none;
+  }
+}
+
+/* Figma crop for the GIT Polytechnic building photo */
+.news-section__image--building {
+  object-position: 50% 66.5%;
+}
+
+/* Figma zooms this photo ~2.73x into the group of students */
+.news-section__image--zoom {
+  inset: auto;
+  left: -83%;
+  top: 50%;
+  width: 273.16%;
+  max-width: none;
+  height: auto;
+  transform: translateY(-55.2%);
+}
+
+.news-section__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(12, 12, 15, 0), var(--news-shade-color) 75.83%) bottom / 100% var(--news-shade-height) no-repeat,
+    linear-gradient(var(--news-tint), var(--news-tint));
+}
+
+.news-section__card--featured .news-section__overlay {
+  background:
+    linear-gradient(to bottom, rgba(12, 12, 15, 0), var(--news-shade-color) 75.83%) bottom / 100% var(--news-shade-height) no-repeat,
+    linear-gradient(to bottom, rgba(0, 0, 0, 0) 76.011%, rgba(0, 0, 0, 0.3));
+}
+
+.news-section__card-text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  font-weight: var(--font-weight-medium);
+}
+
+.news-section__card--featured .news-section__card-text {
+  left: 37px;
+  bottom: 29px;
+  right: auto;
+  max-width: min(605px, calc(100% - 74px));
+  padding: 0;
+}
+
+.news-section__date {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-body);
+}
+
+.news-section__card-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  max-width: 486px;
+  font-size: var(--font-size-xl);
+  line-height: 32px;
+  text-transform: capitalize;
+}
+
+.news-section__card--side-bottom .news-section__card-title {
+  max-width: 480px;
+}
+
+.news-section__card--featured .news-section__card-title {
+  max-width: 517px;
+  font-size: 32px;
+  line-height: 42px;
+  letter-spacing: -1px;
+}
+
+.news-section__circulars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  padding: 34px 28px;
+  background-color: var(--color-bg-circulars);
+  border: 1px solid var(--color-border-circulars);
+}
+
+.news-section__circulars-label {
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.news-section__circulars-list,
+.news-section__circulars-list li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px 34px;
+}
+
+.news-section__circular-link {
+  --text-link-color: var(--color-white);
+  --text-link-border-color: var(--color-border-link-light);
+  --text-link-gap: 6px;
+  --text-link-padding-bottom: 0;
+  --text-link-line-height: normal;
+}
+
+/* ==========================================
+   10. APPROVALS & PARTNERSHIPS SECTION  (#approvals / .approvals-section)
+========================================== */
+
+.approvals-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-bg-light);
+}
+
+.approvals-section__container {
+  display: flex;
+  flex-direction: column;
+  gap: 90px;
+}
+
+.approvals-section__approvals {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+}
+
+.approvals-section__title {
+  --section-title-size: 36px;
+  --section-title-line-height: 54px;
+  --section-title-tracking: 1px;
+  text-align: center;
+}
+
+.approvals-section__columns {
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;
+  width: 100%;
+}
+
+.approvals-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.approvals-section__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: relative;
+  padding: 34px 24px;
+  background-color: var(--color-white);
+  overflow: hidden;
+}
+
+/* Accent bar that grows in from the left edge on hover */
+.approvals-section__item::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background-color: var(--color-primary);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Stretched link: the "Know More" link covers the whole card, so the card is clickable */
+.approvals-section__item .text-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.approvals-section__item:focus-within::before {
+  transform: scaleY(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .approvals-section__item:hover::before {
+    transform: scaleY(1);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .approvals-section__item:hover .text-link {
+    opacity: 1;
+  }
+}
+
+.approvals-section__item-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body);
+  color: var(--color-text-heading);
+  transition: color var(--transition-base);
+}
+
+.approvals-section__item:focus-within .approvals-section__item-title {
+  color: var(--color-primary);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .approvals-section__item:hover .approvals-section__item-title {
+    color: var(--color-primary);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .approvals-section__item::before {
+    transition: none;
+  }
+}
+
+.approvals-section__partners {
+  display: flex;
+  align-items: center;
+  padding-top: 60px;
+  border-top: 1px solid var(--color-divider);
+}
+
+.approvals-section__partners-title {
+  flex: 0 0 275px;
+  font-family: var(--font-heading);
+  font-size: 32px;
+  line-height: 1.3;
+  color: var(--color-primary);
+}
+
+.approvals-section__logos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px 16px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Partnerships logos: the whole image is shown at its natural shape, scaled down
+   to fit the Figma frame (max 100% × 100%) and centred — no crop or positioning.
+   Q2D keeps its 173 × 75 Figma frame. */
+.approvals-section__partners .logo-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.approvals-section__partners .logo-frame__image {
+  position: static;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.approvals-section__logo--q2d {
+  --logo-frame-width: 173px;
+  --logo-frame-height: 75px;
+  --logo-ratio: 173 / 75;
+}
+
+/* ==========================================
+   11. CAMPUS LIFE SECTION  (#campus-life / .campus-life-section)
+========================================== */
+
+.campus-life-section {
+  padding-block: 100px;
+  background-color: var(--color-primary);
+}
+
+.campus-life-section__container {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.campus-life-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.campus-life-section__title {
+  --section-title-color: var(--color-white);
+  --section-title-line-height: 54px;
+  --section-title-tracking: 1px;
+}
+
+.campus-life-section__controls {
+  display: flex;
+  gap: 16px;
+}
+
+/* Hidden when there are ≤3 slides (JS) or when every slide already fits (Swiper lock) */
+.campus-life-section__controls[hidden],
+.campus-life-section__control.swiper-button-lock {
+  display: none;
+}
+
+.campus-life-section__control {
+  --icon-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  color: var(--color-white);
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-white);
+  border-radius: var(--radius-circle);
+  transition: background-color var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .campus-life-section__control:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.campus-life-section__control--prev .icon {
+  transform: scaleX(-1);
+}
+
+/* Slide indicator (line-style dots) — mobile only, see ≤576px block.
+   Uses its own class instead of .swiper-pagination, so Swiper's absolute
+   positioning doesn't apply; it sits in normal flow below the cards. */
+.campus-life-section__pagination {
+  display: none;
+}
+
+/* Swiper slider at every width (3 / 2 / 1.1 cards visible). Grid = no-JS fallback. */
+.campus-life-section__cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.campus-life-section__slider.swiper-initialized .campus-life-section__cards {
+  display: flex;
+  gap: 0;
+}
+
+.campus-life-section__card.swiper-slide {
+  height: auto;
+}
+
+.campus-life-section__card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 42px;
+  background-color: var(--color-white);
+}
+
+.campus-life-section__card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.campus-life-section__logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 83px;
+  height: 83px;
+}
+
+/* Logo sits at its natural size, scaled down only if it exceeds the box */
+.campus-life-section__logo {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Wide partner logos: 83px tall, same 1.728 ratio as the Partnerships frames */
+.campus-life-section__logo-wrap--wide {
+  width: 143.4px;
+}
+
+/* Q2D's Figma frame is 173 × 75 → 191.45 × 83 at this height */
+.campus-life-section__logo-wrap--q2d {
+  width: 191.45px;
+}
+
+
+.campus-life-section__card-icon {
+  color: var(--color-primary);
+}
+
+.campus-life-section__card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.campus-life-section__card-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+  color: var(--color-primary);
+}
+
+.campus-life-section__card-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+  line-height: 1.8;
+  color: var(--color-text-body);
+}
+
+/* ==========================================
+   12. RECRUITERS SECTION  (#recruiters / .recruiters-section)
+========================================== */
+
+.recruiters-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-white);
+}
+
+.recruiters-section__container {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+.recruiters-section__logos {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.recruiters-section__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px 16px;
+}
+
+.recruiters-section__divider {
+  border: 0;
+  border-top: 1px solid var(--color-divider);
+}
+
+/* --- Infinite logo marquee (js/main.js adds .is-ready) ---
+   Row 1 moves left → right, row 2 right → left. Hover pauses; drag/swipe moves
+   it manually. Only `transform` changes per frame, so it stays on the GPU. */
+.recruiters-section__marquee {
+  --recruiters-logo-gap: 78px;
+  /* ≈ the space-between gap in the Figma rows at 1424px */
+}
+
+.recruiters-section__marquee.is-ready {
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+  /* vertical page scroll stays native; horizontal swipes drive the row */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.recruiters-section__marquee.is-dragging {
+  cursor: grabbing;
+}
+
+.recruiters-section__marquee.is-ready .recruiters-section__row {
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 0 var(--recruiters-logo-gap);
+  width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.recruiters-section__marquee img {
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Frame sizes + crop values from Figma (node 130:4613). Infosys, Deloitte,
+   Cognizant and Lenovo fill their 172.8 × 100 frame (object-fit: cover, no crop). */
+.recruiters-section__logo--tcs {
+  --logo-width: 100.12%;
+  --logo-height: 65.33%;
+  --logo-x: 0%;
+  --logo-y: 17.33%;
+}
+
+.recruiters-section__logo--tech-mahindra {
+  --logo-width: 100.12%;
+  --logo-height: 90.58%;
+  --logo-x: -0.14%;
+  --logo-y: 4.71%;
+}
+
+.recruiters-section__logo--jsw {
+  --logo-frame-width: 129px;
+  --logo-width: 134.11%;
+  --logo-height: 86.5%;
+  --logo-x: -17.05%;
+  --logo-y: 6.62%;
+}
+
+.recruiters-section__logo--ey {
+  --logo-frame-width: 211px;
+  --logo-width: 82.94%;
+  --logo-height: 100%;
+  --logo-x: 8.64%;
+  --logo-y: -0.39%;
+}
+
+.recruiters-section__logo--accenture {
+  --logo-width: 112.44%;
+  --logo-height: 129.65%;
+  --logo-x: -6.22%;
+  --logo-y: -15.27%;
+}
+
+.recruiters-section__logo--sib {
+  --logo-width: 116.86%;
+  --logo-height: 258.68%;
+  --logo-x: -8.54%;
+  --logo-y: -78.85%;
+}
+
+.recruiters-section__logo--tata-elxsi {
+  --logo-width: 61.34%;
+  --logo-height: 106%;
+  --logo-x: 19.33%;
+  --logo-y: 0%;
+}
+
+.recruiters-section__logo--icici {
+  --logo-width: 110.19%;
+  --logo-height: 190.4%;
+  --logo-x: -5.09%;
+  --logo-y: -45.2%;
+}
+
+/* ==========================================
+   13. TESTIMONIALS SECTION  (#testimonials / .testimonials-section)
+========================================== */
+
+.testimonials-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-bg-light);
+}
+
+/* Desktop: 3-column grid (Figma). ≤1199.98px: Swiper slider. Grid = no-JS fallback. */
+.testimonials-section__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.testimonials-section__slider.swiper-initialized .testimonials-section__grid {
+  display: flex;
+  gap: 0;
+}
+
+.testimonials-section__card.swiper-slide {
+  height: auto;
+}
+
+.testimonials-section__card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.testimonials-section__media {
+  position: relative;
+  aspect-ratio: 453.33 / 486;
+  overflow: hidden;
+}
+
+.testimonials-section__media--shade::after,
+.testimonials-section__media--shade-strong::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to bottom, rgba(4, 4, 4, 0) 50.266%, rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+}
+
+.testimonials-section__media--shade-strong::after {
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 54.771%, rgba(0, 0, 0, 0.67));
+}
+
+.testimonials-section__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+.testimonials-section__image--cover {
+  object-position: center;
+}
+
+.testimonials-section__play {
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  z-index: 1;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-circle);
+  transition: transform var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .testimonials-section__play:hover {
+    transform: scale(1.06);
+  }
+}
+
+.testimonials-section__text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.testimonials-section__name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+  line-height: 32px;
+  color: var(--color-primary);
+}
+
+.testimonials-section__program {
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body);
+  color: var(--color-black);
+}
+
+.testimonials-section__quote {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  max-width: 378px;
+  line-height: var(--line-height-body);
+  color: var(--color-text-body);
+}
+
+.testimonials-section__quote--narrow {
+  max-width: 367px;
+}
+
+.testimonials-section__quote--narrower {
+  max-width: 322px;
+}
+
+/* ==========================================
+   14. ADMISSIONS SECTION  (#admissions / .admissions-section)
+========================================== */
+
+.admissions-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-white);
+}
+
+.admissions-section__container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+.admissions-section__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 0 1 615px;
+  min-width: 0;
+}
+
+.admissions-section__heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.admissions-section__heading .section-label {
+  padding-inline: 4px;
+}
+
+.admissions-section__title {
+  --display-title-line-height: 1.18;
+}
+
+.admissions-section__description {
+  max-width: 467px;
+}
+
+.admissions-section__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.admissions-section__form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  flex: 0 1 686.89px;
+  min-width: 0;
+  padding-top: 12px;
+}
+
+.admissions-section__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 16px;
+  width: 100%;
+  padding-left: 8px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.form-field--full {
+  grid-column: 1 / -1;
+  padding-bottom: 8.8px;
+}
+
+.form-field__label {
+  height: 30px;
+  padding-top: 8.5px;
+  font-size: var(--font-size-xs);
+  line-height: 14px;
+  white-space: nowrap;
+  color: var(--color-text-label);
+}
+
+.form-field__control {
+  width: 100%;
+  height: 56px;
+  padding: 17px 35px 17px 16px;
+  font-size: var(--font-size-sm);
+  line-height: normal;
+  color: var(--color-text-heading);
+  background-color: var(--color-bg-input);
+  border: 0;
+  border-bottom: 1px solid var(--color-border-input);
+  border-radius: 0;
+  /* Focus line: a 2px primary-colour bar drawn as a background, grown from left to right on focus */
+  background-image: linear-gradient(var(--color-primary), var(--color-primary));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0% 2px;
+  transition: background-size 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Focus: line sweeps in instead of an outline (the phone field reacts when anything inside it is focused) */
+.form-field__control:focus,
+.form-field__control:focus-visible,
+.form-field__control--phone:focus-within {
+  outline: 0;
+  background-size: 100% 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-field__control {
+    transition: none;
+  }
+}
+
+.form-field__control--phone :focus,
+.form-field__control--phone :focus-visible {
+  outline: 0;
+}
+
+.form-field__control::placeholder {
+  color: var(--color-text-placeholder);
+  opacity: 1;
+}
+
+.form-field__control--phone {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 16px 0 0.89px;
+}
+
+.form-field__country {
+  flex-shrink: 0;
+  width: 54.6px;
+  height: 54px;
+}
+
+.form-field__dial-code {
+  flex-shrink: 0;
+  color: var(--color-text-heading);
+}
+
+.form-field__phone-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-left: 5px;
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.form-field__phone-input::placeholder {
+  color: var(--color-text-placeholder);
+  opacity: 1;
+}
+
+.form-field__select-wrap {
+  position: relative;
+}
+
+.form-field__control--select {
+  padding-block: 0;
+  padding-left: 15.89px;
+  line-height: var(--line-height-body);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-field__chevron {
+  position: absolute;
+  top: 16px;
+  right: 14.5px;
+  width: 24px;
+  height: 24px;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.form-field__control--textarea {
+  height: 135px;
+  line-height: var(--line-height-body);
+  resize: none;
+}
+
+.admissions-section__consent {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.admissions-section__checkbox {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.admissions-section__checkbox-box {
+  position: relative;
+  flex-shrink: 0;
+  width: 25px;
+  height: 25px;
+  padding: 7px 0 0 7px;
+}
+
+/* Checked: navy filled box (covers the 18px outline icon at 7px,7px) with a white tick */
+.admissions-section__checkbox-box::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 7px;
+  width: 18px;
+  height: 18px;
+  background-color: var(--color-primary);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.admissions-section__checkbox:checked+.admissions-section__checkbox-box::before {
+  opacity: 1;
+}
+
+.admissions-section__checkbox:checked+.admissions-section__checkbox-box::after {
+  content: "";
+  position: absolute;
+  left: 13px;
+  top: 10px;
+  width: 6px;
+  height: 10px;
+  border: solid var(--color-white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.admissions-section__checkbox:focus-visible+.admissions-section__checkbox-box {
+  outline: 2px solid var(--color-accent-start);
+  outline-offset: 2px;
+}
+
+.admissions-section__consent-text {
+  flex: 1 1 0;
+  font-size: var(--font-size-xs);
+  line-height: 25.2px;
+  color: var(--color-text-body);
+}
+
+/* ==========================================
+   15. CONTACT SECTION  (#contact / .contact-section)
+========================================== */
+
+.contact-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-bg-light);
+}
+
+.contact-section__container {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+.contact-section__info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 0 1 615px;
+  min-width: 0;
+}
+
+.contact-section__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-section__heading .section-label {
+  padding-inline: 4px;
+}
+
+.contact-section__description {
+  max-width: 516px;
+}
+
+.contact-section__list {
+  max-width: 516px;
+}
+
+.contact-section__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding-block: 24px;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body);
+  border-bottom: 1px solid var(--color-border-list);
+}
+
+.contact-section__term {
+  color: var(--color-text-soft);
+}
+
+.contact-section__value {
+  color: var(--color-black);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact-section__value a:hover {
+    text-decoration: underline;
+  }
+}
+
+.contact-section__map {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 481px;
+  overflow: hidden;
+  background-color: var(--color-bg-map);
+  border: 1px solid var(--color-border-map);
+}
+
+.contact-section__map-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ==========================================
+   16. FOOTER SECTION  (#site-footer / .site-footer)
+========================================== */
+
+.site-footer {
+  padding-top: 100px;
+  color: var(--color-white);
+  background-color: var(--color-primary);
+}
+
+.site-footer__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 48px;
+  padding-bottom: 120px;
+}
+
+.site-footer__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  flex: 0 0 270px;
+}
+
+.site-footer__logo {
+  width: 196px;
+  height: 83px;
+  object-fit: contain;
+}
+
+.site-footer__brand-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 34px;
+}
+
+.site-footer__address {
+  max-width: 269px;
+  line-height: 29.8px;
+}
+
+.site-footer__direction {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-body);
+  border: 1px solid var(--color-white);
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-footer__direction:hover {
+    color: var(--color-primary);
+    background-color: var(--color-white);
+  }
+}
+
+.site-footer__direction-icon {
+  --icon-size: 8px;
+  /* Inlined from assets/icons/arrow-outward-tight.svg (see .icon note) */
+  --icon-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath d='M6.728 2.163L1.066 7.825C0.949 7.942 0.801 8 0.62 8C0.44 8 0.292 7.942 0.175 7.825C0.058 7.708 0 7.56 0 7.38C0 7.199 0.058 7.051 0.175 6.934L5.837 1.272H1.002C0.822 1.272 0.671 1.211 0.549 1.089C0.427 0.968 0.366 0.816 0.366 0.636C0.366 0.456 0.427 0.305 0.549 0.183C0.671 0.061 0.822 0 1.002 0H7.364C7.544 0 7.695 0.061 7.817 0.183C7.939 0.305 8 0.456 8 0.636V6.998C8 7.178 7.939 7.329 7.817 7.451C7.695 7.573 7.544 7.634 7.364 7.634C7.184 7.634 7.032 7.573 6.911 7.451C6.789 7.329 6.728 7.178 6.728 6.998V2.163Z'/%3E%3C/svg%3E");
+  margin-inline: 1.66px;
+  --icon-rotate: 45deg;
+  --icon-clip-x: 1.66px;
+}
+
+.site-footer__nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 48px;
+  flex: 0 1 1055px;
+  min-width: 0;
+  min-height: 366px;
+}
+
+.site-footer__columns {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  width: 100%;
+}
+
+.site-footer__column--admissions {
+  flex: 0 1 233px;
+}
+
+.site-footer__column--email {
+  flex: 0 1 226px;
+}
+
+.site-footer__column--office {
+  flex: 0 1 269px;
+}
+
+.site-footer__column--quick {
+  flex: 0 0 auto;
+}
+
+.site-footer__heading {
+  position: relative;
+  padding-bottom: 18px;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: 26px;
+  white-space: nowrap;
+}
+
+.site-footer__heading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 28px;
+  width: var(--footer-heading-line, 100px);
+  height: 1px;
+  background-color: var(--color-white);
+}
+
+.site-footer__heading--admissions {
+  --footer-heading-line: 117.64px;
+}
+
+.site-footer__heading--email {
+  --footer-heading-line: 110.84px;
+}
+
+.site-footer__heading--office {
+  --footer-heading-line: 147px;
+}
+
+.site-footer__heading--quick {
+  --footer-heading-line: 99px;
+  padding-bottom: 20px;
+}
+
+/* Heading toggle: plain heading text on desktop (button is disabled there);
+   becomes the accordion trigger on mobile — see RESPONSIVE (≤ 576px) + js/main.js */
+.site-footer__toggle {
+  display: inline;
+  padding: 0;
+  font: inherit;
+  line-height: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: default;
+}
+
+.site-footer__toggle-icon {
+  display: none;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  background-color: currentColor;
+  /* Inlined from assets/icons/chevron-left.svg (see .icon note) */
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10.8 12L14.7 15.9C14.883 16.083 14.975 16.317 14.975 16.6C14.975 16.883 14.883 17.117 14.7 17.3C14.517 17.483 14.283 17.575 14 17.575C13.717 17.575 13.483 17.483 13.3 17.3L8.7 12.7C8.6 12.6 8.529 12.492 8.488 12.375C8.446 12.258 8.425 12.133 8.425 12C8.425 11.867 8.446 11.742 8.488 11.625C8.529 11.508 8.6 11.4 8.7 11.3L13.3 6.7C13.483 6.517 13.717 6.425 14 6.425C14.283 6.425 14.517 6.517 14.7 6.7C14.883 6.883 14.975 7.117 14.975 7.4C14.975 7.683 14.883 7.917 14.7 8.1L10.8 12Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10.8 12L14.7 15.9C14.883 16.083 14.975 16.317 14.975 16.6C14.975 16.883 14.883 17.117 14.7 17.3C14.517 17.483 14.283 17.575 14 17.575C13.717 17.575 13.483 17.483 13.3 17.3L8.7 12.7C8.6 12.6 8.529 12.492 8.488 12.375C8.446 12.258 8.425 12.133 8.425 12C8.425 11.867 8.446 11.742 8.488 11.625C8.529 11.508 8.6 11.4 8.7 11.3L13.3 6.7C13.483 6.517 13.717 6.425 14 6.425C14.283 6.425 14.517 6.517 14.7 6.7C14.883 6.883 14.975 7.117 14.975 7.4C14.975 7.683 14.883 7.917 14.7 8.1L10.8 12Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  transform: rotate(-90deg);
+  /* chevron-left rotated → points down (closed) */
+  transition: transform 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .site-footer__toggle-icon,
+  .site-footer__panel {
+    transition: none !important;
+  }
+}
+
+.site-footer__list li {
+  display: flex;
+  padding-block: 8px;
+}
+
+.site-footer__link {
+  display: inline-block;
+  line-height: 25px;
+  transition: opacity var(--transition-base);
+}
+
+/* Hover: fade the link (applies to real links only, not the opening-hours text) */
+a.site-footer__link:focus-visible {
+  opacity: 0.7;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  a.site-footer__link:hover {
+    opacity: 0.7;
+  }
+}
+
+.site-footer__link--underline {
+  text-decoration: underline;
+  text-underline-position: from-font;
+}
+
+.site-footer__address--office {
+  padding-top: 7px;
+}
+
+.site-footer__social {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  min-height: 46px;
+  padding-inline: 6px;
+}
+
+.site-footer__social-link {
+  display: block;
+  padding: 4px;
+  transition: opacity var(--transition-base);
+}
+
+.site-footer__credit-link {
+  transition: opacity var(--transition-base);
+}
+
+.site-footer__credit-link:focus-visible {
+  opacity: 0.7;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-footer__credit-link:hover {
+    opacity: 0.7;
+  }
+}
+
+.site-footer__social-link:focus-visible {
+  opacity: 0.7;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-footer__social-link:hover {
+    opacity: 0.7;
+  }
+}
+
+.site-footer__social-link img {
+  width: 32px;
+  height: 32px;
+}
+
+.site-footer__bottom {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding-bottom: 52px;
+  font-size: var(--font-size-xs);
+  line-height: 16.8px;
+}
+
+/* ==========================================
+   16b. VIDEO MODAL  (.video-modal — opened from the Students speak play buttons)
+   Native <dialog> (focus trap, Esc to close, top layer). Desktop: centred 16:9
+   player, close button above it. ≤576px: full screen (see RESPONSIVE).
+========================================== */
+.video-modal {
+  /* Centre in the viewport. The global reset (* { margin: 0 }) removes the
+     dialog's default margin: auto, which is what centres a modal <dialog>. */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(960px, 100vw - 64px);
+  height: fit-content;
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  overflow: visible;
+  color: var(--color-white);
+  background: transparent;
+  border: 0;
+}
+
+.video-modal::backdrop {
+  background: rgba(6, 14, 32, 0.86);
+}
+
+.video-modal__panel {
+  position: relative;
+  padding-block: 60px;
+  /* room for the close button above; equal space below keeps the video itself centred */
+}
+
+.video-modal__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  max-height: calc(100vh - 140px);
+  margin-inline: auto;
+  overflow: hidden;
+  background-color: var(--color-black);
+}
+
+.video-modal__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.video-modal__controls {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  display: flex;
+  gap: 12px;
+}
+
+.video-modal__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: var(--color-white);
+  background-color: rgba(21, 55, 114, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-circle);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background-color var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .video-modal__button:hover {
+    background-color: var(--color-primary);
+  }
+}
+
+.video-modal__button:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 3px;
+}
+
+.video-modal__icon {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+/* Icon state: JS sets data-paused / data-muted on the dialog */
+.video-modal__icon--play,
+.video-modal__icon--muted,
+.video-modal[data-paused] .video-modal__icon--pause,
+.video-modal[data-muted] .video-modal__icon--sound {
+  display: none;
+}
+
+.video-modal[data-paused] .video-modal__icon--play,
+.video-modal[data-muted] .video-modal__icon--muted {
+  display: block;
+}
+
+.video-modal__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+/* Open animation */
+.video-modal[open] {
+  animation: video-modal-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.video-modal[open]::backdrop {
+  animation: video-modal-fade 0.3s ease;
+}
+
+@keyframes video-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes video-modal-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .video-modal[open],
+  .video-modal[open]::backdrop {
+    animation: none;
+  }
+}
+
+/* Page behind the open modal doesn't scroll. Hiding the scrollbar would widen the
+   page and shift it right, so main.js sets --scrollbar-compensation to the
+   scrollbar's width and the same space is added back as padding (0 on touch
+   devices / overlay scrollbars, where nothing shifts). */
+html.has-video-modal {
+  overflow: hidden;
+  padding-right: var(--scrollbar-compensation, 0px);
+}
+
+/* ==========================================
+   17. RESPONSIVE STYLES
+========================================== */
+
+/* ---------- Small desktop / laptop (≤ 1280px) ---------- */
+@media (max-width: 1280px) {
+  :root {
+    --container-gutter: 32px;
+    --font-size-display: 52px;
+    --font-size-hero: 72px;
+    --line-height-hero: 1.08;
+  }
+
+  /* About */
+  .about-section__intro {
+    gap: 48px;
+  }
+
+  .about-section__stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 32px;
+  }
+
+  .about-section__stat,
+  .about-section__stat:last-child {
+    width: auto;
+    padding-right: 0;
+  }
+
+  /* Welcome */
+  .welcome-section__container {
+    gap: 40px;
+  }
+
+  .welcome-section__grid {
+    flex-basis: 58%;
+  }
+
+  .welcome-section__card {
+    padding: 32px;
+  }
+
+  /* Approvals */
+  .approvals-section__partners {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 40px;
+  }
+
+  .approvals-section__partners-title {
+    flex-basis: auto;
+  }
+
+  .approvals-section__logos {
+    width: 100%;
+  }
+
+  /* Footer */
+  .site-footer__brand {
+    flex-basis: 240px;
+  }
+
+  .site-footer__columns {
+    flex-wrap: wrap;
+    gap: 32px 40px;
+  }
+}
+
+/* ---------- Tablet → laptop (768px – 1599.98px): approvals logos ----------
+   The Figma frames (172.8 × 100) don't fit six across here (from 1281px the title also sits
+   beside them), so a 6-column grid
+   keeps them on one row: each frame shrinks to its column (never above its Figma
+   size) and keeps the Figma aspect ratio; the crop inside is in percentages, so
+   it scales with the frame. */
+@media (min-width: 768px) and (max-width: 1599.98px) {
+  .approvals-section__logos {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 16px;
+    justify-items: center;
+    align-items: center;
+  }
+
+  .approvals-section__logos .logo-frame {
+    width: 100%;
+    max-width: calc(var(--logo-frame-width, 172.8px) * var(--logo-scale));
+    height: auto;
+    aspect-ratio: var(--logo-ratio, 1.728);
+  }
+}
+
+/* ---------- Tablet only (577px – 1199.98px): news card gap ---------- */
+@media (min-width: 577px) and (max-width: 1199.98px) {
+
+  .news-section__grid,
+  .news-section__side {
+    gap: 18px;
+  }
+}
+
+/* ---------- Tablet spacing (768px – 1199.98px; ≤767.98px blocks below refine it) ---------- */
+@media (max-width: 1199.98px) {
+  .recruiters-section__marquee {
+    --recruiters-logo-gap: 60px;
+  }
+
+  /* --- Section spacing (tablet: ≤1199.98px) ---
+     Scale: major blocks 48 · stacked pairs 40 · sub-groups 28–40 · card grids 24 */
+  .about-section__container {
+    gap: 48px;
+  }
+
+  .about-section__intro {
+    gap: 40px;
+  }
+
+  .about-section__story {
+    gap: 32px;
+  }
+
+  .welcome-section__content {
+    gap: 28px;
+  }
+
+  .news-section__body {
+    gap: 28px;
+  }
+
+  .approvals-section__container {
+    gap: 72px;
+  }
+
+  .approvals-section__approvals {
+    gap: 40px;
+  }
+
+  .approvals-section__columns {
+    gap: 32px;
+  }
+
+  .approvals-section__partners {
+    padding-top: 48px;
+  }
+
+  .campus-life-section__container {
+    gap: 48px;
+  }
+
+  .recruiters-section__container {
+    gap: 48px;
+  }
+
+  .testimonials-section__grid {
+    gap: 18px;
+  }
+
+  .admissions-section__container {
+    gap: 40px;
+  }
+
+  .contact-section__container {
+    gap: 48px;
+  }
+
+  .site-footer__nav {
+    gap: 40px;
+  }
+}
+
+/* ---------- Tablet (768px – 1199.98px) ---------- */
+@media (max-width: 1199.98px) {
+  :root {
+    --section-padding-y: 88px;
+    --font-size-hero: 60px;
+    --font-size-display: 46px;
+    --font-size-section-title: 40px;
+    --font-size-stat: 52px;
+    --font-size-card-title: 30px;
+    --hero-min-height: 760px;
+  }
+
+  .section-title {
+    --section-title-line-height: 1.15;
+  }
+
+  /* Institutions */
+  .institutions-section__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .institutions-section__body {
+    max-width: none;
+  }
+
+  /* About */
+  .about-section__intro {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .about-section__media {
+    flex: none;
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+
+  .about-section__story {
+    flex-basis: auto;
+  }
+
+  .about-section__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Welcome */
+  .welcome-section__container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .welcome-section__content {
+    flex: none;
+    min-height: 0;
+    padding-block: 0;
+  }
+
+  .welcome-section__grid {
+    flex: none;
+    max-width: none;
+  }
+
+  /* News */
+  .news-section__grid {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .news-section__card {
+    flex: none;
+    aspect-ratio: 700 / 321;
+  }
+
+  .news-section__card--featured {
+    aspect-ratio: 4 / 3;
+  }
+
+  /* Approvals */
+  .approvals-section__columns {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .approvals-section__list {
+    width: 100%;
+  }
+
+  /* Campus life */
+  .campus-life-section {
+    padding-block: 80px;
+  }
+
+  .campus-life-section__cards {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .campus-life-section__card {
+    padding: 32px;
+  }
+
+  /* Recruiters */
+  .recruiters-section__row {
+    justify-content: space-around;
+  }
+
+  /* Testimonials */
+  .testimonials-section__grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px 24px;
+  }
+
+  /* Admissions */
+  .admissions-section__container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admissions-section__intro,
+  .admissions-section__form {
+    flex-basis: auto;
+  }
+
+  .admissions-section__actions {
+    margin-top: 10px;
+  }
+
+  /* Contact */
+  .contact-section__container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .contact-section__info {
+    flex-basis: auto;
+  }
+
+  .contact-section__map {
+    flex: none;
+    height: 400px;
+  }
+
+  /* Footer */
+  .site-footer__top {
+    flex-direction: column;
+    padding-bottom: 72px;
+  }
+
+  .site-footer__brand {
+    flex-basis: auto;
+  }
+
+  .site-footer__nav {
+    flex-basis: auto;
+    align-items: flex-start;
+    width: 100%;
+    min-height: 0;
+  }
+
+  .site-footer__columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-footer__social {
+    justify-content: flex-start;
+    padding-inline: 0;
+    margin-left: -4px;
+  }
+}
+
+/* ---------- Laptop (1200px – 1499.98px) ---------- */
+@media (min-width: 1200px) and (max-width: 1499.98px) {
+  .approvals-section__columns {
+    gap: 40px;
+  }
+}
+
+/* ---------- Tablet About (768px – 1199.98px): desktop layout ----------
+   Image and story side by side, stats in a single row of four. */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .about-section__intro {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .about-section__media {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 420px;
+    aspect-ratio: auto;
+  }
+
+  .about-section__story {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+
+  .about-section__stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 24px;
+  }
+
+  /* Welcome — content beside the 2 × 2 card grid */
+  .welcome-section__container {
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .welcome-section__content {
+    flex: 1 1 0;
+    padding-block: 0;
+  }
+
+  .welcome-section__grid {
+    flex: 0 0 56%;
+    max-width: 56%;
+    gap: 16px;
+  }
+
+  .welcome-section__card {
+    padding: 24px 20px;
+  }
+
+  /* News — featured card beside the two stacked side cards */
+  .news-section__grid {
+    flex-direction: row;
+    height: clamp(480px, 56vw, 666px);
+  }
+
+  .news-section__card,
+  .news-section__card--featured {
+    flex: 1 1 0;
+    aspect-ratio: auto;
+  }
+
+  .news-section__card--featured .news-section__card-title {
+    font-size: 26px;
+    line-height: 1.3;
+  }
+
+  /* Approvals — the two approval lists side by side */
+  .approvals-section__columns {
+    flex-direction: row;
+    gap: 24px;
+  }
+
+  .approvals-section__list {
+    flex: 1 1 0;
+    width: auto;
+  }
+
+  /* Contact — details beside the map, equal halves, map matches their height */
+  .contact-section__container {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 32px;
+  }
+
+  .contact-section__info {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+
+  .contact-section__map {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 420px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  :root {
+    --font-size-stat: 42px;
+  }
+}
+
+/* ---------- Large mobile (577px – 767.98px) ---------- */
+@media (max-width: 767.98px) {
+  :root {
+    --container-gutter: 24px;
+    --section-padding-y: 80px;
+    --font-size-hero: 48px;
+    --font-size-display: 40px;
+    --font-size-section-title: 34px;
+    --font-size-stat: 46px;
+    --font-size-card-title: 28px;
+    --hero-min-height: 680px;
+    --logo-scale: 0.85;
+    --header-height: 97px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-heading {
+    gap: 16px;
+  }
+
+  /* Header */
+  .utility-bar__inner {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-block: 8px;
+  }
+
+  .utility-bar__list {
+    justify-content: center;
+  }
+
+  .site-header__main-inner {
+    min-height: 96px;
+  }
+
+  /* Hero */
+  .hero-section__container {
+    gap: 36px;
+    padding-bottom: 64px;
+  }
+
+  .hero-section__description {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Welcome */
+  .welcome-section__grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* News */
+  .news-section__card--featured .news-section__card-text {
+    left: 24px;
+    bottom: 24px;
+    max-width: calc(100% - 48px);
+  }
+
+  .news-section__card--featured .news-section__card-title {
+    font-size: 26px;
+    line-height: 34px;
+  }
+
+  .news-section__card,
+  .news-section__card--featured {
+    aspect-ratio: 4 / 3;
+  }
+
+  .news-section__circulars {
+    flex-direction: column;
+    padding: 28px 20px;
+  }
+
+  .news-section__circulars-label {
+    margin-right: 0;
+  }
+
+  /* Campus life */
+  .campus-life-section__title {
+    --section-title-line-height: 1.15;
+  }
+
+  /* Approvals */
+  .approvals-section__item {
+    padding: 24px 20px;
+  }
+
+  .approvals-section__item-title {
+    font-size: var(--font-size-md);
+  }
+
+  /* Recruiters */
+  .recruiters-section__container {
+    gap: 40px;
+  }
+
+  .recruiters-section__logos {
+    gap: 40px;
+  }
+
+  .recruiters-section__marquee {
+    --recruiters-logo-gap: 48px;
+  }
+
+  /* Footer */
+  .site-footer {
+    padding-top: 72px;
+  }
+
+  /* --- Section spacing (large mobile / small tablet) ---
+     Scale: major blocks 40 · stacked pairs 32 · sub-groups 28 */
+  .section-header {
+    padding-bottom: 28px;
+  }
+
+  .about-section__container {
+    gap: 40px;
+  }
+
+  .about-section__intro {
+    gap: 32px;
+  }
+
+  .about-section__story {
+    gap: 28px;
+  }
+
+  .approvals-section__container {
+    gap: 56px;
+  }
+
+  .approvals-section__partners {
+    padding-top: 40px;
+  }
+
+  .campus-life-section__container {
+    gap: 40px;
+  }
+
+  .testimonials-section__grid {
+    gap: 32px 24px;
+  }
+
+  /* Sliders: full-bleed so cards scroll edge to edge.
+     Negative margins break out of the container; inline padding keeps the first
+     and last cards aligned with the content (Swiper subtracts padding from its
+     size, and overflow is clipped at the padding edge, so slides reach the
+     screen edge while scrolling). */
+  .institutions-section__slider,
+  .campus-life-section__slider,
+  .testimonials-section__slider {
+    width: auto;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding-inline: var(--container-gutter);
+  }
+
+  /* Recruiters marquee is an endless loop (no first/last item), so it only
+     needs to reach the screen edges — no start/end padding. */
+  .recruiters-section__marquee {
+    margin-inline: calc(-1 * var(--container-gutter));
+  }
+
+  .contact-section__container {
+    gap: 40px;
+  }
+
+  .site-footer__nav {
+    gap: 40px;
+  }
+}
+
+/* ---------- Mobile (≤ 576px) ---------- */
+@media (max-width: 576px) {
+  :root {
+    --container-gutter: 16px;
+    --section-padding-y: 64px;
+    --font-size-hero: 40px;
+    --font-size-display: 34px;
+    --font-size-section-title: 30px;
+    --font-size-stat: 42px;
+    --font-size-card-title: 26px;
+    --hero-min-height: 640px;
+    --button-height: 50px;
+    --button-padding-x: 20px;
+    --logo-scale: 0.75;
+    --header-height: 81px;
+  }
+
+  /* Header — utility bar becomes a compact two-row block:
+     phone numbers stacked on the left, Brochure / IQAC stacked on the right.
+     Dividers are dropped (they only make sense side by side and otherwise
+     dangle at the start of a wrapped line). */
+  .utility-bar__inner {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 12px;
+    padding-block: 8px;
+  }
+
+  .utility-bar__list {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .utility-bar__list:last-child {
+    align-items: flex-end;
+  }
+
+  .utility-bar__item {
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .utility-bar__item+.utility-bar__item::before {
+    display: none;
+  }
+
+  .site-header__main-inner {
+    min-height: 80px;
+    gap: 12px;
+  }
+
+  .site-header__logo {
+    width: 118px;
+    height: 45px;
+  }
+
+  .site-header__logo-wrap {
+    padding-right: 8px;
+  }
+
+  .site-header__nba-wrap {
+    padding-left: 10px;
+  }
+
+  .site-header__nba {
+    width: 48px;
+    height: 44px;
+  }
+
+  .site-header__button {
+    --button-height: 44px;
+    --button-padding-x: 14px;
+    --button-font-size: 14px;
+    --icon-size: 20px;
+  }
+
+  /* Hero */
+  .hero-section__container {
+    padding-top: 80px;
+    padding-bottom: 48px;
+  }
+
+  /* Portrait mobile photo (Hero-mobile.png): show it whole, centred */
+  .hero-section__image {
+    object-position: center;
+  }
+
+  .hero-section__chip {
+    --chip-font-size: var(--font-size-xs);
+    padding: 10px 18px;
+  }
+
+  .hero-section__actions {
+    gap: 16px;
+  }
+
+  /* Institutions */
+  .institutions-section__grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* About — stats stay in a 2 × 2 grid on mobile */
+  .about-section__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 24px;
+  }
+
+  .about-section__stat {
+    padding-block: 20px;
+  }
+
+  .about-section__stat-value {
+    margin-bottom: 8px;
+  }
+
+  .about-section__stat-text {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  /* Welcome */
+  .welcome-section__card,
+  .campus-life-section__card {
+    padding: 28px 24px;
+  }
+
+  /* News — tabs become one horizontally scrollable row (edge to edge, first/last
+     tab aligned with the content). main.js centres the active tab in the row. */
+  .news-section__tabs {
+    flex-wrap: nowrap;
+    gap: 0 24px;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding-inline: var(--container-gutter);
+    scroll-padding-inline: var(--container-gutter);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .news-section__tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .news-section__tab {
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+
+  /* Circulars: left-aligned label over a 2 × 2 grid of full-width links */
+  .news-section__circulars {
+    align-items: stretch;
+    gap: 20px;
+    padding: 24px 18px;
+    margin-inline : -16px;
+    width: auto;
+  }
+
+  .news-section__circulars-label {
+    font-size: 13px;
+    font-weight: var(--font-weight-regular, 400);
+  }
+
+  .news-section__circulars-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 18px;
+  }
+
+  .news-section__circulars-list li {
+    display: block;
+  }
+
+  .news-section__circular-link {
+    --text-link-padding-bottom: 6px;
+    display: flex;
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .news-section__card {
+    aspect-ratio: 1 / 1;
+  }
+
+  .news-section__card--featured .news-section__card-title {
+    font-size: 22px;
+    line-height: 30px;
+    letter-spacing: -0.5px;
+  }
+
+  .news-section__date {
+    font-size: var(--font-size-sm);
+  }
+
+  .news-section__card-title {
+    font-size: var(--font-size-lg);
+    line-height: 28px;
+  }
+
+  /* Approvals */
+  .approvals-section__item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .approvals-section__partners-title {
+    font-size: 28px;
+  }
+
+  .recruiters-section__row {
+    justify-content: center;
+    gap: 16px 8px;
+  }
+
+  /* Approvals logos: one horizontally scrollable row, edge to edge, with the
+     first/last logo aligned to the content (no visible scrollbar) */
+  .approvals-section__logos {
+    flex: none;
+    /* parent is a column here; basis 0 would collapse a scroll container's height */
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 16px;
+    width: calc(100% + 2 * var(--container-gutter));
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding-inline: var(--container-gutter);
+    scroll-padding-inline: var(--container-gutter);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .approvals-section__logos::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 3.5 logos visible: the visible strip = content width (100%) + right gutter;
+     it holds 3.5 frames + 3 gaps of 16px. Height follows the Figma frame ratio. */
+  .approvals-section__logos .logo-frame {
+    flex-shrink: 0;
+    width: calc((100% + var(--container-gutter) - 3 * 16px) / 3.5);
+    height: auto;
+    aspect-ratio: var(--logo-ratio, 1.728);
+  }
+
+  .recruiters-section__marquee {
+    --recruiters-logo-gap: 32px;
+  }
+
+  .recruiters-section__container {
+    gap: 32px;
+  }
+
+  /* Campus life */
+  .campus-life-section {
+    padding-block: 64px;
+  }
+
+  /* Mobile: dots replace the prev/next arrows */
+  .campus-life-section__controls {
+    display: none;
+  }
+
+  .campus-life-section__pagination {
+    --swiper-pagination-bullet-horizontal-gap: 0px;
+    /* spacing comes from `gap` */
+    position: static;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin-top: 16px;
+  }
+
+  .campus-life-section__pagination.swiper-pagination-lock {
+    display: none;
+    /* all slides fit — nothing to indicate */
+  }
+
+  /* 3px visible line; the transparent 8px padding above/below enlarges the tap area */
+  .campus-life-section__pagination.swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet {
+    box-sizing: content-box;
+    width: 16px;
+    height: 3px;
+    padding-block: 8px;
+    margin: 0;
+    border-radius: 0;
+    background-color: var(--color-white);
+    background-clip: content-box;
+    opacity: 0.35;
+    transition: width 0.3s ease, opacity 0.3s ease;
+  }
+
+  .campus-life-section__pagination.swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet-active {
+    width: 32px;
+    opacity: 1;
+  }
+
+  /* Admissions */
+  .admissions-section__fields {
+    grid-template-columns: 1fr;
+    padding-left: 0;
+  }
+
+  /* Submit button spans the form (the form column uses align-items: flex-start) */
+  .admissions-section__submit {
+    align-self: stretch;
+    width: 100%;
+  }
+
+  /* Contact */
+  .contact-section__row {
+    font-size: var(--font-size-sm);
+    padding-block: 18px;
+  }
+
+  .contact-section__map {
+    height: 320px;
+  }
+
+  /* Footer */
+  .site-footer__columns {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  /* Footer accordion (js/main.js adds .is-accordion at ≤ 576px; without JS all columns stay open) */
+  .site-footer__columns.is-accordion {
+    gap: 0;
+  }
+
+  .is-accordion .site-footer__column {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .is-accordion .site-footer__column:first-child {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .is-accordion .site-footer__heading,
+  .is-accordion .site-footer__heading--quick {
+    padding-bottom: 0;
+  }
+
+  .is-accordion .site-footer__heading::after {
+    display: none;
+  }
+
+  .is-accordion .site-footer__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    padding-block: 16px;
+    cursor: pointer;
+  }
+
+  .is-accordion .site-footer__toggle-icon {
+    display: block;
+  }
+
+  .is-accordion .site-footer__column.is-open .site-footer__toggle-icon {
+    transform: rotate(90deg);
+    /* points up (open) */
+  }
+
+  /* Smooth height animation: grid row 0fr ↔ 1fr (no fixed heights, no JS measuring) */
+  .is-accordion .site-footer__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    /* collapsed links are not focusable */
+    transition: grid-template-rows 0.3s ease, visibility 0s linear 0.3s;
+  }
+
+  .is-accordion .site-footer__column.is-open .site-footer__panel {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition: grid-template-rows 0.3s ease, visibility 0s linear 0s;
+  }
+
+  .is-accordion .site-footer__panel-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .is-accordion .site-footer__panel-inner>* {
+    padding-bottom: 16px;
+  }
+
+  .site-footer__top {
+    gap: 40px;
+    padding-bottom: 56px;
+  }
+
+  .site-footer__bottom {
+    flex-direction: column;
+    padding-bottom: 40px;
+  }
+
+  /* --- Section spacing (mobile) ---
+     Scale: major blocks 32 · stacked pairs 24 · sub-groups 24 · card grids 16 */
+  .section-header {
+    padding-bottom: 24px;
+  }
+
+  /* View All moves from the section header to a full-width button under the content */
+  .section-header .section-view-all {
+    display: none;
+  }
+
+  .button.section-view-all--bottom {
+    display: flex;
+    width: 100%;
+    margin-top: 32px;
+  }
+
+  /* Recruiters container is a flex column whose gap already spaces the button */
+  .recruiters-section__container>.section-view-all--bottom {
+    margin-top: 0;
+  }
+
+  .hero-section__container {
+    gap: 32px;
+  }
+
+  .institutions-section__grid {
+    gap: 16px;
+  }
+
+  .about-section__container {
+    gap: 32px;
+  }
+
+  .about-section__intro {
+    gap: 24px;
+  }
+
+  .about-section__story {
+    gap: 24px;
+  }
+
+  .about-section__text {
+    gap: 24px;
+  }
+
+  .welcome-section__container {
+    gap: 32px;
+  }
+
+  .welcome-section__content {
+    gap: 24px;
+  }
+
+  .welcome-section__grid {
+    gap: 16px;
+  }
+
+  .news-section__body {
+    gap: 24px;
+  }
+
+  .news-section__grid,
+  .news-section__side {
+    gap: 16px;
+  }
+
+  .approvals-section__container {
+    gap: 48px;
+  }
+
+  .approvals-section__approvals {
+    gap: 32px;
+  }
+
+  .approvals-section__partners {
+    padding-top: 32px;
+    gap: 24px;
+  }
+
+  .campus-life-section__container {
+    gap: 32px;
+  }
+
+  .campus-life-section__cards {
+    gap: 16px;
+  }
+
+  .testimonials-section__grid {
+    gap: 24px 16px;
+  }
+
+  .admissions-section__container {
+    gap: 32px;
+  }
+
+  .contact-section__container {
+    gap: 32px;
+  }
+
+  .site-footer {
+    padding-top: 56px;
+  }
+
+  .site-footer__nav {
+    gap: 32px;
+  }
+
+  /* Video modal: full screen; video letterboxed on black, controls kept clear
+     of the notch / home indicator via safe-area insets */
+  .video-modal {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    margin: 0;
+    background-color: var(--color-black);
+  }
+
+  .video-modal__panel {
+    height: 100%;
+    padding-block: 0;
+  }
+
+  .video-modal__frame {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
+  }
+
+  .video-modal__controls {
+    left: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+
+  .video-modal__close {
+    top: calc(16px + env(safe-area-inset-top));
+    right: 16px;
+  }
+}
+
+/* ---------- Small mobile (≤ 400px) ---------- */
+@media (max-width: 400px) {
+  .site-header__logo {
+    width: 96px;
+    height: 37px;
+  }
+
+  .site-header__nba {
+    width: 40px;
+    height: 37px;
+  }
+
+  .site-header__button .icon {
+    display: none;
+  }
+
+  /* Keeps "2000+" inside its half-width column on the narrowest phones */
+  .about-section__stats {
+    gap: 0 16px;
+  }
+
+  .about-section__stat-value {
+    font-size: 34px;
+    line-height: 34px;
+  }
+}
+/* ---------- Small phones (≤ 374.98px) ---------- */
+@media (max-width: 374.98px) {
+  /* Circular links may wrap rather than run into the neighbouring column */
+  .news-section__circular-link {
+    white-space: normal;
+  }
+}

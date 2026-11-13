@@ -209,8 +209,7 @@ h6 {
 }
 
 /* Icons are inlined as data URIs: mask-image is fetched in CORS mode, so external
-   SVG files are blocked when the page is opened via file://.
-   Sources: assets/icons/arrow-outward.svg, arrow-forward.svg */
+   SVG files are blocked when the page is opened via file://. */
 .icon--arrow-outward {
   --icon-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16 8.4L7.1 17.3C6.917 17.483 6.683 17.575 6.4 17.575C6.117 17.575 5.883 17.483 5.7 17.3C5.517 17.117 5.425 16.883 5.425 16.6C5.425 16.317 5.517 16.083 5.7 15.9L14.6 7H7C6.717 7 6.479 6.904 6.288 6.713C6.096 6.521 6 6.283 6 6C6 5.717 6.096 5.479 6.288 5.288C6.479 5.096 6.717 5 7 5H17C17.283 5 17.521 5.096 17.713 5.288C17.904 5.479 18 5.717 18 6V16C18 16.283 17.904 16.521 17.713 16.713C17.521 16.904 17.283 17 17 17C16.717 17 16.479 16.904 16.288 16.713C16.096 16.521 16 16.283 16 16V8.4Z'/%3E%3C/svg%3E");
 }
@@ -498,6 +497,22 @@ h6 {
   border-radius: var(--radius-pill);
 }
 
+/* --- Visibility utilities: swap mobile-only text (Figma mobile copy) ---
+   .u-mobile-only shows only at ≤ 576px; .u-hide-mobile hides there. */
+.u-mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 576px) {
+  .u-mobile-only {
+    display: revert !important;
+  }
+
+  .u-hide-mobile {
+    display: none !important;
+  }
+}
+
 /* --- Swiper sliders ---
    Swiper's CSS gives .swiper auto side margins; inside a flex column that turns
    off stretching and the slider sizes to its own content (runaway width).
@@ -632,6 +647,134 @@ h6 {
   width: 69px;
   height: 64px;
   object-fit: contain;
+}
+
+/* Hamburger (Figma 426:7775) — only displayed on mobile (see ≤ 576px block) */
+.site-header__menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+  color: var(--color-primary);
+}
+
+.site-header__menu-bar {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: currentColor;
+}
+
+/* Mobile slide-in menu (Figma 447:9113). A native <dialog> (showModal) gives the
+   focus trap, Esc to close and an inert page behind it; main.js adds the
+   open/close slide. Never shown above 576px — main.js closes it on resize. */
+.mobile-menu {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: var(--color-white);
+  color: var(--color-black);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.mobile-menu.is-visible {
+  transform: translateX(0);
+}
+
+.mobile-menu::backdrop {
+  background-color: transparent;
+}
+
+.mobile-menu__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 20px 60px;
+}
+
+.mobile-menu__top {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Close "X": two 24 × 2px bars crossed in a 41px box */
+.mobile-menu__close {
+  position: relative;
+  width: 41px;
+  height: 41px;
+  color: var(--color-primary);
+}
+
+.mobile-menu__close::before,
+.mobile-menu__close::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 2px;
+  background-color: currentColor;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.mobile-menu__close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.mobile-menu__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mobile-menu__links {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border-header);
+}
+
+.mobile-menu__link {
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.4;
+}
+
+.mobile-menu__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+
+.mobile-menu__button {
+  width: 100%;
+  --button-height: 52px;
+}
+
+html.has-mobile-menu {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu {
+    transition: none;
+  }
 }
 
 /* ==========================================
@@ -1477,6 +1620,11 @@ a.institutions-section__media {
   gap: 50px;
 }
 
+/* View More is a mobile-only control (see section 18, mobile) */
+.approvals-section__load-more {
+  display: none;
+}
+
 .approvals-section__title {
   --section-title-size: 36px;
   --section-title-line-height: 54px;
@@ -1681,12 +1829,6 @@ a.institutions-section__media {
   transform: scaleX(-1);
 }
 
-/* Slide indicator (line-style dots) — mobile only, see ≤576px block.
-   Uses its own class instead of .swiper-pagination, so Swiper's absolute
-   positioning doesn't apply; it sits in normal flow below the cards. */
-.campus-life-section__pagination {
-  display: none;
-}
 
 /* Swiper slider at every width (3 / 2 / 1.1 cards visible). Grid = no-JS fallback. */
 .campus-life-section__cards {
@@ -1747,6 +1889,11 @@ a.institutions-section__media {
 
 .campus-life-section__card-icon {
   color: var(--color-primary);
+}
+
+/* "Learn more ↗" — only in the Figma mobile design (see section 18) */
+.campus-life-section__card-more {
+  display: none;
 }
 
 .campus-life-section__card-text {
@@ -1834,6 +1981,12 @@ a.institutions-section__media {
   width: max-content;
   will-change: transform;
   backface-visibility: hidden;
+}
+
+/* Crop box around each logo: no box on desktop (display: contents keeps the
+   image positioned against the .logo-frame); the mobile grid gives it a frame. */
+.recruiters-section__logo-box {
+  display: contents;
 }
 
 .recruiters-section__marquee img {
@@ -2065,6 +2218,11 @@ a.institutions-section__media {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 26px;
+}
+
+/* "Enquire About Admissions" — only in the Figma mobile design (see section 18) */
+.admissions-section__form-title {
+  display: none;
 }
 
 .admissions-section__form {
@@ -2424,7 +2582,7 @@ a.institutions-section__media {
 
 .site-footer__direction-icon {
   --icon-size: 8px;
-  /* Inlined from assets/icons/arrow-outward-tight.svg (see .icon note) */
+  /* Tight-cropped arrow, inlined as a data URI (see .icon note) */
   --icon-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath d='M6.728 2.163L1.066 7.825C0.949 7.942 0.801 8 0.62 8C0.44 8 0.292 7.942 0.175 7.825C0.058 7.708 0 7.56 0 7.38C0 7.199 0.058 7.051 0.175 6.934L5.837 1.272H1.002C0.822 1.272 0.671 1.211 0.549 1.089C0.427 0.968 0.366 0.816 0.366 0.636C0.366 0.456 0.427 0.305 0.549 0.183C0.671 0.061 0.822 0 1.002 0H7.364C7.544 0 7.695 0.061 7.817 0.183C7.939 0.305 8 0.456 8 0.636V6.998C8 7.178 7.939 7.329 7.817 7.451C7.695 7.573 7.544 7.634 7.364 7.634C7.184 7.634 7.032 7.573 6.911 7.451C6.789 7.329 6.728 7.178 6.728 6.998V2.163Z'/%3E%3C/svg%3E");
   margin-inline: 1.66px;
   --icon-rotate: 45deg;
@@ -2500,40 +2658,6 @@ a.institutions-section__media {
 .site-footer__heading--quick {
   --footer-heading-line: 99px;
   padding-bottom: 20px;
-}
-
-/* Heading toggle: plain heading text on desktop (button is disabled there);
-   becomes the accordion trigger on mobile — see RESPONSIVE (≤ 576px) + js/main.js */
-.site-footer__toggle {
-  display: inline;
-  padding: 0;
-  font: inherit;
-  line-height: inherit;
-  text-align: left;
-  color: inherit;
-  cursor: default;
-}
-
-.site-footer__toggle-icon {
-  display: none;
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  background-color: currentColor;
-  /* Inlined from assets/icons/chevron-left.svg (see .icon note) */
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10.8 12L14.7 15.9C14.883 16.083 14.975 16.317 14.975 16.6C14.975 16.883 14.883 17.117 14.7 17.3C14.517 17.483 14.283 17.575 14 17.575C13.717 17.575 13.483 17.483 13.3 17.3L8.7 12.7C8.6 12.6 8.529 12.492 8.488 12.375C8.446 12.258 8.425 12.133 8.425 12C8.425 11.867 8.446 11.742 8.488 11.625C8.529 11.508 8.6 11.4 8.7 11.3L13.3 6.7C13.483 6.517 13.717 6.425 14 6.425C14.283 6.425 14.517 6.517 14.7 6.7C14.883 6.883 14.975 7.117 14.975 7.4C14.975 7.683 14.883 7.917 14.7 8.1L10.8 12Z'/%3E%3C/svg%3E") center / contain no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10.8 12L14.7 15.9C14.883 16.083 14.975 16.317 14.975 16.6C14.975 16.883 14.883 17.117 14.7 17.3C14.517 17.483 14.283 17.575 14 17.575C13.717 17.575 13.483 17.483 13.3 17.3L8.7 12.7C8.6 12.6 8.529 12.492 8.488 12.375C8.446 12.258 8.425 12.133 8.425 12C8.425 11.867 8.446 11.742 8.488 11.625C8.529 11.508 8.6 11.4 8.7 11.3L13.3 6.7C13.483 6.517 13.717 6.425 14 6.425C14.283 6.425 14.517 6.517 14.7 6.7C14.883 6.883 14.975 7.117 14.975 7.4C14.975 7.683 14.883 7.917 14.7 8.1L10.8 12Z'/%3E%3C/svg%3E") center / contain no-repeat;
-  transform: rotate(-90deg);
-  /* chevron-left rotated → points down (closed) */
-  transition: transform 0.3s ease;
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-  .site-footer__toggle-icon,
-  .site-footer__panel {
-    transition: none !important;
-  }
 }
 
 .site-footer__list li {
@@ -3416,84 +3540,9 @@ html.has-video-modal {
     --header-height: 81px;
   }
 
-  /* Header — utility bar becomes a compact two-row block:
-     phone numbers stacked on the left, Brochure / IQAC stacked on the right.
-     Dividers are dropped (they only make sense side by side and otherwise
-     dangle at the start of a wrapped line). */
-  .utility-bar__inner {
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    gap: 12px;
-    padding-block: 8px;
-  }
-
-  .utility-bar__list {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-  }
-
-  .utility-bar__list:last-child {
-    align-items: flex-end;
-  }
-
-  .utility-bar__item {
-    font-size: 12px;
-    gap: 8px;
-  }
-
-  .utility-bar__item+.utility-bar__item::before {
-    display: none;
-  }
-
-  .site-header__main-inner {
-    min-height: 80px;
-    gap: 12px;
-  }
-
-  .site-header__logo {
-    width: 118px;
-    height: 45px;
-  }
-
-  .site-header__logo-wrap {
-    padding-right: 8px;
-  }
-
-  .site-header__nba-wrap {
-    padding-left: 10px;
-  }
-
-  .site-header__nba {
-    width: 48px;
-    height: 44px;
-  }
-
-  .site-header__button {
-    --button-height: 44px;
-    --button-padding-x: 14px;
-    --button-font-size: 14px;
-    --icon-size: 20px;
-  }
-
-  /* Hero */
-  .hero-section__container {
-    padding-top: 80px;
-    padding-bottom: 48px;
-  }
-
   /* Portrait mobile photo (Hero-mobile.png): show it whole, centred */
   .hero-section__image {
     object-position: center;
-  }
-
-  .hero-section__chip {
-    --chip-font-size: var(--font-size-xs);
-    padding: 10px 18px;
-  }
-
-  .hero-section__actions {
-    gap: 16px;
   }
 
   /* Institutions */
@@ -3547,38 +3596,6 @@ html.has-video-modal {
 
   .news-section__tab {
     flex-shrink: 0;
-    font-size: 14px;
-  }
-
-  /* Circulars: left-aligned label over a 2 × 2 grid of full-width links */
-  .news-section__circulars {
-    align-items: stretch;
-    gap: 20px;
-    padding: 24px 18px;
-    margin-inline : -16px;
-    width: auto;
-  }
-
-  .news-section__circulars-label {
-    font-size: 13px;
-    font-weight: var(--font-weight-regular, 400);
-  }
-
-  .news-section__circulars-list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px 18px;
-  }
-
-  .news-section__circulars-list li {
-    display: block;
-  }
-
-  .news-section__circular-link {
-    --text-link-padding-bottom: 6px;
-    display: flex;
-    width: 100%;
-    font-size: 14px;
   }
 
   .news-section__card {
@@ -3602,7 +3619,7 @@ html.has-video-modal {
 
   /* Approvals */
   .approvals-section__item {
-    flex-direction: column;
+    /* flex-direction: column; */
     align-items: flex-start;
     gap: 12px;
   }
@@ -3661,46 +3678,6 @@ html.has-video-modal {
     padding-block: 64px;
   }
 
-  /* Mobile: dots replace the prev/next arrows */
-  .campus-life-section__controls {
-    display: none;
-  }
-
-  .campus-life-section__pagination {
-    --swiper-pagination-bullet-horizontal-gap: 0px;
-    /* spacing comes from `gap` */
-    position: static;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    margin-top: 16px;
-  }
-
-  .campus-life-section__pagination.swiper-pagination-lock {
-    display: none;
-    /* all slides fit — nothing to indicate */
-  }
-
-  /* 3px visible line; the transparent 8px padding above/below enlarges the tap area */
-  .campus-life-section__pagination.swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet {
-    box-sizing: content-box;
-    width: 16px;
-    height: 3px;
-    padding-block: 8px;
-    margin: 0;
-    border-radius: 0;
-    background-color: var(--color-white);
-    background-clip: content-box;
-    opacity: 0.35;
-    transition: width 0.3s ease, opacity 0.3s ease;
-  }
-
-  .campus-life-section__pagination.swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet-active {
-    width: 32px;
-    opacity: 1;
-  }
-
   /* Admissions */
   .admissions-section__fields {
     grid-template-columns: 1fr;
@@ -3727,71 +3704,6 @@ html.has-video-modal {
   .site-footer__columns {
     grid-template-columns: 1fr;
     gap: 28px;
-  }
-
-  /* Footer accordion (js/main.js adds .is-accordion at ≤ 576px; without JS all columns stay open) */
-  .site-footer__columns.is-accordion {
-    gap: 0;
-  }
-
-  .is-accordion .site-footer__column {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .is-accordion .site-footer__column:first-child {
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .is-accordion .site-footer__heading,
-  .is-accordion .site-footer__heading--quick {
-    padding-bottom: 0;
-  }
-
-  .is-accordion .site-footer__heading::after {
-    display: none;
-  }
-
-  .is-accordion .site-footer__toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    width: 100%;
-    padding-block: 16px;
-    cursor: pointer;
-  }
-
-  .is-accordion .site-footer__toggle-icon {
-    display: block;
-  }
-
-  .is-accordion .site-footer__column.is-open .site-footer__toggle-icon {
-    transform: rotate(90deg);
-    /* points up (open) */
-  }
-
-  /* Smooth height animation: grid row 0fr ↔ 1fr (no fixed heights, no JS measuring) */
-  .is-accordion .site-footer__panel {
-    display: grid;
-    grid-template-rows: 0fr;
-    visibility: hidden;
-    /* collapsed links are not focusable */
-    transition: grid-template-rows 0.3s ease, visibility 0s linear 0.3s;
-  }
-
-  .is-accordion .site-footer__column.is-open .site-footer__panel {
-    grid-template-rows: 1fr;
-    visibility: visible;
-    transition: grid-template-rows 0.3s ease, visibility 0s linear 0s;
-  }
-
-  .is-accordion .site-footer__panel-inner {
-    min-height: 0;
-    overflow: hidden;
-  }
-
-  .is-accordion .site-footer__panel-inner>* {
-    padding-bottom: 16px;
   }
 
   .site-footer__top {
@@ -3945,36 +3857,1233 @@ html.has-video-modal {
   }
 }
 
-/* ---------- Small mobile (≤ 400px) ---------- */
-@media (max-width: 400px) {
-  .site-header__logo {
-    width: 96px;
-    height: 37px;
+/* ==========================================
+   18. MOBILE — FIGMA MOBILE DESIGN (≤ 576px)
+   Figma node 426:7098 ("GIT Responsive Homepage", 393px frame) and the menu
+   node 447:9113. Kept last so it settles every earlier mobile rule. Text that
+   differs on mobile is swapped with .u-hide-mobile / .u-mobile-only.
+========================================== */
+@media (max-width: 576px) {
+  :root {
+    --container-gutter: 20px;
+    --header-height: 75px;
   }
 
-  .site-header__nba {
-    width: 40px;
-    height: 37px;
-  }
-
-  .site-header__button .icon {
+  /* ---------- Header (Figma 426:7766): no utility bar, hamburger replaces Apply Online ---------- */
+  .utility-bar,
+  .site-header__button {
     display: none;
   }
 
-  /* Keeps "2000+" inside its half-width column on the narrowest phones */
+  .site-header__main-inner {
+    min-height: 74px;
+    padding-block: 0;
+    gap: 30px;
+  }
+
+  .site-header__logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 8px;
+    border-right: 0;
+  }
+
+  /* 1 × 35px divider between the two logos */
+  .site-header__logo-wrap::after {
+    content: "";
+    width: 1px;
+    height: 35px;
+    background-color: #bbbbbb;
+  }
+
+  .site-header__logo {
+    width: 118px;
+    height: 46px;
+  }
+
+  .site-header__nba-wrap {
+    padding-left: 0;
+  }
+
+  .site-header__nba {
+    width: 46px;
+    height: 40px;
+  }
+
+  .site-header__menu-toggle {
+    display: flex;
+  }
+
+  /* ---------- Hero (Figma 426:7101) ---------- */
+  .hero-section {
+    min-height: 720px;
+  }
+
+  .hero-section__media::after {
+    background-image: linear-gradient(183.256deg, rgba(0, 0, 0, 0) 25.025%, rgba(0, 0, 0, 0.82) 98.494%);
+  }
+
+  .hero-section__container {
+    gap: 24px;
+    padding-top: 80px;
+    padding-bottom: 60px;
+    padding-left: var(--container-gutter);
+  }
+
+  .hero-section__content {
+    gap: 16px;
+  }
+
+  .hero-section__title {
+    font-size: 48px;
+    line-height: 1;
+    text-transform: none;
+  }
+
+  .hero-section__description {
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+  }
+
+  /* 20px between the paragraph and the chips (content gap is 16px) */
+  .hero-section__chips {
+    margin-top: 4px;
+  }
+
+  .hero-section__chip {
+    --chip-font-size: var(--font-size-xs);
+    height: 36px;
+    padding: 8px 12px;
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.4;
+  }
+
+  .hero-section__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hero-section__actions .button {
+    --button-height: 52px;
+    width: 100%;
+    padding-inline: 24px;
+  }
+}
+
+/* ---------- Mobile (≤ 576px), continued: section headings + Find Your Path ---------- */
+@media (max-width: 576px) {
+  :root {
+    --section-padding-y: 60px;
+  }
+
+  /* Section heading (Figma mobile): 14px label, 20px gap, 36px Canela title in brand blue */
+  .section-header {
+    padding-bottom: 32px;
+  }
+
+  .section-heading {
+    gap: 20px;
+  }
+
+  .section-label {
+    line-height: 1.4;
+  }
+
+  .section-title {
+    --section-title-size: 36px;
+    --section-title-line-height: 1;
+    --section-title-color: var(--color-primary);
+  }
+
+  /* …except on the blue sections (News, Life at GIT), where titles stay white */
+  .news-section .section-title,
+  .campus-life-section .section-title {
+    --section-title-color: var(--color-white);
+  }
+
+  /* No "View All" buttons in the Figma mobile design */
+  .button.section-view-all--bottom {
+    display: none;
+  }
+
+  /* ---------- Find Your Path (Figma 426:7121): static 2 × 2 grid ---------- */
+  .institutions-section__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .institutions-section__media {
+    aspect-ratio: 170.5 / 162.375;
+  }
+
+  .institutions-section__media--shade::after,
+  .institutions-section__media--shade-strong::after {
+    content: none;
+  }
+
+  .institutions-section__image,
+  .institutions-section__image--bottom,
+  .institutions-section__image--right {
+    object-position: center;
+  }
+
+  .institutions-section__body {
+    gap: 2px;
+    padding: 12px 15px 0;
+  }
+
+  .institutions-section__meta {
+    margin-bottom: 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #6f6f6f;
+  }
+
+  .institutions-section__title {
+    margin-bottom: 0;
+    overflow: hidden;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .institutions-section__description {
+    display: none;
+  }
+
+  .institutions-section__footer {
+    padding: 20px 12px 12px;
+  }
+
+  .institutions-section__footer .button--block {
+    --button-border-color: #e6e6e6;
+    --button-font-size: var(--font-size-xs);
+    --button-gap: 2px;
+    --icon-size: 9px;
+    padding: 11px 5px;
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+  }
+}
+
+/* ---------- Mobile (≤ 576px), continued: About + Welcome ---------- */
+@media (max-width: 576px) {
+  /* Shared mobile type (Figma): 36px Canela titles, 16px / 1.4 body copy */
+  .display-title {
+    font-family: var(--font-heading);
+    font-size: 36px;
+    letter-spacing: normal;
+    --display-title-line-height: 1;
+  }
+
+  .section-description {
+    --section-description-size: var(--font-size-sm);
+    --section-description-line-height: 1.4;
+  }
+
+  /* ---------- About (Figma 426:7191) ---------- */
+  .about-section__container {
+    gap: 40px;
+  }
+
+  .about-section__intro {
+    gap: 40px;
+  }
+
+  .about-section__media {
+    aspect-ratio: auto;
+    height: 310px;
+  }
+
+  .about-section__story {
+    gap: 32px;
+  }
+
+  .about-section__text {
+    gap: 24px;
+  }
+
+  .about-section__heading {
+    gap: 20px;
+  }
+
+  .about-section__heading .section-label {
+    padding-inline: 0;
+  }
+
+  .about-section__story .button {
+    --button-height: 52px;
+  }
+
+  /* Stats: 2 × 2, 22px column gap, 40px between the rows */
   .about-section__stats {
-    gap: 0 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 22px;
+  }
+
+  .about-section__stat,
+  .about-section__stat:last-child {
+    padding: 0;
   }
 
   .about-section__stat-value {
-    font-size: 34px;
-    line-height: 34px;
+    margin-bottom: 4px;
+    font-size: 40px;
+    line-height: 1;
+  }
+
+  .about-section__stat-label,
+  .about-section__stat-label--semibold {
+    font-weight: var(--font-weight-bold);
+    line-height: 1.4;
+  }
+
+  .about-section__stat-text {
+    max-width: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top-color: #333333;
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+    color: var(--color-text-heading);
+  }
+
+  /* ---------- Welcome (Figma 426:7254) ---------- */
+  .welcome-section__container {
+    gap: 40px;
+  }
+
+  .welcome-section__content {
+    gap: 24px;
+  }
+
+  .welcome-section__heading {
+    gap: 20px;
+  }
+
+  .welcome-section__text {
+    gap: 24px;
+  }
+
+  .welcome-section__links {
+    gap: 12px 10px;
+  }
+
+  .welcome-section__chip {
+    padding: 11px 20px;
+    border-color: rgba(21, 55, 114, 0.13);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+  }
+
+  .welcome-section__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .welcome-section__card {
+    gap: 8px;
+    min-height: 211px;
+    padding: 22px 18px;
+  }
+
+  .welcome-section__icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .welcome-section__card-text {
+    gap: 8px;
+  }
+
+  .welcome-section__card-label {
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+    color: var(--color-text-heading);
+  }
+
+  .welcome-section__card-title {
+    font-size: 20px;
+    line-height: 1.4;
+  }
+
+  .welcome-section__card-description {
+    display: none;
+  }
+
+  /* "Learn more ↗" pinned to the bottom of each card */
+  .welcome-section__card .text-button {
+    --icon-size: 16px;
+    gap: 4px;
+    margin-top: auto;
+    line-height: 1.4;
+    white-space: nowrap;
   }
 }
-/* ---------- Small phones (≤ 374.98px) ---------- */
-@media (max-width: 374.98px) {
-  /* Circular links may wrap rather than run into the neighbouring column */
+
+/* ---------- Mobile (≤ 576px), continued: News (Figma 488:2582) ---------- */
+@media (max-width: 576px) {
+  .news-section__container {
+    gap: 40px;
+  }
+
+  .news-section__header {
+    padding-bottom: 16px;
+  }
+
+  .news-section__body {
+    gap: 24px;
+  }
+
+  .news-section__tabs {
+    gap: 0 20px;
+  }
+
+  .news-section__tab {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+  }
+
+  .news-section__tab--active {
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Cards: one swipeable row of 303.578 × 360 cards (24px apart), edge to edge with
+     the first card aligned to the content; the side column's two cards join the row. */
+  .news-section__grid {
+    flex-direction: row;
+    gap: 24px;
+    height: auto;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding-inline: var(--container-gutter);
+    scroll-padding-inline: var(--container-gutter);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .news-section__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .news-section__side {
+    display: contents;
+  }
+
+  .news-section__card,
+  .news-section__card--featured {
+    flex: 0 0 303.578px;
+    max-width: calc(100vw - 2 * var(--container-gutter));
+    height: 360px;
+    aspect-ratio: auto;
+    scroll-snap-align: start;
+  }
+
+  /* Plain photo crop on mobile (object-fit: cover, centred) */
+  .news-section__image--zoom {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: none;
+  }
+
+  .news-section__image--building {
+    object-position: center;
+  }
+
+  /* Bottom 234px fades from transparent to #0c0c0f */
+  .news-section__overlay,
+  .news-section__card--featured .news-section__overlay {
+    background: linear-gradient(to bottom, rgba(12, 12, 15, 0), #0c0c0f) bottom / 100% 234px no-repeat;
+  }
+
+  .news-section__card-text,
+  .news-section__card--featured .news-section__card-text {
+    inset: auto 0 0 0;
+    gap: 7px;
+    max-width: none;
+    padding: 26px;
+  }
+
+  .news-section__date {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+  }
+
+  .news-section__card-title,
+  .news-section__card--featured .news-section__card-title,
+  .news-section__card--side-bottom .news-section__card-title {
+    display: block;
+    max-width: 252px;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.4;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  /* Sentence case, as in Figma ("Why opt for polytechnic courses…") */
+  .news-section__card-title::first-letter {
+    text-transform: uppercase;
+  }
+
+  /* Circulars (Figma 488:2623): full-bleed box, vertical list of links */
+  .news-section__circulars {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+    width: auto;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding: 24px 21px;
+    background-color: rgba(33, 97, 203, 0.24);
+    border-color: rgba(226, 230, 238, 0.09);
+  }
+
+  .news-section__circulars-label {
+    margin-right: 0;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+    letter-spacing: normal;
+  }
+
+  .news-section__circulars-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .news-section__circulars-list li {
+    display: flex;
+  }
+
   .news-section__circular-link {
-    white-space: normal;
+    --text-link-border-color: var(--color-white);
+    --text-link-gap: 4px;
+    --text-link-padding-bottom: 0;
+    --icon-size: 14px;
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+  }
+}
+
+/* ---------- Mobile (≤ 576px), continued: Approvals + Partnerships ---------- */
+@media (max-width: 576px) {
+  /* The grey approvals block ends 60px below View More; Partnerships sits in its
+     own white band (Figma 484:2355: 48px top, 60px bottom padding). */
+  .approvals-section {
+    padding-bottom: 0;
+  }
+
+  .approvals-section__container {
+    gap: 60px;
+  }
+
+  /* ---------- AICTE Approvals (Figma 484:2408) ---------- */
+  .approvals-section__approvals {
+    align-items: stretch;
+    gap: 32px;
+  }
+
+  .approvals-section__title {
+    --section-title-tracking: normal;
+    text-align: left;
+  }
+
+  /* One column, in the interleaved order set by main.js (CSS order) */
+  .approvals-section__columns {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .approvals-section__list {
+    display: contents;
+  }
+
+  .approvals-section__item {
+    align-items: center;
+    gap: 16px;
+    min-height: 68px;
+    padding: 0 16px;
+  }
+
+  .approvals-section__item-title {
+    max-width: 193px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+  }
+
+  .approvals-section__item .text-link {
+    --text-link-gap: 2px;
+    --text-link-padding-bottom: 0;
+    --text-link-line-height: 1.4;
+    --icon-size: 14px;
+    flex-shrink: 0;
+    font-size: var(--font-size-xs);
+  }
+
+  .approvals-section__columns:not(.is-expanded) .approvals-section__item--extra {
+    display: none;
+  }
+
+  /* View More: filled, full width, 12px under the last card */
+  .approvals-section__load-more {
+    --button-height: 52px;
+    display: flex;
+    width: 100%;
+    margin-top: -20px;
+  }
+
+  .approvals-section__load-more[hidden] {
+    display: none;
+  }
+
+  /* ---------- Partnerships & Affiliations (Figma 484:2355): 3 × 2 logo grid ---------- */
+  .approvals-section__partners {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 36px;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding: 48px var(--container-gutter) 60px;
+    background-color: var(--color-white);
+    border-top: 0;
+  }
+
+  .approvals-section__partners-title {
+    flex: none;
+    font-size: 36px;
+    line-height: 1;
+  }
+
+  .approvals-section__logos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .approvals-section__logos .logo-frame,
+  .approvals-section__logo--q2d {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    height: 65px;
+    aspect-ratio: auto;
+    overflow: hidden;
+  }
+
+  /* Each logo fills its 107.664 × 65 frame (contain); KTU, Q2D and WSC use the
+     Figma mobile crops (node 484:2392) */
+  .approvals-section__partners .logo-frame__image {
+    position: absolute;
+    left: var(--partner-x, 0%);
+    top: var(--partner-y, 0%);
+    width: var(--partner-w, 100%);
+    height: var(--partner-h, 100%);
+    max-width: none;
+    max-height: none;
+    object-fit: var(--partner-fit, contain);
+  }
+
+  .approvals-section__logo--ktu {
+    --partner-x: 1.68%;
+    --partner-y: -28.26%;
+    --partner-w: 94.81%;
+    --partner-h: 154.25%;
+    --partner-fit: cover;
+  }
+
+  .approvals-section__logo--q2d {
+    --partner-x: -21.72%;
+    --partner-y: -29.59%;
+    --partner-w: 143.18%;
+    --partner-h: 158.3%;
+    --partner-fit: cover;
+  }
+
+  .approvals-section__logo--wsc {
+    --partner-x: 10.41%;
+    --partner-y: -16.53%;
+    --partner-w: 79.58%;
+    --partner-h: 131.81%;
+    --partner-fit: cover;
+  }
+}
+
+/* ---------- Mobile (≤ 576px), continued: Life at GIT + Recruiters ---------- */
+@media (max-width: 576px) {
+  /* ---------- Life at GIT (Figma 426:7462) ---------- */
+  .campus-life-section {
+    padding-block: var(--section-padding-y);
+  }
+
+  .campus-life-section__container {
+    gap: 36px;
+  }
+
+  .campus-life-section__header {
+    align-items: flex-start;
+  }
+
+  .campus-life-section__title {
+    --section-title-line-height: 1;
+    --section-title-tracking: normal;
+    --section-title-color: var(--color-white);
+  }
+
+  /* 36px round arrows beside the title */
+  .campus-life-section__controls {
+    display: flex;
+    gap: 12px;
+  }
+
+  .campus-life-section__control {
+    --icon-size: 16px;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255, 255, 255, 0.09);
+  }
+
+  /* 322.26 × 329 cards (shrinks on phones narrower than 393px) */
+  .campus-life-section__card,
+  .campus-life-section__card.swiper-slide {
+    width: min(322.26px, calc(100vw - 2 * var(--container-gutter) - 30.74px));
+    min-height: 329px;
+    gap: 24px;
+    padding: 28px;
+  }
+
+  .campus-life-section__card-icon {
+    display: none;
+  }
+
+  .campus-life-section__logo-wrap {
+    width: 72px;
+    height: 72px;
+  }
+
+  .campus-life-section__logo-wrap--wide {
+    width: 124.4px;
+  }
+
+  .campus-life-section__logo-wrap--q2d {
+    width: 166.07px;
+  }
+
+  .campus-life-section__card-title {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.4;
+  }
+
+  .campus-life-section__card-description {
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+    color: var(--color-text-body);
+  }
+
+  .campus-life-section__card-more {
+    --icon-size: 16px;
+    display: inline-flex;
+    gap: 4px;
+    margin-top: auto;
+    line-height: 1.4;
+  }
+
+  /* ---------- Our Recruiters (Figma 426:7506): static 3 × 4 grid ---------- */
+  .recruiters-section__container {
+    gap: 0;
+  }
+
+  .recruiters-section__header {
+    padding-bottom: 24px;
+  }
+
+  .recruiters-section__logos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+  }
+
+  .recruiters-section__marquee,
+  .recruiters-section__row,
+  .recruiters-section__marquee.is-ready .recruiters-section__row {
+    display: contents;
+  }
+
+  .recruiters-section__divider,
+  .recruiters-section__logos [data-marquee-clone] {
+    display: none;
+  }
+
+  /* Cell: 95px tall, #eee rule under each row except the last */
+  .recruiters-section__logos .logo-frame {
+    position: static;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: 95px;
+    overflow: visible;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .recruiters-section__marquee:last-of-type .logo-frame:nth-last-child(-n + 3) {
+    border-bottom: 0;
+  }
+
+  /* Logo frame: 87.664 × 75 (scales with the column on narrower phones) */
+  .recruiters-section__logo-box {
+    position: relative;
+    display: block;
+    width: calc(100% - 30px);
+    height: 75px;
+    overflow: hidden;
+  }
+
+  /* Most logos sit whole inside the frame (object-fit: contain) … */
+  .recruiters-section__logos .logo-frame {
+    --logo-x: 0%;
+    --logo-y: 0%;
+    --logo-width: 100%;
+    --logo-height: 100%;
+  }
+
+  .recruiters-section__logos .logo-frame__image {
+    object-fit: contain;
+  }
+
+  /* … the rest use the Figma mobile crops */
+  .recruiters-section__logos .recruiters-section__logo--cognizant {
+    --logo-x: 0.37%;
+    --logo-y: -8.01%;
+    --logo-width: 99.25%;
+    --logo-height: 116.01%;
+  }
+
+  .recruiters-section__logos .recruiters-section__logo--ey {
+    --logo-x: -17.16%;
+    --logo-y: -6.22%;
+    --logo-width: 141.88%;
+    --logo-height: 94.76%;
+  }
+
+  .recruiters-section__logos .recruiters-section__logo--accenture {
+    --logo-x: -8.87%;
+    --logo-y: 4.08%;
+    --logo-width: 117.74%;
+    --logo-height: 91.83%;
+  }
+
+  .recruiters-section__logos .recruiters-section__logo--sib {
+    --logo-x: -18.63%;
+    --logo-y: -52.77%;
+    --logo-width: 137.27%;
+    --logo-height: 205.54%;
+  }
+
+  .recruiters-section__logos .recruiters-section__logo--icici {
+    --logo-x: -0.01%;
+    --logo-y: -8.45%;
+    --logo-width: 100.02%;
+    --logo-height: 116.91%;
+  }
+
+  .recruiters-section__logos .recruiters-section__logo--cognizant .logo-frame__image,
+  .recruiters-section__logos .recruiters-section__logo--ey .logo-frame__image,
+  .recruiters-section__logos .recruiters-section__logo--accenture .logo-frame__image,
+  .recruiters-section__logos .recruiters-section__logo--sib .logo-frame__image,
+  .recruiters-section__logos .recruiters-section__logo--icici .logo-frame__image {
+    object-fit: cover;
+  }
+}
+
+/* ---------- Mobile (≤ 576px), continued: Students speak, Admissions, Contact, Footer ---------- */
+@media (max-width: 576px) {
+  /* ---------- Students speak (Figma 426:7543): 313.313px cards, square photo ---------- */
+  .testimonials-section__card,
+  .testimonials-section__card.swiper-slide {
+    width: min(313.313px, calc(100vw - 2 * var(--container-gutter) - 39.687px));
+    gap: 20px;
+  }
+
+  .testimonials-section__media {
+    aspect-ratio: 1 / 1;
+  }
+
+  .testimonials-section__media--shade::after,
+  .testimonials-section__media--shade-strong::after {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7));
+  }
+
+  .testimonials-section__image {
+    object-position: center;
+  }
+
+  .testimonials-section__play {
+    left: 22px;
+    bottom: 22px;
+  }
+
+  .testimonials-section__text {
+    gap: 0;
+  }
+
+  .testimonials-section__name {
+    font-size: var(--font-size-lg);
+    line-height: 1.4;
+  }
+
+  .testimonials-section__program {
+    line-height: 1.4;
+    color: var(--color-text-heading);
+  }
+
+  .testimonials-section__quote,
+  .testimonials-section__quote--narrow,
+  .testimonials-section__quote--narrower {
+    max-width: none;
+    margin-top: 16px;
+    line-height: 1.4;
+  }
+
+  /* ---------- Admissions intro (Figma 426:7595) + form band (Figma 484:2193) ---------- */
+  .admissions-section {
+    padding-bottom: 0;
+  }
+
+  .admissions-section__container {
+    gap: 0;
+  }
+
+  .admissions-section__intro {
+    gap: 24px;
+    padding-bottom: 40px;
+  }
+
+  .admissions-section__heading {
+    gap: 20px;
+  }
+
+  .admissions-section__heading .section-label {
+    padding-inline: 0;
+  }
+
+  .admissions-section__actions {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .admissions-section__actions .button {
+    --button-height: 52px;
+    width: 100%;
+  }
+
+  /* Grey full-bleed band: 32px top, 60px bottom */
+  .admissions-section__form {
+    gap: 18px;
+    width: auto;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding: 32px var(--container-gutter) 60px;
+    background-color: var(--color-bg-light);
+  }
+
+  .admissions-section__form-title {
+    display: block;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.4;
+    color: var(--color-text-heading);
+  }
+
+  .admissions-section__fields {
+    gap: 18px;
+  }
+
+  .form-field--full {
+    padding-bottom: 0;
+  }
+
+  .form-field__label {
+    height: auto;
+    padding: 0 0 10px;
+    line-height: 1.4;
+    color: #515151;
+  }
+
+  .form-field__control {
+    padding: 15px 16px;
+    line-height: 1.4;
+    background-color: var(--color-white);
+  }
+
+  .form-field__control::placeholder,
+  .form-field__phone-input::placeholder {
+    color: #6e6e6e;
+  }
+
+  /* Phone: plain "+91  Enter mobile" (no flag in the mobile design) */
+  .form-field__control--phone {
+    gap: 0;
+    padding: 0 16px;
+  }
+
+  .form-field__country {
+    display: none;
+  }
+
+  .form-field__dial-code {
+    color: #6e6e6e;
+  }
+
+  .form-field__phone-input {
+    margin-left: 8px;
+  }
+
+  .form-field__control--select {
+    padding-inline: 16px 36px;
+  }
+
+  .form-field__control--textarea {
+    height: 130px;
+  }
+
+  /* Consent: 16px square checkbox, 12px from the text */
+  .admissions-section__checkbox {
+    top: 2px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .admissions-section__checkbox-box {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    padding: 0;
+    background-color: var(--color-white);
+    border: 1px solid #767676;
+    border-radius: 2px;
+  }
+
+  .admissions-section__checkbox-box img {
+    display: none;
+  }
+
+  .admissions-section__checkbox-box::before {
+    inset: -1px;
+    width: auto;
+    height: auto;
+  }
+
+  .admissions-section__checkbox:checked+.admissions-section__checkbox-box::after {
+    left: 4px;
+    top: 1px;
+    width: 5px;
+    height: 9px;
+  }
+
+  .admissions-section__consent-text {
+    line-height: 1.4;
+    color: #515151;
+  }
+
+  .admissions-section__submit {
+    --button-height: 52px;
+    align-self: flex-start;
+    width: auto;
+  }
+
+  /* ---------- Contact (Figma 426:7678) ---------- */
+  .contact-section {
+    background-color: var(--color-white);
+  }
+
+  .contact-section__container {
+    gap: 40px;
+  }
+
+  .contact-section__info {
+    gap: 20px;
+  }
+
+  .contact-section__heading {
+    gap: 24px;
+  }
+
+  .contact-section__heading .section-label {
+    padding-inline: 0;
+  }
+
+  /* The Contact title is Playfair Display in the mobile design */
+  .contact-section .section-title {
+    --section-title-size: 37.6px;
+    --section-title-line-height: 40.608px;
+    --section-title-tracking: -0.752px;
+    font-family: var(--font-display);
+  }
+
+  .contact-section__row {
+    flex-wrap: nowrap;
+    padding-block: 20px;
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+    border-bottom-color: #dddddd;
+  }
+
+  .contact-section__term {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-heading);
+  }
+
+  .contact-section__value {
+    font-weight: var(--font-weight-regular);
+    text-align: right;
+    color: var(--color-text-heading);
+  }
+
+  .contact-section__map {
+    height: 330px;
+    border: 0;
+  }
+
+  /* ---------- Footer (Figma 426:7713) ---------- */
+  .site-footer {
+    padding-top: 80px;
+  }
+
+  .site-footer__top {
+    gap: 36px;
+    padding-bottom: 60px;
+  }
+
+  .site-footer__brand {
+    gap: 24px;
+  }
+
+  .site-footer__logo {
+    width: 150px;
+    height: 64px;
+  }
+
+  .site-footer__brand-body {
+    gap: 20px;
+  }
+
+  .site-footer__address {
+    max-width: none;
+    line-height: 1.4;
+  }
+
+  .site-footer__direction {
+    min-height: 52px;
+    padding: 14px 24px;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: normal;
+  }
+
+  /* Same tight arrow, scaled to read like the 24px arrow_outward icon */
+  .site-footer__direction-icon {
+    --icon-size: 12px;
+    --icon-rotate: 0deg;
+    --icon-clip-x: 0px;
+    margin-inline: 6px;
+  }
+
+  .site-footer__nav {
+    align-items: stretch;
+    gap: 20px;
+    min-height: 0;
+  }
+
+  .site-footer__columns {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  .site-footer__column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: none;
+    gap: 20px;
+    width: 100%;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.17);
+  }
+
+  .site-footer__column.site-footer__column--office {
+    display: none;
+  }
+
+  /* Heading underlined to its own width */
+  .site-footer__heading,
+  .site-footer__heading--quick {
+    padding: 1px 0;
+    line-height: 1.4;
+    border-bottom: 1px solid var(--color-white);
+  }
+
+  .site-footer__heading::after {
+    content: none;
+  }
+
+  .site-footer__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .site-footer__list li {
+    padding-block: 0;
+  }
+
+  .site-footer__link {
+    line-height: 1.4;
+  }
+
+  .site-footer__link--underline {
+    text-decoration: none;
+  }
+
+  /* Social icons sit under Quick Links */
+  .site-footer__social {
+    justify-content: flex-start;
+    gap: 0;
+    min-height: 0;
+    margin-left: 0;
+    padding-inline: 0;
+  }
+
+  .site-footer__social-link img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .site-footer__bottom {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 25px 0 35px;
+    font-size: 12px;
+    line-height: 1.4;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
   }
 }

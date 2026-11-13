@@ -75,9 +75,41 @@
           Apply Online
           <span class="icon icon--arrow-outward" aria-hidden="true"></span>
         </a>
+        <!-- Mobile only (≤ 576px): opens the slide-in menu below -->
+        <button type="button" class="site-header__menu-toggle" aria-label="Open navigation" aria-controls="mobile-menu" aria-expanded="false">
+          <span class="site-header__menu-bar"></span>
+          <span class="site-header__menu-bar"></span>
+          <span class="site-header__menu-bar"></span>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- ==================== MOBILE MENU (≤ 576px, Figma node 447:9113) ==================== -->
+  <dialog id="mobile-menu" class="mobile-menu" aria-label="Site navigation">
+    <div class="mobile-menu__panel">
+      <div class="mobile-menu__top">
+        <button type="button" class="mobile-menu__close" aria-label="Close navigation"></button>
+      </div>
+      <div class="mobile-menu__body">
+        <ul class="mobile-menu__links">
+          <li><a href="#" class="mobile-menu__link">Brochure</a></li>
+          <li><a href="https://www.google.com/" class="mobile-menu__link">IQAC</a></li>
+          <li><a href="#" class="mobile-menu__link">Privacy Policy</a></li>
+          <li><a href="#" class="mobile-menu__link">Terms and Conditions</a></li>
+        </ul>
+        <ul class="mobile-menu__contact">
+          <li><a href="mailto:info@git.ac.in" class="mobile-menu__contact-link">info@git.ac.in</a></li>
+          <li><a href="mailto:registration@git.ac.in" class="mobile-menu__contact-link">registration@git.ac.in</a></li>
+          <li>Mon – Sat, 9:00 am – 5:00 pm</li>
+        </ul>
+        <a href="#admissions" class="button button--primary mobile-menu__button">
+          Apply Online
+          <span class="icon icon--arrow-outward" aria-hidden="true"></span>
+        </a>
+      </div>
+    </div>
+  </dialog>
 
   <main>
 
@@ -94,7 +126,7 @@
         <div class="hero-section__content">
           <h1 class="hero-section__title">Gregorian<br> Group of Institutions</h1>
           <p class="hero-section__description">
-            Engineering, Polytechnic, BCA and BBA on one green campus at Kangazha. The first technical institution in Kerala to earn NBA accreditation within seven years of its founding
+            Engineering, Polytechnic, BCA and BBA on one green campus at Kangazha. The first technical institution in Kerala to earn NBA accreditation within seven years of its founding<span class="u-mobile-only">.</span>
           </p>
           <ul class="hero-section__chips">
             <li class="chip hero-section__chip">NBA Accredited Diplomas</li>
@@ -140,7 +172,7 @@
             </div>
             <div class="institutions-section__footer">
               <a href="https://git.ac.in" class="button button--block" target="_blank" rel="noopener">
-                Visit git.ac.in
+                <span class="u-hide-mobile">Visit git.ac.in</span><span class="u-mobile-only">git.ac.in</span>
                 <span class="icon icon--arrow-outward" aria-hidden="true"></span>
               </a>
             </div>
@@ -157,7 +189,7 @@
             </div>
             <div class="institutions-section__footer">
               <a href="https://gitgroup.ac.in" class="button button--block" target="_blank" rel="noopener">
-                Visit gitgroup.ac.in
+                <span class="u-hide-mobile">Visit gitgroup.ac.in</span><span class="u-mobile-only">gitgroup.ac.in</span>
                 <span class="icon icon--arrow-outward" aria-hidden="true"></span>
               </a>
             </div>
@@ -174,7 +206,7 @@
             </div>
             <div class="institutions-section__footer">
               <a href="#" class="button button--block">
-                Visit BCA site
+                <span class="u-hide-mobile">Visit BCA site</span><span class="u-mobile-only">BCA site</span>
                 <span class="icon icon--arrow-outward" aria-hidden="true"></span>
               </a>
             </div>
@@ -191,7 +223,7 @@
             </div>
             <div class="institutions-section__footer">
               <a href="#" class="button button--block">
-                Visit BBA site
+                <span class="u-hide-mobile">Visit BBA site</span><span class="u-mobile-only">BBA site</span>
                 <span class="icon icon--arrow-outward" aria-hidden="true"></span>
               </a>
             </div>
@@ -285,7 +317,7 @@
               <p class="welcome-section__card-description">29/10/2026 · GIT Campus, Kangazha Registrations open</p>
             </div>
             <span class="text-button">
-              Register
+              <span class="u-hide-mobile">Register</span><span class="u-mobile-only">Learn more</span>
               <span class="icon icon--arrow-outward" aria-hidden="true"></span>
             </span>
           </a>
@@ -309,7 +341,7 @@
               <p class="welcome-section__card-description welcome-section__card-description--narrow">Class of 2026 · recruitment drives on</p>
             </div>
             <span class="text-button">
-              See record
+              <span class="u-hide-mobile">See record</span><span class="u-mobile-only">Learn more</span>
               <span class="icon icon--arrow-outward" aria-hidden="true"></span>
             </span>
           </a>
@@ -321,7 +353,7 @@
               <p class="welcome-section__card-description">Diploma · B.Tech · BCA · BBA programmes for 2027.</p>
             </div>
             <span class="text-button">
-              Register
+              <span class="u-hide-mobile">Register</span><span class="u-mobile-only">Learn more</span>
               <span class="icon icon--arrow-outward" aria-hidden="true"></span>
             </span>
           </a>
@@ -336,7 +368,7 @@
           <div class="section-header news-section__header">
             <div class="section-heading">
               <p class="section-label">Latest</p>
-              <h2 class="section-title">Latest&nbsp; News, events &amp; announcements</h2>
+              <h2 class="section-title">Latest<span class="u-hide-mobile">&nbsp;</span> News, events &amp; announcements</h2>
             </div>
             <a href="#" class="button button--outline-light section-view-all">
               View All
@@ -468,7 +500,7 @@
       <div class="container approvals-section__container">
         <div class="approvals-section__approvals">
           <h2 class="section-title approvals-section__title">AICTE Approvals</h2>
-          <div class="approvals-section__columns">
+          <div class="approvals-section__columns" id="approvals-columns">
             <ul class="approvals-section__list">
               <li class="approvals-section__item"><h3 class="approvals-section__item-title">APPROVAL 2025-26</h3><a href="#" class="text-link">Know More <span class="icon icon--arrow-outward" aria-hidden="true"></span></a></li>
               <li class="approvals-section__item"><h3 class="approvals-section__item-title">APPROVAL 2023-24</h3><a href="#" class="text-link">Know More <span class="icon icon--arrow-outward" aria-hidden="true"></span></a></li>
@@ -483,6 +515,8 @@
               <li class="approvals-section__item"><h3 class="approvals-section__item-title">APPROVAL 2018-19</h3><a href="#" class="text-link">Know More <span class="icon icon--arrow-outward" aria-hidden="true"></span></a></li>
             </ul>
           </div>
+          <!-- Mobile only: shown by js/main.js when there are more than 5 approvals (Figma "View More") -->
+          <button type="button" class="button button--primary approvals-section__load-more" id="approvals-load-more" aria-controls="approvals-columns" aria-expanded="false" hidden>View More</button>
         </div>
 
         <div class="approvals-section__partners">
@@ -525,8 +559,9 @@
             </span>
             <span class="campus-life-section__card-text">
               <span class="campus-life-section__card-title">National Service Scheme</span>
-              <span class="campus-life-section__card-description">The National Service Scheme Unit (No: 293) at Gregorian Institute of Technology promotes civic responsibility through programs.</span>
+              <span class="campus-life-section__card-description"><span class="u-hide-mobile">The National Service Scheme Unit (No: 293) at Gregorian Institute of Technology promotes civic responsibility through programs.</span><span class="u-mobile-only">The National Service Scheme Unit (No: 293) promotes civic responsibility through programmes.</span></span>
             </span>
+            <span class="text-button campus-life-section__card-more">Learn more <span class="icon icon--arrow-outward" aria-hidden="true"></span></span>
           </a>
           <a href="#" class="swiper-slide campus-life-section__card">
             <span class="campus-life-section__card-top">
@@ -539,6 +574,7 @@
               <span class="campus-life-section__card-title">Innovation &amp; Entrepreneurship</span>
               <span class="campus-life-section__card-description">IEDC by Kerala Startup Mission promotes entrepreneurship and innovation among faculty and students.</span>
             </span>
+            <span class="text-button campus-life-section__card-more">Learn more <span class="icon icon--arrow-outward" aria-hidden="true"></span></span>
           </a>
           <a href="#" class="swiper-slide campus-life-section__card">
             <span class="campus-life-section__card-top">
@@ -551,6 +587,7 @@
               <span class="campus-life-section__card-title">Institution of Engineers (India)</span>
               <span class="campus-life-section__card-description">Institute of Engineers (India) covers 15 disciplines, offering a global platform. It promotes ethical practice and professional excellence.</span>
             </span>
+            <span class="text-button campus-life-section__card-more">Learn more <span class="icon icon--arrow-outward" aria-hidden="true"></span></span>
           </a>
           <!-- Static placeholder slides — replace with real clubs / chapters -->
           <a href="#" class="swiper-slide campus-life-section__card">
@@ -564,6 +601,7 @@
               <span class="campus-life-section__card-title">IITM Pravartak Skilling</span>
               <span class="campus-life-section__card-description">The 3+1 B.Tech model pairs coursework with IIT Madras Pravartak skilling programs and hands-on industry training.</span>
             </span>
+            <span class="text-button campus-life-section__card-more">Learn more <span class="icon icon--arrow-outward" aria-hidden="true"></span></span>
           </a>
           <a href="#" class="swiper-slide campus-life-section__card">
             <span class="campus-life-section__card-top">
@@ -576,6 +614,7 @@
               <span class="campus-life-section__card-title">IBM Q2D Collaboration</span>
               <span class="campus-life-section__card-description">Students explore emerging technologies through the IBM Q2D collaboration with sessions, projects and mentoring.</span>
             </span>
+            <span class="text-button campus-life-section__card-more">Learn more <span class="icon icon--arrow-outward" aria-hidden="true"></span></span>
           </a>
           <a href="#" class="swiper-slide campus-life-section__card">
             <span class="campus-life-section__card-top">
@@ -588,10 +627,10 @@
               <span class="campus-life-section__card-title">World Skill Center</span>
               <span class="campus-life-section__card-description">Skill development programs that prepare students for industry certifications and professional careers.</span>
             </span>
+            <span class="text-button campus-life-section__card-more">Learn more <span class="icon icon--arrow-outward" aria-hidden="true"></span></span>
           </a>
           </div>
           <!-- Mobile-only slide indicator (bullets generated by Swiper) -->
-          <div class="campus-life-section__pagination"></div>
         </div>
       </div>
     </section>
@@ -602,7 +641,7 @@
         <div class="section-header recruiters-section__header">
           <div class="section-heading">
             <p class="section-label">Placements</p>
-            <h2 class="section-title">Our recruiters</h2>
+            <h2 class="section-title"><span class="u-hide-mobile">Our recruiters</span><span class="u-mobile-only">Our Recruiters</span></h2>
           </div>
           <a href="#" class="button button--outline section-view-all">
             View All
@@ -613,23 +652,23 @@
         <div class="recruiters-section__logos">
           <div class="recruiters-section__marquee" data-marquee-direction="right">
             <ul class="recruiters-section__row">
-              <li class="logo-frame recruiters-section__logo--tcs"><img src="assets/images/recruiter-tcs.png" alt="Tata Consultancy Services" class="logo-frame__image" draggable="false"></li>
-              <li class="logo-frame recruiters-section__logo--tech-mahindra"><img src="assets/images/recruiter-tech-mahindra.png" alt="Tech Mahindra" class="logo-frame__image" draggable="false"></li>
-              <li class="logo-frame recruiters-section__logo--infosys"><img src="assets/images/recruiter-infosys.png" alt="Infosys" class="logo-frame__image" draggable="false"></li>
-              <li class="logo-frame recruiters-section__logo--deloitte"><img src="assets/images/recruiter-deloitte.png" alt="Deloitte" class="logo-frame__image" draggable="false"></li>
-              <li class="logo-frame recruiters-section__logo--cognizant"><img src="assets/images/recruiter-cognizant.png" alt="Cognizant" class="logo-frame__image" draggable="false"></li>
-              <li class="logo-frame recruiters-section__logo--lenovo"><img src="assets/images/recruiter-lenovo.png" alt="Lenovo" class="logo-frame__image" draggable="false"></li>
+              <li class="logo-frame recruiters-section__logo--tcs"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-tcs.png" alt="Tata Consultancy Services" class="logo-frame__image" draggable="false"></span></li>
+              <li class="logo-frame recruiters-section__logo--tech-mahindra"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-tech-mahindra.png" alt="Tech Mahindra" class="logo-frame__image" draggable="false"></span></li>
+              <li class="logo-frame recruiters-section__logo--infosys"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-infosys.png" alt="Infosys" class="logo-frame__image" draggable="false"></span></li>
+              <li class="logo-frame recruiters-section__logo--deloitte"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-deloitte.png" alt="Deloitte" class="logo-frame__image" draggable="false"></span></li>
+              <li class="logo-frame recruiters-section__logo--cognizant"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-cognizant.png" alt="Cognizant" class="logo-frame__image" draggable="false"></span></li>
+              <li class="logo-frame recruiters-section__logo--lenovo"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-lenovo.png" alt="Lenovo" class="logo-frame__image" draggable="false"></span></li>
             </ul>
           </div>
           <hr class="recruiters-section__divider">
           <div class="recruiters-section__marquee" data-marquee-direction="left">
             <ul class="recruiters-section__row">
-              <li class="logo-frame recruiters-section__logo--jsw"><img src="assets/images/recruiter-jsw.png" alt="JSW" class="logo-frame__image" draggable="false"></li>
-              <li class="logo-frame recruiters-section__logo--ey"><img src="assets/images/recruiter-ey.png" alt="EY" class="logo-frame__image" draggable="false"></li>
-              <li class="logo-frame recruiters-section__logo--accenture"><img src="assets/images/recruiter-accenture.png" alt="Accenture" class="logo-frame__image" draggable="false"></li>
-              <li class="logo-frame recruiters-section__logo--sib"><img src="assets/images/recruiter-south-indian-bank.png" alt="South Indian Bank" class="logo-frame__image" draggable="false"></li>
-              <li class="logo-frame recruiters-section__logo--tata-elxsi"><img src="assets/images/recruiter-tata-elxsi.png" alt="Tata Elxsi" class="logo-frame__image" draggable="false"></li>
-              <li class="logo-frame recruiters-section__logo--icici"><img src="assets/images/recruiter-icici-bank.png" alt="ICICI Bank" class="logo-frame__image" draggable="false"></li>
+              <li class="logo-frame recruiters-section__logo--jsw"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-jsw.png" alt="JSW" class="logo-frame__image" draggable="false"></span></li>
+              <li class="logo-frame recruiters-section__logo--ey"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-ey.png" alt="EY" class="logo-frame__image" draggable="false"></span></li>
+              <li class="logo-frame recruiters-section__logo--accenture"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-accenture.png" alt="Accenture" class="logo-frame__image" draggable="false"></span></li>
+              <li class="logo-frame recruiters-section__logo--sib"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-south-indian-bank.png" alt="South Indian Bank" class="logo-frame__image" draggable="false"></span></li>
+              <li class="logo-frame recruiters-section__logo--tata-elxsi"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-tata-elxsi.png" alt="Tata Elxsi" class="logo-frame__image" draggable="false"></span></li>
+              <li class="logo-frame recruiters-section__logo--icici"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-icici-bank.png" alt="ICICI Bank" class="logo-frame__image" draggable="false"></span></li>
             </ul>
           </div>
         </div>
@@ -728,6 +767,8 @@
         </div>
 
         <form class="admissions-section__form" action="#" method="post">
+          <!-- Mobile only (Figma 484:2193) -->
+          <h3 class="admissions-section__form-title">Enquire About Admissions</h3>
           <div class="admissions-section__fields">
             <div class="form-field">
               <label for="first-name" class="form-field__label">First Name</label>
@@ -775,7 +816,7 @@
               <input type="text" id="state" name="state" class="form-field__control" placeholder="Enter state" autocomplete="address-level1">
             </div>
             <div class="form-field form-field--full">
-              <label for="subject" class="form-field__label">Subject (Optinal)</label>
+              <label for="subject" class="form-field__label"><span class="u-hide-mobile">Subject (Optinal)</span><span class="u-mobile-only">Subject (Optional)</span></label>
               <textarea id="subject" name="subject" class="form-field__control form-field__control--textarea" placeholder="Enter subject"></textarea>
             </div>
           </div>
@@ -785,11 +826,11 @@
             <span class="admissions-section__checkbox-box" aria-hidden="true">
               <img src="assets/icons/checkbox-outline.svg" alt="" width="18" height="18">
             </span>
-            <span class="admissions-section__consent-text">I acknowledge the information is true to the best of my knowledge. If found false, I will forfeit my admission claim. I agree to the Joint Declaration by Parent/Guardian and student undertaking.</span>
+            <span class="admissions-section__consent-text"><span class="u-hide-mobile">I acknowledge the information is true to the best of my knowledge. If found false, I will forfeit my admission claim. I agree to the Joint Declaration by Parent/Guardian and student undertaking.</span><span class="u-mobile-only">I acknowledge the information is true to the best of my knowledge and agree to the Joint Declaration by Parent/Guardian and student undertaking.</span></span>
           </label>
 
           <button type="submit" class="button button--primary admissions-section__submit">
-            Submit enquiry
+            <span class="u-hide-mobile">Submit enquiry</span><span class="u-mobile-only">Submit Enquiry</span>
             <span class="icon icon--arrow-outward" aria-hidden="true"></span>
           </button>
         </form>
@@ -848,7 +889,7 @@
         <div class="site-footer__brand">
           <img src="assets/images/logo-git-kottayam-white.png" alt="GIT Kottayam" class="site-footer__logo" width="196" height="83" loading="lazy">
           <div class="site-footer__brand-body">
-            <address class="site-footer__address site-footer__address--brand">Mar Gregorious Memorial Education And Charitable Trust, Registered Office At Muthumarathil Building, Elanthoor East P O, Variyapuram, Pathanamthitta, Kerala 689643.</address>
+            <address class="site-footer__address site-footer__address--brand"><span class="u-hide-mobile">Mar Gregorious Memorial Education And Charitable Trust, Registered Office At Muthumarathil Building, Elanthoor East P O, Variyapuram, Pathanamthitta, Kerala 689643.</span><span class="u-mobile-only">Mar Gregorious Memorial Education And Charitable Trust, Muthumarathil Building, Elanthoor East P O, Variyapuram, Pathanamthitta, Kerala 689643.</span></address>
             <a href="https://www.google.com/maps/dir/?api=1&amp;destination=Gregorian+Institute+of+Technology,+Kangazha,+Kottayam" class="site-footer__direction" target="_blank" rel="noopener">
               Get Direction
               <span class="icon icon--arrow-outward site-footer__direction-icon" aria-hidden="true"></span>
@@ -859,69 +900,33 @@
         <div class="site-footer__nav">
           <div class="site-footer__columns">
             <div class="site-footer__column site-footer__column--admissions">
-              <h2 class="site-footer__heading site-footer__heading--admissions">
-                <button type="button" class="site-footer__toggle" id="footer-toggle-admissions" aria-controls="footer-panel-admissions" disabled>
-                  <span class="site-footer__toggle-label">Admissions</span>
-                  <span class="site-footer__toggle-icon" aria-hidden="true"></span>
-                </button>
-              </h2>
-              <div class="site-footer__panel" id="footer-panel-admissions" role="region" aria-labelledby="footer-toggle-admissions">
-                <div class="site-footer__panel-inner">
-                  <ul class="site-footer__list">
-                    <li><a href="tel:+919645580005" class="site-footer__link">Polytechnic: +91 96455 80005</a></li>
-                    <li><a href="tel:+919447239999" class="site-footer__link">B.Tech: +91 94472 39999</a></li>
-                    <li><a href="tel:+917442280005" class="site-footer__link">BCA: +91 74422 80005</a></li>
-                    <li><a href="tel:+913346580005" class="site-footer__link">BBA: +91 33465 80005</a></li>
-                  </ul>
-                </div>
-              </div>
+              <h2 class="site-footer__heading site-footer__heading--admissions">Admissions</h2>
+              <ul class="site-footer__list">
+                <li><a href="tel:+919645580005" class="site-footer__link">Polytechnic: +91 96455 80005</a></li>
+                <li><a href="tel:+919447239999" class="site-footer__link">B.Tech: +91 94472 39999</a></li>
+                <li><a href="tel:+917442280005" class="site-footer__link">BCA: +91 74422 80005</a></li>
+                <li><a href="tel:+913346580005" class="site-footer__link">BBA: +91 33465 80005</a></li>
+              </ul>
             </div>
             <div class="site-footer__column site-footer__column--email">
-              <h2 class="site-footer__heading site-footer__heading--email">
-                <button type="button" class="site-footer__toggle" id="footer-toggle-email" aria-controls="footer-panel-email" disabled>
-                  <span class="site-footer__toggle-label">Email &amp; Hours</span>
-                  <span class="site-footer__toggle-icon" aria-hidden="true"></span>
-                </button>
-              </h2>
-              <div class="site-footer__panel" id="footer-panel-email" role="region" aria-labelledby="footer-toggle-email">
-                <div class="site-footer__panel-inner">
-                  <ul class="site-footer__list">
-                    <li><a href="mailto:info@git.ac.in" class="site-footer__link">info@git.ac.in</a></li>
-                    <li><a href="mailto:registration@git.ac.in" class="site-footer__link">registration@git.ac.in</a></li>
-                    <li><a href="mailto:gitkottayam@gmail.com" class="site-footer__link">gitkottayam@gmail.com</a></li>
-                    <li><span class="site-footer__link">Mon – Sat, 9:00 am – 5:00 pm</span></li>
-                  </ul>
-                </div>
-              </div>
+              <h2 class="site-footer__heading site-footer__heading--email">Email &amp; Hours</h2>
+              <ul class="site-footer__list">
+                <li><a href="mailto:info@git.ac.in" class="site-footer__link">info@git.ac.in</a></li>
+                <li><a href="mailto:registration@git.ac.in" class="site-footer__link">registration@git.ac.in</a></li>
+                <li class="u-hide-mobile"><a href="mailto:gitkottayam@gmail.com" class="site-footer__link">gitkottayam@gmail.com</a></li>
+                <li><span class="site-footer__link">Mon – Sat, 9:00 am – 5:00 pm</span></li>
+              </ul>
             </div>
             <div class="site-footer__column site-footer__column--office">
-              <h2 class="site-footer__heading site-footer__heading--office">
-                <button type="button" class="site-footer__toggle" id="footer-toggle-office" aria-controls="footer-panel-office" disabled>
-                  <span class="site-footer__toggle-label">Registered office</span>
-                  <span class="site-footer__toggle-icon" aria-hidden="true"></span>
-                </button>
-              </h2>
-              <div class="site-footer__panel" id="footer-panel-office" role="region" aria-labelledby="footer-toggle-office">
-                <div class="site-footer__panel-inner">
-                  <address class="site-footer__address site-footer__address--office">Mar Gregorious Memorial Education And Charitable Trust, Registered Office At Muthumarathil Building, Elanthoor East P O, Variyapuram, Pathanamthitta, Kerala 689643.</address>
-                </div>
-              </div>
+              <h2 class="site-footer__heading site-footer__heading--office">Registered office</h2>
+              <address class="site-footer__address site-footer__address--office">Mar Gregorious Memorial Education And Charitable Trust, Registered Office At Muthumarathil Building, Elanthoor East P O, Variyapuram, Pathanamthitta, Kerala 689643.</address>
             </div>
             <div class="site-footer__column site-footer__column--quick">
-              <h2 class="site-footer__heading site-footer__heading--quick">
-                <button type="button" class="site-footer__toggle" id="footer-toggle-quick" aria-controls="footer-panel-quick" disabled>
-                  <span class="site-footer__toggle-label">Quick Links</span>
-                  <span class="site-footer__toggle-icon" aria-hidden="true"></span>
-                </button>
-              </h2>
-              <div class="site-footer__panel" id="footer-panel-quick" role="region" aria-labelledby="footer-toggle-quick">
-                <div class="site-footer__panel-inner">
-                  <ul class="site-footer__list">
-                    <li><a href="#" class="site-footer__link site-footer__link--underline">Privacy Policy</a></li>
-                    <li><a href="#" class="site-footer__link site-footer__link--underline">Terms and Conditions</a></li>
-                  </ul>
-                </div>
-              </div>
+              <h2 class="site-footer__heading site-footer__heading--quick">Quick Links</h2>
+              <ul class="site-footer__list">
+                <li><a href="#" class="site-footer__link site-footer__link--underline">Privacy Policy</a></li>
+                <li><a href="#" class="site-footer__link site-footer__link--underline">Terms and Conditions</a></li>
+              </ul>
             </div>
           </div>
 

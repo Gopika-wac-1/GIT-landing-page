@@ -26,7 +26,8 @@
   function animate(item) {
     const start = performance.now();
     function frame(now) {
-      const progress = Math.min((now - start) / DURATION, 1);
+      // Clamp at 0: a frame timestamp can be slightly earlier than `start`
+      const progress = Math.min(Math.max((now - start) / DURATION, 0), 1);
       const value = Math.round(easeOutCubic(progress) * item.target);
       item.el.textContent = item.prefix + value + item.suffix;
       if (progress < 1) requestAnimationFrame(frame);
@@ -139,9 +140,10 @@
    1. Life at GIT: slider at every width, driven by the design's prev/next
       arrows. Arrows are hidden when there are 3 slides or fewer, and Swiper
       also hides them whenever every slide already fits (watchOverflow).
-   2. Find Your Path + Students speak: desktop keeps the Figma grid; at
-      ≤1199.98px (tablet + mobile) they become swipeable sliders (a peek of the next card shows
-      that the row scrolls). Created/destroyed as the viewport crosses 1200px.
+   2. Find Your Path + Students speak: desktop keeps the Figma grid; on tablet
+      (and, for Students speak, mobile) they become swipeable sliders (a peek of
+      the next card shows that the row scrolls). Each is created/destroyed as the
+      viewport enters/leaves its range.
 ========================================== */
 (function () {
   if (typeof window.Swiper === "undefined") return; // CDN unavailable: CSS grids remain
@@ -156,8 +158,9 @@
     if (controls) controls.hidden = !hasEnoughSlides;
 
     new window.Swiper(lifeSlider, {
-      slidesPerView: 1.1,
-      spaceBetween: 16,
+      // Mobile (Figma 426:7462): fixed 322.26px cards (width set in CSS), 24px apart
+      slidesPerView: "auto",
+      spaceBetween: 24,
       loop: hasEnoughSlides,
       grabCursor: true,
       watchOverflow: true,
@@ -167,12 +170,8 @@
             nextEl: ".campus-life-section__control--next",
           }
         : false,
-      // Line-style dots; shown only on mobile via CSS (arrows are hidden there)
-      pagination: {
-        el: lifeSlider.querySelector(".campus-life-section__pagination"),
-        clickable: true,
-      },
       breakpoints: {
+        577: { slidesPerView: 1.1, spaceBetween: 16 },
         640: { slidesPerView: 2, spaceBetween: 24 },
         768: { slidesPerView: 2, spaceBetween: 18 },  // tablet (768–1199.98px)
         1200: { slidesPerView: 3, spaceBetween: 24 },
@@ -181,41 +180,48 @@
   }
 
   /* --- 2. Mobile / tablet sliders --- */
-  const mobileQuery = window.matchMedia("(max-width: 1199.98px)");
-  const mobileOptions = {
-    slidesPerView: 1.15,
-    spaceBetween: 16,
-    grabCursor: true,
-    watchOverflow: true,
-    breakpoints: {
-      576: { slidesPerView: 2.2, spaceBetween: 24 },
-    },
-  };
+  const sliderBase = { grabCursor: true, watchOverflow: true };
 
-  // Per-slider overrides. Institutions uses an 18px gap on tablet (≥576px),
-  // the tablet gap used across 768–1199.98px.
+  // Each slider has its own range. Find Your Path is a 2 × 2 grid on mobile
+  // (Figma mobile design), so it is only a slider on tablet (577–1199.98px), with
+  // the 18px tablet gap. Students speak slides on tablet and mobile.
   const mobileSliders = [
     {
       selector: ".institutions-section__slider",
-      options: { ...mobileOptions, breakpoints: { 576: { slidesPerView: 2.2, spaceBetween: 18 } } },
+      query: "(min-width: 577px) and (max-width: 1199.98px)",
+      options: { ...sliderBase, slidesPerView: 2.2, spaceBetween: 18 },
     },
-    { selector: ".testimonials-section__slider", options: mobileOptions },
-  ]
-    .map(({ selector, options }) => ({ el: document.querySelector(selector), options }))
-    .filter(({ el }) => el);
-  let mobileInstances = [];
+    {
+      // Mobile (Figma 426:7543): fixed 313.313px cards (width set in CSS), 24px apart
+      selector: ".testimonials-section__slider",
+      query: "(max-width: 1199.98px)",
+      options: {
+        ...sliderBase,
+        slidesPerView: "auto",
+        spaceBetween: 24,
+        breakpoints: { 577: { slidesPerView: 2.2, spaceBetween: 24 } },
+      },
+    },
+  ];
 
-  function syncMobileSliders() {
-    if (mobileQuery.matches && !mobileInstances.length) {
-      mobileInstances = mobileSliders.map(({ el, options }) => new window.Swiper(el, options));
-    } else if (!mobileQuery.matches && mobileInstances.length) {
-      mobileInstances.forEach((swiper) => swiper.destroy(true, true)); // restores the grid
-      mobileInstances = [];
+  mobileSliders.forEach(({ selector, query, options }) => {
+    const el = document.querySelector(selector);
+    if (!el) return;
+    const mq = window.matchMedia(query);
+    let instance = null;
+
+    function sync() {
+      if (mq.matches && !instance) {
+        instance = new window.Swiper(el, options);
+      } else if (!mq.matches && instance) {
+        instance.destroy(true, true); // restores the grid
+        instance = null;
+      }
     }
-  }
 
-  syncMobileSliders();
-  mobileQuery.addEventListener("change", syncMobileSliders);
+    sync();
+    mq.addEventListener("change", sync);
+  });
 })();
 
 /* ==========================================
@@ -230,6 +236,8 @@
    - Hover: eases to a stop. Drag / swipe: moves the row 1:1 with the pointer;
      on release it carries the swipe momentum and eases back to auto speed.
    - Pauses while off-screen; no jump after switching browser tabs.
+   - Mobile (≤ 576px): the Figma mobile design shows a static 3 × 4 logo grid
+     (CSS), so the marquee stands down there — no clones, no transform, no loop.
 ========================================== */
 (function () {
   const marquees = document.querySelectorAll(".recruiters-section__marquee");
@@ -239,6 +247,7 @@
   const EASE = 6;            // how quickly speed eases toward its target (higher = snappier)
   const MAX_FLING = 1800;    // cap on release momentum, px per second
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const staticGrid = window.matchMedia("(max-width: 576px)");
 
   marquees.forEach((root) => {
     const track = root.querySelector(".recruiters-section__row");
@@ -266,6 +275,14 @@
     function build() {
       track.querySelectorAll("[data-marquee-clone]").forEach((node) => node.remove());
 
+      // Static grid on mobile: originals only, no transform
+      if (staticGrid.matches) {
+        setWidth = 0;
+        x = 0;
+        track.style.transform = "";
+        return;
+      }
+
       const addSet = () =>
         originals.forEach((item) => {
           const clone = item.cloneNode(true);
@@ -277,6 +294,7 @@
       addSet();
       const firstClone = track.querySelector("[data-marquee-clone]");
       setWidth = firstClone.getBoundingClientRect().left - originals[0].getBoundingClientRect().left;
+      if (setWidth <= 0) return; // not laid out yet — a later resize rebuilds
 
       // Need: track width ≥ one set + visible width, so the viewport is always covered.
       const setsNeeded = Math.ceil(root.clientWidth / setWidth) + 1;
@@ -315,7 +333,7 @@
     }
 
     function start() {
-      if (rafId !== null) return;
+      if (rafId !== null || staticGrid.matches) return;
       lastTime = null;
       rafId = requestAnimationFrame(tick);
     }
@@ -336,6 +354,7 @@
 
     /* --- Drag / swipe --- */
     root.addEventListener("pointerdown", (e) => {
+      if (staticGrid.matches) return;
       if (e.pointerType === "mouse" && e.button !== 0) return;
       dragging = true;
       pointerId = e.pointerId;
@@ -409,72 +428,14 @@
       if (document.hidden) stop();
       else if (inView) start();
     });
-  });
-})();
 
-/* ==========================================
-   Footer — accordion columns (mobile only, ≤ 576px)
-   Above 576px the headings are plain text (toggle buttons disabled) and every
-   column is visible. At ≤ 576px each heading becomes a toggle; all columns start
-   collapsed and only one can be open at a time (opening one closes the others).
-   Without JS, all columns stay open.
-========================================== */
-(function () {
-  const columnsWrap = document.querySelector(".site-footer__columns");
-  if (!columnsWrap) return;
-
-  const mobileQuery = window.matchMedia("(max-width: 576px)");
-  const columns = Array.from(columnsWrap.querySelectorAll(".site-footer__column"));
-
-  function setOpen(column, open) {
-    const toggle = column.querySelector(".site-footer__toggle");
-    column.classList.toggle("is-open", open);
-    if (toggle) toggle.setAttribute("aria-expanded", String(open));
-  }
-
-  function enable() {
-    columnsWrap.classList.add("is-accordion");
-    columns.forEach((column) => {
-      const toggle = column.querySelector(".site-footer__toggle");
-      if (toggle) toggle.disabled = false;
-      setOpen(column, false);
+    // Crossing 576px: rebuild for the new layout and stop / resume the loop
+    staticGrid.addEventListener("change", () => {
+      stop();
+      build();
+      if (!staticGrid.matches) start();
     });
-  }
-
-  function disable() {
-    columnsWrap.classList.remove("is-accordion");
-    columns.forEach((column) => {
-      const toggle = column.querySelector(".site-footer__toggle");
-      column.classList.remove("is-open");
-      if (toggle) {
-        toggle.disabled = true;
-        toggle.removeAttribute("aria-expanded");
-      }
-    });
-  }
-
-  columnsWrap.addEventListener("click", (event) => {
-    const toggle = event.target.closest(".site-footer__toggle");
-    if (!toggle || toggle.disabled) return;
-    const column = toggle.closest(".site-footer__column");
-    const willOpen = !column.classList.contains("is-open");
-
-    // Only one item open at a time: close the others before opening this one
-    if (willOpen) {
-      columns.forEach((other) => {
-        if (other !== column) setOpen(other, false);
-      });
-    }
-    setOpen(column, willOpen);
   });
-
-  function sync() {
-    if (mobileQuery.matches) enable();
-    else disable();
-  }
-
-  sync();
-  mobileQuery.addEventListener("change", sync);
 })();
 
 /* ==========================================
@@ -583,4 +544,112 @@
 
   ["play", "pause", "ended"].forEach((type) => video.addEventListener(type, syncPlayState));
   video.addEventListener("volumechange", syncMuteState);
+})();
+
+/* ==========================================
+   APPROVALS — mobile "View More" (Figma 484:2408)
+   On mobile (≤ 576px) the two lists merge into one column (lists are
+   display: contents) in Figma's order: the columns interleave — 2025-26,
+   2023-24 (Working Professionals), 2023-24, 2022-23, 2021-22 … — so each item
+   gets a CSS order of its row × 2 (+1 for the second list). Only the first 5 in
+   that order show; View More reveals the rest and becomes View Less. Above
+   576px the lists are separate flex columns, where the same orders keep each
+   list's own sequence, and the --extra class is ignored. Without JS every
+   item stays visible and the button stays hidden.
+========================================== */
+(() => {
+  const VISIBLE = 5;
+  const columns = document.getElementById("approvals-columns");
+  const button = document.getElementById("approvals-load-more");
+  if (!columns || !button) return;
+
+  const lists = [...columns.querySelectorAll(".approvals-section__list")];
+  const ordered = [];
+  lists.forEach((list, listIndex) => {
+    [...list.children].forEach((item, row) => {
+      const order = row * lists.length + listIndex;
+      item.style.order = String(order);
+      ordered[order] = item;
+    });
+  });
+  const items = ordered.filter(Boolean);
+  if (items.length <= VISIBLE) return;
+
+  items.slice(VISIBLE).forEach((item) => item.classList.add("approvals-section__item--extra"));
+
+  button.hidden = false;
+
+  // Toggles between "View More" (first 5) and "View Less" (every item)
+  button.addEventListener("click", () => {
+    const expand = !columns.classList.contains("is-expanded");
+    columns.classList.toggle("is-expanded", expand);
+    button.setAttribute("aria-expanded", String(expand));
+    button.textContent = expand ? "View Less" : "View More";
+
+    // On collapse the list shrinks above the button; keep the button in view
+    if (!expand) {
+      const top = button.getBoundingClientRect().top;
+      const header = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      if (top < header) button.scrollIntoView({ block: "center" });
+    }
+  });
+})();
+
+/* ==========================================
+   HEADER — mobile slide-in menu (≤ 576px, Figma node 447:9113)
+   The hamburger opens a native <dialog> (focus trap, Esc, inert page); the panel
+   slides in from the right via .is-visible and slides out before close(). Any
+   link inside closes the menu. Above 576px the toggle is hidden, so an open menu
+   is closed if the viewport grows past the breakpoint.
+========================================== */
+(() => {
+  const toggle = document.querySelector(".site-header__menu-toggle");
+  const menu = document.getElementById("mobile-menu");
+  if (!toggle || !menu || typeof menu.showModal !== "function") return;
+
+  const closeButton = menu.querySelector(".mobile-menu__close");
+  const root = document.documentElement;
+  const mobile = window.matchMedia("(max-width: 576px)");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  function open() {
+    if (menu.open) return;
+    menu.showModal();
+    root.classList.add("has-mobile-menu");
+    toggle.setAttribute("aria-expanded", "true");
+    // Next frame, so the transform transition runs from the off-screen state
+    requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add("is-visible")));
+  }
+
+  function close() {
+    if (!menu.open) return;
+    menu.classList.remove("is-visible");
+    if (reducedMotion.matches) {
+      menu.close();
+      return;
+    }
+    menu.addEventListener("transitionend", () => menu.close(), { once: true });
+  }
+
+  // Every way the dialog closes ends here (close button, link, Esc, resize)
+  menu.addEventListener("close", () => {
+    menu.classList.remove("is-visible");
+    root.classList.remove("has-mobile-menu");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.focus({ preventScroll: true });
+  });
+
+  // Esc: run the slide-out instead of the instant native close
+  menu.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    close();
+  });
+
+  toggle.addEventListener("click", open);
+  closeButton.addEventListener("click", close);
+  menu.querySelectorAll("a").forEach((link) => link.addEventListener("click", close));
+
+  mobile.addEventListener("change", (event) => {
+    if (!event.matches && menu.open) menu.close();
+  });
 })();

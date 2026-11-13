@@ -2122,13 +2122,26 @@ a.institutions-section__media {
   z-index: 1;
   width: 52px;
   height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  background-color: var(--color-white);
   border-radius: var(--radius-circle);
+}
+
+/* Play triangle (inline SVG, same shape as the Figma icon); the circle itself
+   stays still and only the icon zooms on hover */
+.testimonials-section__play-icon {
+  width: 13px;
+  height: 16px;
+  fill: currentColor;
   transition: transform var(--transition-base);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .testimonials-section__play:hover {
-    transform: scale(1.06);
+  .testimonials-section__play:hover .testimonials-section__play-icon {
+    transform: scale(1.15);
   }
 }
 

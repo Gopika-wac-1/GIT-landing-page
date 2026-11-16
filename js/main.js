@@ -1,4 +1,25 @@
 /* ==========================================
+   Hero — fill the first screen
+   Sets --hero-offset to the real height of the utility bar + header so the
+   hero is (viewport height − header). CSS has a per-breakpoint fallback; this
+   corrects it when the utility bar wraps or the header changes size.
+========================================== */
+(function () {
+  const parts = [document.getElementById("utility-bar"), document.getElementById("site-header")].filter(Boolean);
+  if (!parts.length || !("ResizeObserver" in window)) return;
+
+  const root = document.documentElement;
+  const update = () => {
+    const offset = parts.reduce((sum, el) => sum + el.offsetHeight, 0);
+    root.style.setProperty("--hero-offset", offset + "px");
+  };
+
+  update();
+  const observer = new ResizeObserver(update);
+  parts.forEach((el) => observer.observe(el));
+})();
+
+/* ==========================================
    About section — stat counters
    Counts each .about-section__stat-value up from 0 to the number in its HTML
    (e.g. "2000+") once the stats scroll into view. Runs once per page load.

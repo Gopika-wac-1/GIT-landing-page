@@ -77,9 +77,10 @@
   --container-width: 1424px;
   --container-gutter: 40px;
   --section-padding-y: 120px;
-  --hero-min-height: 899px;
   --header-height: 120px;
   /* sticky header (used for anchor offset) */
+  --utility-bar-height: 61px;
+  /* blue bar above the header; js/main.js overwrites --hero-offset with the measured total */
 
   /* Components */
   --button-height: 54px;
@@ -785,7 +786,10 @@ html.has-mobile-menu {
   position: relative;
   display: flex;
   align-items: flex-end;
-  min-height: var(--hero-min-height);
+  /* First screen = utility bar + header + hero. min-height (not height) so the hero grows
+     instead of clipping its text on short screens. svh = stable height on mobile browsers. */
+  min-height: calc(100vh - var(--hero-offset, (var(--utility-bar-height) + var(--header-height))));
+  min-height: calc(100svh - var(--hero-offset, (var(--utility-bar-height) + var(--header-height))));
   overflow: hidden;
   color: var(--color-white);
   background-color: var(--color-primary);
@@ -3094,7 +3098,6 @@ html.has-video-modal {
     --font-size-section-title: 40px;
     --font-size-stat: 52px;
     --font-size-card-title: 30px;
-    --hero-min-height: 760px;
   }
 
   .section-title {
@@ -3372,9 +3375,9 @@ html.has-video-modal {
     --font-size-section-title: 34px;
     --font-size-stat: 46px;
     --font-size-card-title: 28px;
-    --hero-min-height: 680px;
     --logo-scale: 0.85;
     --header-height: 97px;
+    --utility-bar-height: 45px;
   }
 
   .section-header {
@@ -3546,7 +3549,6 @@ html.has-video-modal {
     --font-size-section-title: 30px;
     --font-size-stat: 42px;
     --font-size-card-title: 26px;
-    --hero-min-height: 640px;
     --button-height: 50px;
     --button-padding-x: 20px;
     --logo-scale: 0.75;
@@ -3880,6 +3882,7 @@ html.has-video-modal {
   :root {
     --container-gutter: 20px;
     --header-height: 75px;
+    --utility-bar-height: 0px;
   }
 
   /* ---------- Header (Figma 426:7766): no utility bar, hamburger replaces Apply Online ---------- */
@@ -3929,10 +3932,6 @@ html.has-video-modal {
   }
 
   /* ---------- Hero (Figma 426:7101) ---------- */
-  .hero-section {
-    min-height: 720px;
-  }
-
   .hero-section__media::after {
     background-image: linear-gradient(183.256deg, rgba(0, 0, 0, 0) 25.025%, rgba(0, 0, 0, 0.82) 98.494%);
   }

@@ -412,13 +412,76 @@ h6 {
   --button-hover-color: var(--color-primary);
 }
 
-/* Cyan gradient → navy sweep, white text */
+/* Cyan gradient + light sheen, white text. No colour sweep: a diagonal light band
+   glides across instead. Hover and the viewport entry use separate layers so
+   neither restarts or cancels the other:
+     hover/focus → sheen on ::before
+     entry (once) → faint drop-shadow pulse + sheen on ::after */
 .button--gradient {
   --button-background: linear-gradient(to right, var(--color-accent-start), var(--color-accent-end));
   --button-color: var(--color-white);
-  --button-hover-fill: var(--color-primary);
   --button-hover-color: var(--color-white);
   border: 0;
+}
+
+/* Sheen layers: a white band parked off the left edge until animated across */
+.button--gradient::before,
+.button--gradient::after {
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.3) 50%, transparent 65%);
+  transform: translateX(-100%);
+  transition: none;
+  pointer-events: none;
+}
+
+.button--gradient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.button--gradient:focus-visible::before {
+  transform: translateX(-100%);
+  animation: button-sheen 0.8s ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* Plays each time the pointer enters; no reverse sweep on leave */
+  .button--gradient:hover::before {
+    transform: translateX(-100%);
+    animation: button-sheen 0.8s ease-out;
+  }
+}
+
+/* Viewport entry: js/main.js adds .is-in-view once (never removed), so it runs one time */
+.button--gradient.is-in-view {
+  animation: button-glow-pulse 1.6s ease-out;
+}
+
+.button--gradient.is-in-view::after {
+  animation: button-sheen 1s ease-out 0.15s;
+}
+
+@keyframes button-sheen {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes button-glow-pulse {
+
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(22, 174, 229, 0));
+  }
+
+  45% {
+    filter: drop-shadow(0 0 10px rgba(22, 174, 229, 0.5));
+  }
 }
 
 /* White card button → navy sweep, white text, navy border */
@@ -438,6 +501,14 @@ h6 {
   .button,
   .button::before {
     transition: none;
+  }
+
+  /* The moving sheen and entry pulse are skipped */
+  .button--gradient.is-in-view,
+  .button--gradient.is-in-view::after,
+  .button--gradient:hover::before,
+  .button--gradient:focus-visible::before {
+    animation: none;
   }
 }
 

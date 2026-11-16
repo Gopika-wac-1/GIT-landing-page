@@ -20,6 +20,32 @@
 })();
 
 /* ==========================================
+   Gradient buttons — viewport animation
+   Adds .is-in-view the first time each .button--gradient is mostly on screen;
+   the CSS animation plays once. Unobserved afterwards, so it never restarts.
+   Hover is pure CSS (::before overlay) and runs independently of this.
+========================================== */
+(function () {
+  const buttons = document.querySelectorAll(".button--gradient");
+  if (!buttons.length) return;
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion || !("IntersectionObserver" in window)) return; // static gradient
+
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-in-view");
+        obs.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.6 }
+  );
+  buttons.forEach((button) => observer.observe(button));
+})();
+
+/* ==========================================
    About section — stat counters
    Counts each .about-section__stat-value up from 0 to the number in its HTML
    (e.g. "2000+") once the stats scroll into view. Runs once per page load.

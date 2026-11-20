@@ -293,11 +293,11 @@ const introGate = (() => {
 
 /* ==========================================
    Welcome screen (index.html) — background video
-   Uses <video data-welcome-video data-src="…"> (data-src-mobile for ≤ 576px).
-   The photo is the first paint; the video is fetched once the page has loaded
-   and fades in when it is actually playing. Skipped (photo stays) when no
-   source is set, with reduced motion or data saver, or if the file is missing
-   or autoplay is blocked.
+   Uses <video data-welcome-video data-src="…" poster="…"> (data-src-mobile for
+   ≤ 576px). The poster (campus banner) is the first paint; the video is fetched
+   once the page has loaded and takes over from the poster when it plays.
+   Skipped (poster stays) when no source is set, with reduced motion or data
+   saver, or if the file is missing or autoplay is blocked.
 ========================================== */
 (function () {
   const video = document.querySelector("[data-welcome-video]");
@@ -310,8 +310,6 @@ const introGate = (() => {
   const isMobile = window.matchMedia("(max-width: 576px)").matches;
   const src = ((isMobile && video.dataset.srcMobile) || video.dataset.src || "").trim();
   if (!src) return;
-
-  video.addEventListener("playing", () => video.classList.add("is-playing"), { once: true });
 
   const load = () => {
     video.muted = true; // required for autoplay in every browser

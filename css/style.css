@@ -98,6 +98,10 @@
 
   /* Motion */
   --transition-base: 0.2s ease;
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  /* custom cursor + intro (reference easing) */
+  --dark-surface-grid-color: rgba(255, 255, 255, 0.035);
+  /* faint grid on .dark-surface sections */
 }
 
 /* ==========================================
@@ -456,6 +460,8 @@ h6 {
 /* Viewport entry: js/main.js adds .is-in-view once (never removed), so it runs one time */
 .button--gradient.is-in-view {
   animation: button-glow-pulse 1.6s ease-out;
+  /* the drop-shadow pulse can't run on the GPU: keep its repaint on its own layer */
+  will-change: filter;
 }
 
 .button--gradient.is-in-view::after {
@@ -585,6 +591,20 @@ h6 {
   }
 }
 
+/* Hidden on screen but still read by screen readers and search engines
+   (e.g. a heading that the design does not show) */
+.u-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 /* --- Swiper sliders ---
    Swiper's CSS gives .swiper auto side margins; inside a flex column that turns
    off stretching and the slider sizes to its own content (runaway width).
@@ -617,6 +637,401 @@ h6 {
   height: var(--logo-height, 100%);
   max-width: none;
   object-fit: cover;
+}
+
+/* --- Dark surface (Figma 550:3962 "Motion + Dark BG"): News, Life at GIT, footer ---
+   Each section sets --dark-surface-background (navy gradient + glows, measured from the
+   Figma render); ::before draws the faint 96px grid, strongest in the centre.
+   ≤ 576px keeps the flat navy of the mobile design (see section 18). */
+.dark-surface {
+  position: relative;
+  isolation: isolate;
+  background: var(--dark-surface-background, var(--color-primary));
+}
+
+.dark-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(90deg, var(--dark-surface-grid-color) 1px, transparent 1px),
+    linear-gradient(var(--dark-surface-grid-color) 1px, transparent 1px);
+  background-size: 96px 96px;
+  -webkit-mask-image: var(--dark-surface-grid-mask, radial-gradient(ellipse 45% 60% at 50% 50%, #000, transparent));
+  mask-image: var(--dark-surface-grid-mask, radial-gradient(ellipse 45% 60% at 50% 50%, #000, transparent));
+}
+
+/* --- Custom cursor (reference/GIT-landing-scroll-intro.html) ---
+   Fine pointers only, set up by js/main.js (body.has-custom-cursor). A white dot
+   (difference blend) follows the pointer with easing; over links/buttons it becomes a
+   46px ring; over cards with data-cursor="…" it morphs into a wobbling labelled blob
+   (navy, or frosted glass with data-cursor-glass). */
+@media (pointer: fine) {
+
+  body.has-custom-cursor,
+  body.has-custom-cursor * {
+    cursor: none !important;
+  }
+}
+
+.custom-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.custom-cursor__dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--color-white);
+  mix-blend-mode: difference;
+  transition: width 0.35s var(--ease-out-expo), height 0.35s var(--ease-out-expo), margin 0.35s var(--ease-out-expo), background 0.25s, border 0.25s, opacity 0.2s;
+}
+
+.custom-cursor.is-link .custom-cursor__dot {
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  background: transparent;
+  border: 1.5px solid var(--color-white);
+}
+
+/* mix-blend-mode on the dot stops the blob's backdrop-filter from blurring the
+   page (Chrome), so the blend is dropped while the blob is showing */
+.custom-cursor.is-blob .custom-cursor__dot {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  opacity: 0;
+  mix-blend-mode: normal;
+}
+
+.custom-cursor__blob {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  /* Figma hover "Cursor blob": 96 × 90 */
+  width: 96px;
+  height: 90px;
+  margin: -45px 0 0 -48px;
+  opacity: 0;
+  transform: scale(0.15) rotate(30deg);
+  transition: transform 0.45s var(--ease-out-expo), opacity 0.25s ease;
+}
+
+.custom-cursor__blob::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Figma "Blob": #153772 @ 92%, background blur 8 (Figma blur ÷ 2 = CSS px) */
+  background: rgba(21, 55, 114, 0.92);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border-radius: 58% 42% 55% 45% / 47% 58% 42% 53%;
+  animation: custom-cursor-wobble 4s ease-in-out infinite;
+}
+
+/* Figma glass "Blob" (Visit / Read / Play / About): white @ 24%, background blur 20, no stroke */
+.custom-cursor.is-glass .custom-cursor__blob::before {
+  background: rgba(255, 255, 255, 0.24);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.custom-cursor__label {
+  position: relative;
+  font-size: 15px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.2px;
+  color: var(--color-white);
+  opacity: 0;
+  transition: opacity 0.2s ease 0.12s;
+}
+
+.custom-cursor.is-blob .custom-cursor__blob {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+}
+
+.custom-cursor.is-blob .custom-cursor__label {
+  opacity: 1;
+}
+
+.custom-cursor.is-hidden {
+  opacity: 0;
+}
+
+@keyframes custom-cursor-wobble {
+
+  0%,
+  100% {
+    border-radius: 58% 42% 55% 45% / 47% 58% 42% 53%;
+  }
+
+  33% {
+    border-radius: 44% 56% 41% 59% / 58% 44% 56% 42%;
+  }
+
+  66% {
+    border-radius: 52% 48% 62% 38% / 41% 54% 46% 59%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-cursor {
+    display: none;
+  }
+
+  body.has-custom-cursor,
+  body.has-custom-cursor * {
+    cursor: auto !important;
+  }
+}
+
+/* ==========================================
+   3b. PAGE WRAPPER + HERO ENTRANCE  (home.html: .page, html.hero-entrance-pending)
+========================================== */
+.page {
+  position: relative;
+  z-index: 1;
+}
+
+/* Dark backing behind the utility bar + header. Always covered by the bars; it only
+   shows while they fade in during the hero entrance, so they arrive over dark (as in
+   Figma) instead of over a white band. */
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  height: var(--hero-offset, calc(var(--utility-bar-height) + var(--header-height)));
+  background: #0a1a3d;
+  pointer-events: none;
+}
+
+/* --- Hero entrance (Figma 698:2955 motion timeline, played by js/main.js) ---
+   home.html starts with html.hero-entrance-pending: until the entrance starts these
+   sit in their first-keyframe state, so nothing pops when the animations begin.
+   (Without JS, a <noscript> style in home.html shows them; with reduced motion the
+   class is removed at once and the CSS below keeps them visible anyway.) */
+.hero-entrance-pending .utility-bar,
+.hero-entrance-pending .site-header__main,
+.hero-entrance-pending .hero-section__title,
+.hero-entrance-pending .hero-section__description,
+.hero-entrance-pending .hero-section__chip,
+.hero-entrance-pending .hero-section__actions > *,
+.hero-entrance-pending .hero-section__media {
+  opacity: 0;
+}
+
+.hero-entrance-pending .hero-section__media {
+  transform: scale(1.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .hero-entrance-pending .utility-bar,
+  .hero-entrance-pending .site-header__main,
+  .hero-entrance-pending .hero-section__title,
+  .hero-entrance-pending .hero-section__description,
+  .hero-entrance-pending .hero-section__chip,
+  .hero-entrance-pending .hero-section__actions > *,
+  .hero-entrance-pending .hero-section__media {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Title words / description words wrapped by js/main.js so each can move on its own */
+.hero-word {
+  display: inline-block;
+}
+
+/* ==========================================
+   3c. WELCOME SCREEN  (index.html: #welcome-screen / .welcome-screen)
+   Figma 824:1410 ("Image"). One full-viewport screen, no scrolling. Background =
+   the campus banner (sky + campus cut-out, exported from Figma; can be swapped for a
+   video) under Figma's static gradient overlay (node 824:1429). Chips and button use
+   the site's normal sizes; layout, gaps and type follow Figma. js/main.js runs the
+   30 s countdown / Enter key / Enter Now navigation and the pointer parallax.
+========================================== */
+html.is-welcome,
+html.is-welcome body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.welcome-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100vh;
+  height: 100dvh;
+  padding: 0 var(--container-gutter) clamp(40px, 7.5vh, 77px);
+  overflow: hidden;
+  color: var(--color-white);
+  background-color: #0a1a3d;
+}
+
+/* Static background (no pointer movement) */
+.welcome-screen__media {
+  position: absolute;
+  inset: 0;
+}
+
+.welcome-screen__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+/* Optional background video over the photo, under the gradient (::after); invisible
+   until it is actually playing (.is-playing, js/main.js), then fades in */
+.welcome-screen__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.welcome-screen__video.is-playing {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-screen__video {
+    transition: none;
+  }
+}
+
+/* Figma "Overlay (static gradient)" 824:1429 */
+.welcome-screen__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(1.2667deg, rgba(0, 0, 0, 0.72) 24.19%, rgba(0, 0, 0, 0) 60.422%);
+}
+
+.welcome-screen__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 55px;
+  width: min(776px, 100%);
+  text-align: center;
+}
+
+.welcome-screen__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  width: 100%;
+}
+
+/* Abhaya Libre 69.6px, tracking 0.696px, horizontally condensed to 91 % (Figma) */
+.welcome-screen__title {
+  width: 100%;
+  font-family: "Abhaya Libre", var(--font-heading);
+  font-size: clamp(40px, 3.625vw, 69.6px);
+  font-weight: var(--font-weight-regular);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  transform: scaleX(0.91);
+}
+
+.welcome-screen__chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Same glass chip as the hero (Figma: white 10 %, border white 12 %, blur) */
+.welcome-screen__chip {
+  --chip-background: rgba(255, 255, 255, 0.1);
+  --chip-border-color: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.welcome-screen__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 19px;
+}
+
+/* "ENTERING IN 30s – OR PRESS ENTER": uppercase, wide tracking (0.488 em), 91 % width */
+.welcome-screen__countdown {
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  letter-spacing: 0.488em;
+  text-transform: uppercase;
+  /* the last letter's tracking would push the centred line left */
+  margin-right: -0.488em;
+  transform: scaleX(0.91);
+}
+
+.welcome-screen__countdown-value {
+  display: inline-block;
+  min-width: 2ch;
+  color: #007aff;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Leaving for home.html: a short fade so the hand-over isn't a hard cut */
+.welcome-screen.is-leaving {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+@media (max-width: 576px) {
+  .welcome-screen__content {
+    gap: 40px;
+  }
+
+  .welcome-screen__intro {
+    gap: 20px;
+  }
+
+  .welcome-screen__countdown {
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.3em;
+    margin-right: -0.3em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .welcome-screen.is-leaving {
+    transition: none;
+  }
 }
 
 /* ==========================================
@@ -719,6 +1134,36 @@ h6 {
   width: 69px;
   height: 64px;
   object-fit: contain;
+}
+
+/* Desktop / tablet (≥ 768px): compact 96px header, logos scaled to fit (~0.92×).
+   Smaller screens keep their own header sizes (see the ≤ 767.98px / ≤ 576px blocks). */
+@media (min-width: 768px) {
+  :root {
+    --header-height: 96px;
+  }
+
+  .site-header__main-inner {
+    min-height: 95px; /* + 1px border-bottom = 96px */
+  }
+
+  .site-header__logo-wrap {
+    padding-right: 10px;
+  }
+
+  .site-header__logo {
+    width: 157px;
+    height: 60px;
+  }
+
+  .site-header__nba-wrap {
+    padding-left: 15px;
+  }
+
+  .site-header__nba {
+    width: 64px;
+    height: 59px;
+  }
 }
 
 /* Hamburger (Figma 426:7775) — only displayed on mobile (see ≤ 576px block) */
@@ -881,7 +1326,26 @@ html.has-mobile-menu {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 71.7%;
+  /* campus banner (Figma 698:2955 hero): anchored to its bottom edge */
+  object-position: 50% 100%;
+}
+
+/* Background video sits over the photo (which stays as poster/fallback) and under the
+   dark gradient overlay below; fades in only once it is actually playing (.is-playing) */
+.hero-section__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* same crop as .hero-section__image, so the frame lines up with the photo under it */
+  object-position: 50% 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.hero-section__video.is-playing {
+  opacity: 1;
 }
 
 .hero-section__media::after {
@@ -889,6 +1353,51 @@ html.has-mobile-menu {
   position: absolute;
   inset: 0;
   background-image: linear-gradient(11.385deg, rgba(0, 0, 0, 0.76) 22.742%, rgba(0, 0, 0, 0) 51.106%);
+}
+
+/* Pause/play button for the background video: glass circle like the hero chips */
+.hero-section__video-toggle {
+  position: absolute;
+  bottom: 24px;
+  right: var(--container-gutter);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--color-white);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background-color var(--transition-base);
+}
+
+.hero-section__video-toggle[hidden] {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-section__video-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.hero-section__video-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Shows pause while playing, play while paused */
+.hero-section__video-icon--play,
+.hero-section__video-toggle.is-paused .hero-section__video-icon--pause {
+  display: none;
+}
+
+.hero-section__video-toggle.is-paused .hero-section__video-icon--play {
+  display: block;
 }
 
 .hero-section__container {
@@ -948,7 +1457,14 @@ html.has-mobile-menu {
 .hero-section__actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-section__video {
+    transition: none;
+  }
 }
 
 /* ==========================================
@@ -1418,7 +1934,11 @@ a.institutions-section__media {
   --section-title-color: var(--color-white);
   padding-block: var(--section-padding-y);
   color: var(--color-white);
-  background-color: var(--color-primary);
+  /* .dark-surface: glow top-right, teal glow bottom-left, navy → blue diagonal */
+  --dark-surface-background:
+    radial-gradient(ellipse 36% 42% at 92% 20%, rgba(44, 104, 200, 0.7), transparent 70%),
+    radial-gradient(ellipse 40% 50% at 0% 100%, rgba(26, 92, 140, 0.85), transparent 75%),
+    linear-gradient(140deg, #0d2350 0%, #0d2350 18%, #174085 60%, #1a4590 100%);
 }
 
 .news-section__container {
@@ -1579,18 +2099,36 @@ a.institutions-section__media {
   transform: translateY(-55.2%);
 }
 
+/* Figma "Hover tint" (#153772 at 22%) sits between the photo and the shade, so it
+   is a background layer under the shade gradient. Registered as a <color> so the
+   fade (smart animate 350ms ease-out) can transition it. */
+@property --news-hover-tint {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(21, 55, 114, 0);
+}
+
 .news-section__overlay {
   position: absolute;
   inset: 0;
   background:
     linear-gradient(to bottom, rgba(12, 12, 15, 0), var(--news-shade-color) 75.83%) bottom / 100% var(--news-shade-height) no-repeat,
+    linear-gradient(var(--news-hover-tint), var(--news-hover-tint)),
     linear-gradient(var(--news-tint), var(--news-tint));
+  transition: --news-hover-tint 0.35s ease-out;
 }
 
 .news-section__card--featured .news-section__overlay {
   background:
     linear-gradient(to bottom, rgba(12, 12, 15, 0), var(--news-shade-color) 75.83%) bottom / 100% var(--news-shade-height) no-repeat,
-    linear-gradient(to bottom, rgba(0, 0, 0, 0) 76.011%, rgba(0, 0, 0, 0.3));
+    linear-gradient(to bottom, rgba(0, 0, 0, 0) 76.011%, rgba(0, 0, 0, 0.3)),
+    linear-gradient(var(--news-hover-tint), var(--news-hover-tint));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .news-section__card:hover .news-section__overlay {
+    --news-hover-tint: rgba(21, 55, 114, 0.22);
+  }
 }
 
 .news-section__card-text {
@@ -1796,8 +2334,8 @@ a.institutions-section__media {
 .approvals-section__partners {
   display: flex;
   align-items: center;
-  padding-top: 60px;
-  border-top: 1px solid var(--color-divider);
+  /* padding-top: 60px; */
+  /* border-top: 1px solid var(--color-divider); */
 }
 
 .approvals-section__partners-title {
@@ -1841,13 +2379,89 @@ a.institutions-section__media {
   --logo-ratio: 173 / 75;
 }
 
+/* --- Partners logo marquee (Figma 550:3962: the row runs past the edge and fades out) ---
+   js/main.js (Logo marquees) clones the set and moves it right → left; hover pauses,
+   drag/swipe moves it. ≥ 577px only — the mobile design keeps its 3 × 2 grid. */
+.approvals-section__marquee {
+  --partners-logo-gap: 22px;
+  /* ≈ Figma spacing: 172.8px frames, one every ~195px */
+  --partners-fade: 80px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+@media (min-width: 577px) {
+  .approvals-section__marquee.is-ready {
+    overflow: hidden;
+    cursor: grab;
+    touch-action: pan-y;
+    /* vertical page scroll stays native; horizontal swipes drive the row */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--partners-fade), #000 calc(100% - var(--partners-fade)), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 var(--partners-fade), #000 calc(100% - var(--partners-fade)), transparent);
+  }
+
+  .approvals-section__marquee.is-dragging {
+    cursor: grabbing;
+  }
+
+  /* One nowrap row at the Figma frame size (overrides the static grid/row layouts) */
+  .approvals-section__marquee.is-ready .approvals-section__logos {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 0 var(--partners-logo-gap);
+    width: max-content;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .approvals-section__marquee.is-ready .logo-frame {
+    flex-shrink: 0;
+    width: calc(var(--logo-frame-width, 172.8px) * var(--logo-scale));
+    max-width: none;
+    height: calc(var(--logo-frame-height, 100px) * var(--logo-scale));
+    aspect-ratio: auto;
+  }
+
+  .approvals-section__marquee img {
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+}
+
+/* Title above the logos (≤ 1280px): the strip spans the full width */
+@media (max-width: 1280px) {
+  .approvals-section__marquee {
+    flex: none;
+    width: 100%;
+  }
+}
+
+/* Mobile: no marquee — the wrapper steps aside for the 3 × 2 grid */
+@media (max-width: 576px) {
+  .approvals-section__marquee {
+    display: contents;
+  }
+}
+
 /* ==========================================
    11. CAMPUS LIFE SECTION  (#campus-life / .campus-life-section)
 ========================================== */
 
 .campus-life-section {
   padding-block: 100px;
-  background-color: var(--color-primary);
+  /* .dark-surface: glow top-left, darker top-centre, broad glow bottom-right */
+  --dark-surface-background:
+    radial-gradient(ellipse 26% 70% at 11% 0%, rgba(46, 98, 184, 0.85), transparent 70%),
+    radial-gradient(ellipse 35% 75% at 42% 0%, rgba(13, 35, 80, 0.75), transparent 72%),
+    radial-gradient(ellipse 65% 120% at 100% 100%, rgba(30, 104, 176, 0.9), transparent 75%),
+    linear-gradient(0deg, rgba(30, 84, 160, 0.45), transparent 30%),
+    #13336b;
 }
 
 .campus-life-section__container {
@@ -1925,8 +2539,41 @@ a.institutions-section__media {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  position: relative;
   padding: 42px;
   background-color: var(--color-white);
+}
+
+/* Figma "Accent": #EABC33, 4px along the bottom edge, grows left → right on hover
+   (smart animate 350ms ease-out) */
+.campus-life-section__card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background-color: #eabc33;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.35s ease-out;
+  pointer-events: none;
+}
+
+.campus-life-section__card:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .campus-life-section__card:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campus-life-section__card::after {
+    transition: none;
+  }
 }
 
 .campus-life-section__card-top {
@@ -2049,6 +2696,16 @@ a.institutions-section__media {
   cursor: grabbing;
 }
 
+/* Logos fade in/out at both ends, like the partners strip (≥ 577px; the mobile
+   design is a static grid) */
+@media (min-width: 577px) {
+  .recruiters-section__marquee.is-ready {
+    --recruiters-fade: 80px;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--recruiters-fade), #000 calc(100% - var(--recruiters-fade)), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 var(--recruiters-fade), #000 calc(100% - var(--recruiters-fade)), transparent);
+  }
+}
+
 .recruiters-section__marquee.is-ready .recruiters-section__row {
   flex-wrap: nowrap;
   justify-content: flex-start;
@@ -2166,11 +2823,33 @@ a.institutions-section__media {
   overflow: hidden;
 }
 
+/* Figma "Hover tint": #153772 at 22% over the photo, under the bottom shade
+   (::after) and the play button; fades in on card hover (smart animate 350ms ease-out) */
+.testimonials-section__media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Explicit layers: photo (zoomed on hover, so it gets its own layer) < tint (1)
+     < bottom shade (1, later in the DOM) < play button (2) */
+  z-index: 1;
+  background-color: var(--color-primary);
+  opacity: 0;
+  transition: opacity 0.35s ease-out;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .testimonials-section__card:hover .testimonials-section__media::before {
+    opacity: 0.22;
+  }
+}
+
 .testimonials-section__media--shade::after,
 .testimonials-section__media--shade-strong::after {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 1;
   background-image: linear-gradient(to bottom, rgba(4, 4, 4, 0) 50.266%, rgba(0, 0, 0, 0.6));
   pointer-events: none;
 }
@@ -2184,6 +2863,24 @@ a.institutions-section__media {
   height: 100%;
   object-fit: cover;
   object-position: center bottom;
+  /* Hover zoom (same feel as the news cards); the media box clips it */
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.testimonials-section__card:focus-within .testimonials-section__image {
+  transform: scale(1.05);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .testimonials-section__card:hover .testimonials-section__image {
+    transform: scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonials-section__image {
+    transition: none;
+  }
 }
 
 .testimonials-section__image--cover {
@@ -2194,7 +2891,7 @@ a.institutions-section__media {
   position: absolute;
   left: 24px;
   bottom: 24px;
-  z-index: 1;
+  z-index: 2;
   width: 52px;
   height: 52px;
   display: flex;
@@ -2613,7 +3310,14 @@ a.institutions-section__media {
 .site-footer {
   padding-top: 100px;
   color: var(--color-white);
-  background-color: var(--color-primary);
+  /* .dark-surface (fitted to the Figma 550:3962 render): glow right-centre,
+     teal glow bottom-left, navy → blue diagonal; grid strongest in the centre */
+  --dark-surface-background:
+    radial-gradient(ellipse 30.75% 75% at 91% 47%, rgba(44, 99, 192, 0.82), transparent 70%),
+    radial-gradient(ellipse 46% 87.5% at 0% 100%, rgba(24, 96, 146, 0.53), transparent 75%),
+    linear-gradient(153.75deg, #0d2350 0%, #0d2350 18%, #194185 70%, #1f4fa4 100%);
+  --dark-surface-grid-color: rgba(255, 255, 255, 0.055);
+  --dark-surface-grid-mask: radial-gradient(ellipse 52% 52.5% at 50% 50.75%, #000, transparent);
 }
 
 .site-footer__top {
@@ -3627,7 +4331,8 @@ html.has-video-modal {
   }
 
   /* Portrait mobile photo (Hero-mobile.png): show it whole, centred */
-  .hero-section__image {
+  .hero-section__image,
+  .hero-section__video {
     object-position: center;
   }
 
@@ -3956,6 +4661,15 @@ html.has-video-modal {
     --utility-bar-height: 0px;
   }
 
+  /* Mobile design keeps flat navy for News / Life at GIT / footer (no glows, no grid) */
+  .dark-surface {
+    --dark-surface-background: var(--color-primary);
+  }
+
+  .dark-surface::before {
+    display: none;
+  }
+
   /* ---------- Header (Figma 426:7766): no utility bar, hamburger replaces Apply Online ---------- */
   .utility-bar,
   .site-header__button {
@@ -4053,6 +4767,12 @@ html.has-video-modal {
     width: 100%;
     padding-inline: 24px;
   }
+
+  /* Full-width buttons reach the right edge here, so drop the video toggle into the
+     60px bottom padding (8px gap below Contact Us) instead of overlapping it */
+  .hero-section__video-toggle {
+    bottom: 8px;
+  }
 }
 
 /* ---------- Mobile (≤ 576px), continued: section headings + Find Your Path ---------- */
@@ -4086,9 +4806,26 @@ html.has-video-modal {
     --section-title-color: var(--color-white);
   }
 
-  /* No "View All" buttons in the Figma mobile design */
+  /* "View All" below the content, full width (Figma mobile "Mobile" buttons 541:3763,
+     541:3887, 541:3906, 541:3897): 52px tall, 14px × 24px padding (stroke inside), 16px medium label
+     + 24px arrow, 8px apart. 32px under Find Your Path / Students speak, 24px under
+     News / Our Recruiters. (The heading-row View All stays hidden on mobile.) */
   .button.section-view-all--bottom {
-    display: none;
+    --button-height: 52px;
+    --button-padding-x: 24px;
+    /* Figma's 14px includes its inside 1px stroke; CSS adds the border outside */
+    --button-padding-y: 13px;
+    --button-gap: 8px;
+    --button-font-size: 16px;
+    --icon-size: 24px;
+    display: flex;
+    width: 100%;
+    margin-top: 32px;
+  }
+
+  .news-section .section-view-all--bottom,
+  .recruiters-section__container > .section-view-all--bottom {
+    margin-top: 24px;
   }
 
   /* ---------- Find Your Path (Figma 426:7121): static 2 × 2 grid ---------- */

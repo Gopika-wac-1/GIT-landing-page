@@ -1,4 +1,29 @@
 /* ==========================================
+   Intro gates (home.html hero entrance)
+   Work that should wait for the hero entrance hooks in here: revealStart opens
+   when the entrance begins (or at once when it is skipped / on pages without a
+   hero), revealEnd when the entrance has finished.
+========================================== */
+const introGate = (() => {
+  const gate = () => {
+    let isOpen = false;
+    const queue = [];
+    return {
+      then(fn) {
+        if (isOpen) fn();
+        else queue.push(fn);
+      },
+      open() {
+        if (isOpen) return;
+        isOpen = true;
+        queue.splice(0).forEach((fn) => fn());
+      },
+    };
+  };
+  return { revealStart: gate(), revealEnd: gate() };
+})();
+
+/* ==========================================
    Hero — fill the first screen
    Sets --hero-offset to the real height of the utility bar + header so the
    hero is (viewport height − header). CSS has a per-breakpoint fallback; this
@@ -17,6 +42,474 @@
   update();
   const observer = new ResizeObserver(update);
   parts.forEach((el) => observer.observe(el));
+})();
+
+/* ==========================================
+   Hero — background video
+   Smooth hand-over from the photo to the video after the hero appears:
+   - Buffering starts after the page has loaded (so the first view is never
+     delayed) and runs while the intro is on screen. The video is not played
+     (no decoding work) yet.
+   - It starts only once the hero entrance animation has finished AND it can
+     play through without stalling, then cross-fades over the photo (0.8 s).
+     During the entrance (zoom-out, blurred title words, chips, buttons) the
+     banner shows the still photo, so video decoding never competes with those
+     animations — starting it then made the banner shiver on desktop.
+   Skipped with reduced motion or data saver; if the file is missing or can't
+   play, the photo simply stays. The pause/play button appears once it plays
+   (WCAG 2.2.2).
+========================================== */
+(function () {
+  const video = document.querySelector("[data-hero-video]");
+  if (!video) return;
+  const toggle = document.querySelector("[data-hero-video-toggle]");
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const saveData = navigator.connection && navigator.connection.saveData;
+  if (reduceMotion || saveData) return;
+
+  const isMobile = window.matchMedia("(max-width: 576px)").matches;
+  const src = (isMobile && video.dataset.srcMobile) || video.dataset.src;
+  if (!src) return;
+
+  const canPlayThrough = () => video.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA;
+  let entranceStarted = false;
+  let entranceEnded = false;
+  let started = false;
+
+  const setPaused = (paused) => {
+    if (!toggle) return;
+    toggle.classList.toggle("is-paused", paused);
+    toggle.setAttribute("aria-label", paused ? "Play background video" : "Pause background video");
+  };
+
+  video.addEventListener("playing", () => {
+    video.classList.add("is-playing");
+    if (toggle) toggle.hidden = false;
+    setPaused(false);
+  });
+  video.addEventListener("pause", () => setPaused(true));
+
+  if (toggle) {
+    toggle.addEventListener("click", () => {
+      if (video.paused) video.play().catch(() => {});
+      else video.pause();
+    });
+  }
+
+  const startVideo = () => {
+    if (started) return;
+    started = true;
+    video.play().catch(() => {}); // autoplay blocked → photo stays
+  };
+
+  // Called whenever something changes; starts the video once the moment is right
+  const update = () => {
+    if (started || !entranceStarted || !entranceEnded || !canPlayThrough()) return;
+    startVideo();
+  };
+
+  video.addEventListener("canplaythrough", update);
+
+  introGate.revealStart.then(() => {
+    entranceStarted = true;
+    update();
+  });
+
+  introGate.revealEnd.then(() => {
+    entranceEnded = true;
+    update();
+  });
+
+  // Buffer during the intro, after everything else on the page has loaded
+  const preload = () => {
+    video.preload = "auto";
+    video.src = src;
+    video.load();
+  };
+  if (document.readyState === "complete") preload();
+  else window.addEventListener("load", preload, { once: true });
+})();
+
+/* ==========================================
+   Hero entrance (home.html, Figma 698:2955 motion timeline)
+   home.html starts with html.hero-entrance-pending, which holds the utility bar,
+   header and hero content in their first-keyframe state. Once the fonts and the
+   hero photo are ready (max 1.5 s wait), the entrance plays: bars slide down, the
+   photo fades in and settles from 120 %, the title arrives word by word, then the
+   description lines, chips and buttons. introGate.revealStart / revealEnd mark
+   its start and end (the hero video waits for revealEnd).
+   Loading with a #hash (e.g. home.html#admissions) or with reduced motion skips
+   the entrance: everything is shown at once.
+========================================== */
+(function () {
+  const root = document.documentElement;
+  const hero = document.getElementById("hero");
+
+  const openGates = () => {
+    root.classList.remove("hero-entrance-pending");
+    introGate.revealStart.open();
+    introGate.revealEnd.open();
+  };
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!hero || !root.classList.contains("hero-entrance-pending") || reduceMotion || window.location.hash) {
+    openGates();
+    return;
+  }
+
+  const EASE_OUT = "cubic-bezier(0.22, 1, 0.36, 1)";
+
+  // Wraps each word in span.hero-word (whitespace and <br> stay between them;
+  // inline elements such as the mobile-only "." stay attached to their word)
+  function splitWords(el) {
+    const words = [];
+    const nodes = Array.from(el.childNodes);
+    let current = null;
+    el.textContent = "";
+    nodes.forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        node.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) {
+            el.appendChild(document.createTextNode(part));
+            current = null;
+            return;
+          }
+          current = document.createElement("span");
+          current.className = "hero-word";
+          current.textContent = part;
+          el.appendChild(current);
+          words.push(current);
+        });
+      } else if (node.nodeName === "BR") {
+        el.appendChild(node);
+        current = null;
+      } else if (current) {
+        current.appendChild(node);
+      } else {
+        el.appendChild(node);
+      }
+    });
+    return words;
+  }
+
+  // Line index of each word (words on the same visual line share an offsetTop)
+  function lineIndexes(words) {
+    const tops = [];
+    return words.map((word) => {
+      const top = word.offsetTop;
+      let index = tops.findIndex((t) => Math.abs(t - top) < 4);
+      if (index === -1) {
+        tops.push(top);
+        index = tops.length - 1;
+      }
+      return index;
+    });
+  }
+
+  // fill: "backwards" holds the first keyframe during the delay; once finished the
+  // element is back on its own CSS (no leftover inline styles)
+  const play = (el, keyframes, delay, duration, easing = EASE_OUT) =>
+    el.animate(keyframes, { delay, duration, easing, fill: "backwards" });
+
+  let started = false;
+  function reveal() {
+    if (started) return;
+    started = true;
+    introGate.revealStart.open();
+
+    const anims = [];
+    const from = (y, scale = 1, extra = {}) => ({ opacity: 0, transform: `translateY(${y}px) scale(${scale})`, ...extra });
+    const to = (extra = {}) => ({ opacity: 1, transform: "translateY(0) scale(1)", ...extra });
+
+    const utility = document.getElementById("utility-bar");
+    const headerMain = document.querySelector(".site-header__main");
+    const media = hero.querySelector(".hero-section__media");
+    const title = hero.querySelector(".hero-section__title");
+    const description = hero.querySelector(".hero-section__description");
+    const chips = hero.querySelectorAll(".hero-section__chip");
+    const actions = hero.querySelector(".hero-section__actions");
+
+    // Utility bar: 100 ms, 700 ms, from −30px · Header: 200 ms, 800 ms, from −40px
+    if (utility) anims.push(play(utility, [from(-30), to()], 100, 700));
+    if (headerMain) anims.push(play(headerMain, [from(-40), to()], 200, 800));
+
+    // Hero photo/video: fades in over 1 s and settles from 120 % over 7.5 s
+    if (media) {
+      play(media, [{ opacity: 0 }, { opacity: 1 }], 0, 1000, "ease-out");
+      play(media, [{ transform: "scale(1.2)" }, { transform: "scale(1)" }], 0, 7500, "ease");
+    }
+
+    // Title: word by word from 48px below, blurred 14px → sharp (537 ms, 188 ms apart)
+    if (title) {
+      splitWords(title).forEach((word, i) => {
+        // The blur can't run on the GPU: give each word its own layer while it animates,
+        // so only that word is repainted per frame (not the hero area over the video)
+        word.style.willChange = "transform, opacity, filter";
+        const anim = play(word, [from(48, 1, { filter: "blur(14px)" }), to({ filter: "blur(0px)" })], 300 + i * 188, 537);
+        const release = () => { word.style.willChange = ""; };
+        anim.finished.then(release, release);
+        anims.push(anim);
+      });
+    }
+
+    // Description: line by line from 20px below (615 ms, 185 ms apart)
+    if (description) {
+      const words = splitWords(description);
+      lineIndexes(words).forEach((line, i) => {
+        anims.push(play(words[i], [from(20), to()], 900 + line * 185, 615));
+      });
+    }
+
+    // Chips: 1.9 s on, 80 ms apart, 600 ms, from 18px below at 94 %
+    chips.forEach((chip, i) => {
+      anims.push(play(chip, [from(18, 0.94), to()], 1900 + i * 80, 600));
+    });
+
+    // Buttons: 2.3 s on, 120 ms apart, 700 ms, from 22px below at 95 %
+    if (actions) {
+      Array.from(actions.children).forEach((button, i) => {
+        anims.push(play(button, [from(22, 0.95), to()], 2300 + i * 120, 700));
+      });
+    }
+
+    // All animations above already hold their first frame, so this can't flash
+    root.classList.remove("hero-entrance-pending");
+
+    const end = () => introGate.revealEnd.open();
+    Promise.all(anims.map((a) => a.finished)).then(end, end);
+  }
+
+  // Start once the title font and the hero photo are ready (so lines are measured
+  // correctly and the photo doesn't fade in empty) — but never wait more than 1.5 s
+  const photo = hero.querySelector(".hero-section__image");
+  const ready = [
+    document.fonts ? document.fonts.ready : null,
+    photo && photo.decode ? photo.decode() : null,
+  ].filter(Boolean).map((promise) => promise.catch(() => {}));
+  Promise.race([Promise.all(ready), new Promise((resolve) => window.setTimeout(resolve, 1500))]).then(reveal);
+})();
+
+/* ==========================================
+   Welcome screen (index.html) — background video
+   Uses <video data-welcome-video data-src="…"> (data-src-mobile for ≤ 576px).
+   The photo is the first paint; the video is fetched once the page has loaded
+   and fades in when it is actually playing. Skipped (photo stays) when no
+   source is set, with reduced motion or data saver, or if the file is missing
+   or autoplay is blocked.
+========================================== */
+(function () {
+  const video = document.querySelector("[data-welcome-video]");
+  if (!video) return;
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const saveData = navigator.connection && navigator.connection.saveData;
+  if (reduceMotion || saveData) return;
+
+  const isMobile = window.matchMedia("(max-width: 576px)").matches;
+  const src = ((isMobile && video.dataset.srcMobile) || video.dataset.src || "").trim();
+  if (!src) return;
+
+  video.addEventListener("playing", () => video.classList.add("is-playing"), { once: true });
+
+  const load = () => {
+    video.muted = true; // required for autoplay in every browser
+    video.src = src;
+    video.play().catch(() => {}); // autoplay blocked / file missing → photo stays
+  };
+
+  if (document.readyState === "complete") load();
+  else window.addEventListener("load", load, { once: true });
+})();
+
+/* ==========================================
+   Welcome screen (index.html) — navigation to home.html
+   Goes to the "Enter Now" link's href (home.html) when any one of these happens:
+   the link is clicked, Enter is pressed, or 30 s have passed. A flag makes sure
+   it navigates only once; the countdown timer and key listener are cleared
+   first. Ctrl/⌘/Shift/middle-click on the link keep the browser's own behaviour
+   (new tab/window), and Enter with a modifier key is left to the browser.
+========================================== */
+(function () {
+  const screen = document.querySelector("[data-welcome]");
+  const link = document.querySelector("[data-welcome-enter]");
+  if (!screen || !link) return;
+
+  const SECONDS = 30;
+  const countdownValue = document.querySelector("[data-welcome-countdown]");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const keys = new AbortController();
+  let done = false;
+  let timer = null;
+  let deadline = 0;
+
+  const enter = () => {
+    if (done) return;
+    done = true;
+    window.clearInterval(timer);
+    keys.abort();
+    // Short fade-out (0.3 s) so the hand-over to the main page isn't a hard cut
+    if (reduceMotion) {
+      window.location.href = link.href;
+      return;
+    }
+    screen.classList.add("is-leaving");
+    window.setTimeout(() => { window.location.href = link.href; }, 300);
+  };
+
+  // Ticks from a fixed deadline (no drift if a tick runs late); enters at 0
+  const tick = () => {
+    const remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+    if (countdownValue) countdownValue.textContent = String(remaining);
+    if (remaining === 0) enter();
+  };
+
+  const start = () => {
+    window.clearInterval(timer);
+    deadline = Date.now() + SECONDS * 1000;
+    tick();
+    timer = window.setInterval(tick, 1000);
+  };
+
+  link.addEventListener("click", (event) => {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    enter();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" || event.repeat || event.isComposing) return;
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    // Enter on the focused link already fires its click (handled above)
+    if (event.target instanceof Element && event.target.closest("a, button, input, select, textarea")) return;
+    event.preventDefault();
+    enter();
+  }, { signal: keys.signal });
+
+  start();
+
+  // Back button can restore this page from the back/forward cache after leaving it,
+  // with the countdown finished: reload so it starts over with fresh listeners
+  window.addEventListener("pageshow", (event) => {
+    if (!event.persisted) return;
+    window.location.reload();
+  });
+})();
+
+/* ==========================================
+   Custom cursor
+   Port of the reference cursor: a dot that follows the pointer with easing
+   (0.16 per frame), a ring over links/buttons, and a labelled blob over cards
+   marked data-cursor="Visit|About|View|Read|Explore|Play" (data-cursor-glass =
+   frosted blob). Fine pointers only, off with reduced motion (native cursor).
+   Hidden over the map iframe (its own cursor shows there) and while a dialog
+   is open (dialogs sit in the top layer, above any z-index).
+========================================== */
+(function () {
+  const cursor = document.querySelector("[data-cursor-root]");
+  if (!cursor) return;
+
+  const fine = window.matchMedia("(pointer: fine)").matches;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!fine || reduceMotion) {
+    cursor.remove();
+    return;
+  }
+
+  const label = cursor.querySelector(".custom-cursor__label");
+  const LINK = "a[href], button, [role='tab']";
+  const STATES = ["is-link", "is-blob", "is-glass"];
+  let tx = window.innerWidth / 2;
+  let ty = window.innerHeight / 2;
+  let x = tx;
+  let y = ty;
+  let started = false;
+  let running = false;
+  let overFrame = false;
+  let dialogOpen = false;
+
+  document.body.classList.add("has-custom-cursor");
+
+  const syncVisibility = () => {
+    cursor.classList.toggle("is-hidden", !started || overFrame || dialogOpen);
+  };
+
+  function loop() {
+    x += (tx - x) * 0.16;
+    y += (ty - y) * 0.16;
+    cursor.style.transform = `translate3d(${x}px,${y}px,0)`;
+    if (Math.abs(tx - x) < 0.1 && Math.abs(ty - y) < 0.1) {
+      running = false;
+      return;
+    }
+    window.requestAnimationFrame(loop);
+  }
+
+  window.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "touch") return;
+    tx = event.clientX;
+    ty = event.clientY;
+    if (!started) {
+      x = tx;
+      y = ty;
+      started = true;
+      syncVisibility();
+    }
+    if (!running) {
+      running = true;
+      window.requestAnimationFrame(loop);
+    }
+  }, { passive: true });
+
+  document.documentElement.addEventListener("mouseleave", () => cursor.classList.add("is-hidden"));
+  document.documentElement.addEventListener("mouseenter", syncVisibility);
+
+  // Shape follows what's under the pointer: card blob > link ring > dot
+  document.addEventListener("pointerover", (event) => {
+    const el = event.target instanceof Element ? event.target : null;
+    cursor.classList.remove(...STATES);
+    overFrame = !!(el && el.closest("iframe"));
+    syncVisibility();
+    if (!el) return;
+    const card = el.closest("[data-cursor]");
+    if (card) {
+      label.textContent = card.dataset.cursor;
+      cursor.classList.add("is-blob");
+      if (card.hasAttribute("data-cursor-glass")) cursor.classList.add("is-glass");
+    } else if (el.closest(LINK)) {
+      cursor.classList.add("is-link");
+    }
+  });
+
+  // Native cursor while a dialog (video modal / mobile menu) is open
+  const dialogs = document.querySelectorAll("dialog");
+  const syncDialogs = () => {
+    dialogOpen = Array.from(dialogs).some((d) => d.open);
+    document.body.classList.toggle("has-custom-cursor", !dialogOpen);
+    syncVisibility();
+  };
+  const observer = new MutationObserver(syncDialogs);
+  dialogs.forEach((d) => observer.observe(d, { attributes: true, attributeFilter: ["open"] }));
+})();
+
+/* ==========================================
+   Cursor cards — whole card triggers its action
+   Cards that show a cursor label (data-cursor) but are not links themselves
+   (institution cards → their "Visit" link, Students speak → the play button)
+   forward a click on empty card space to the card's own link/button, so the
+   "Visit" / "Play" cursor does what it says. Keyboard users still tab to the
+   real link/button.
+========================================== */
+(function () {
+  document.querySelectorAll("[data-cursor]:not(a)").forEach((card) => {
+    const action = card.querySelector(".button, .testimonials-section__play");
+    if (!action) return;
+    card.addEventListener("click", (event) => {
+      if (event.target.closest("a, button, input, select, textarea, label")) return;
+      action.click();
+    });
+  });
 })();
 
 /* ==========================================
@@ -42,7 +535,9 @@
     },
     { threshold: 0.6 }
   );
-  buttons.forEach((button) => observer.observe(button));
+  // The hero's "Enter Now" is under the intro overlay at first: wait until the hero
+  // entrance has finished, or the pulse would play unseen / clash with the entrance
+  introGate.revealEnd.then(() => buttons.forEach((button) => observer.observe(button)));
 })();
 
 /* ==========================================
@@ -183,7 +678,7 @@
 })();
 
 /* ==========================================
-   Sliders (Swiper — loaded from CDN in index.html)
+   Sliders (Swiper — loaded from CDN in home.html)
    1. Life at GIT: slider at every width, driven by the design's prev/next
       arrows. Arrows are hidden when there are 3 slides or fewer, and Swiper
       also hides them whenever every slide already fits (watchOverflow).
@@ -272,9 +767,9 @@
 })();
 
 /* ==========================================
-   Recruiters — infinite logo marquee
-   Row 1 (data-marquee-direction="right") moves left → right,
-   row 2 ("left") moves right → left, forever.
+   Logo marquees — infinite (Our recruiters rows, Partnerships & Affiliations)
+   Any [data-marquee] element whose [data-marquee-track] list scrolls forever:
+   data-marquee-direction="right" moves left → right, "left" moves right → left.
    - Seamless loop: the logo set is cloned until the track is at least one set
      wider than the viewport; the position wraps by exactly one set width
      (measured with sub-pixel precision), so the seam is invisible.
@@ -287,7 +782,7 @@
      (CSS), so the marquee stands down there — no clones, no transform, no loop.
 ========================================== */
 (function () {
-  const marquees = document.querySelectorAll(".recruiters-section__marquee");
+  const marquees = document.querySelectorAll("[data-marquee]");
   if (!marquees.length) return;
 
   const SPEED = 45;          // auto-scroll speed, px per second
@@ -297,7 +792,7 @@
   const staticGrid = window.matchMedia("(max-width: 576px)");
 
   marquees.forEach((root) => {
-    const track = root.querySelector(".recruiters-section__row");
+    const track = root.querySelector("[data-marquee-track]");
     if (!track) return;
 
     const direction = root.dataset.marqueeDirection === "right" ? 1 : -1;

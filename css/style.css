@@ -903,8 +903,9 @@ html.is-welcome body {
   object-position: 50% 50%;
 }
 
-/* Optional background video over the photo, under the gradient (::after); invisible
-   until it is actually playing (.is-playing, js/main.js), then fades in */
+/* Background video under the gradient (::after). Visible from the start: its poster
+   (campus banner) shows until playback begins and stays if the video can't play.
+   object-fit covers both the poster and the video frames. */
 .welcome-screen__video {
   position: absolute;
   inset: 0;
@@ -912,18 +913,6 @@ html.is-welcome body {
   height: 100%;
   object-fit: cover;
   object-position: 50% 50%;
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-
-.welcome-screen__video.is-playing {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .welcome-screen__video {
-    transition: none;
-  }
 }
 
 /* Figma "Overlay (static gradient)" 824:1429 */

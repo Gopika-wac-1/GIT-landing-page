@@ -31,6 +31,8 @@
   <!-- Inter (UI) + Abhaya Libre (welcome title, Figma 824:1469) -->
   <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <!-- Welcome video poster = first thing on screen: fetch it straight away -->
+  <link rel="preload" as="image" href="assets/images/campus-banner.jpg" fetchpriority="high">
   <script src="js/main.js" defer></script>
   <!-- Fetch the main page in the background so entering it is quick -->
   <link rel="prefetch" href="home.html">
@@ -44,12 +46,12 @@
     <div class="welcome-screen__media" aria-hidden="true">
       <!-- Campus banner (Figma sky + campus cut-out): shows first, and stays as the fallback -->
       <!-- <img src="assets/images/campus-banner.jpg" alt="" class="welcome-screen__image" width="1920" height="1026" fetchpriority="high"> -->
-      <!-- Background video, drawn over the photo. To use one, put the file path in data-src
-           (e.g. data-src="assets/videos/welcome.mp4"); optional data-src-mobile="…" for a
-           portrait clip on phones (≤ 576px). js/main.js loads it after the page has loaded and
-           fades it in once it's playing. Empty data-src, reduced motion, data saver, a missing
-           file or blocked autoplay → the photo simply stays. -->
-      <video class="welcome-screen__video" data-welcome-video data-src="assets/videos/introduction-video.mp4" muted loop playsinline preload="none" disablepictureinpicture></video>
+      <!-- Background video. The campus banner is its poster: it shows at once and stays as the
+           fallback. Video file in data-src; optional data-src-mobile="…" for a portrait clip on
+           phones (≤ 576px). js/main.js loads it after the page has loaded and plays it. Empty
+           data-src, reduced motion, data saver, a missing file or blocked autoplay → the poster
+           simply stays. -->
+      <video class="welcome-screen__video" data-welcome-video data-src="assets/videos/introduction-video.mp4" poster="assets/images/campus-banner.jpg" muted loop playsinline preload="none" disablepictureinpicture></video>
     </div>
 
     <div class="welcome-screen__content" data-welcome-content>

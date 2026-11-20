@@ -1,0 +1,84 @@
+Act as a **Senior Front-End Developer** with strong expertise in HTML5, CSS3, Vanilla JavaScript, responsive web development, advanced CSS animations, and pixel-perfect Figma-to-code implementation.
+
+## Objective
+Modify the existing GIT landing page by following the provided HTML reference and Figma designs. Implement the complete UI, loading animation, scroll animations, hover interactions, and custom cursor designs accurately.
+
+### 1. Reference Files
+
+**Initial Loading Animation (Exact Reference)**
+
+Refer to:
+`@reference/GIT-landing-scroll-intro.html`
+
+- Reproduce the initial loading/intro animation exactly as implemented in this reference HTML.
+- The initial page load must match the reference in terms of layout, animation sequence, timing, transitions, positioning, and visual behaviour.
+- Do not redesign, simplify, or reinterpret this animation.
+- Inspect the reference HTML, CSS, and JavaScript before implementation and reuse the existing logic wherever appropriate.
+
+### 2. Figma Design References
+
+**Desktop Design:**
+
+Implement the design from:
+https://www.figma.com/design/8lVHysRLMjz2RN0h76p4Xi/GREGORIAN-INSTITUTE-OF-TECHNOLOGY?node-id=550-3962&m=dev
+
+**Mobile Design:**
+
+Implement the design from:
+https://www.figma.com/design/8lVHysRLMjz2RN0h76p4Xi/GREGORIAN-INSTITUTE-OF-TECHNOLOGY?node-id=426-7098&m=dev
+
+Treat the respective Figma frames as the single source of truth for their layouts, typography, colours, spacing, images, icons, cursor designs, and responsive behaviour.
+
+### 3. Animation and Interaction Requirements
+
+Implement the following without compromising the reference design:
+
+- **Page Loading:** Reproduce the exact initial animation from the provided HTML reference.
+- **Scroll Animations:** Implement the animations and transitions according to the intended design and existing reference behaviour.
+- **Hover Animations:** Add smooth hover interactions for buttons, links, cards, and other interactive elements wherever indicated by the Figma design.
+- **Custom Cursors:** Implement the cursor designs and interactive cursor behaviour as shown in the Figma references. Ensure they work correctly across the relevant sections and interactive elements.
+- **Transitions:** All animations must feel smooth and consistent, without sudden changes, layout shifts, or unexpected movement.
+
+### 4. Technical and Browser Requirements
+
+- Ensure consistent rendering across Chrome, Edge, Firefox, and Safari.
+- Make animations responsive across desktop, tablet, and mobile devices.
+- Prevent layout jumps, content flickering, white flashes, and unwanted scrollbars.
+- Avoid animation conflicts, duplicate event listeners, and unnecessary DOM manipulations.
+- Use performant animation techniques and clean Vanilla JavaScript.
+- Handle browser-specific cursor and animation limitations gracefully without breaking the intended design.
+- Respect `prefers-reduced-motion` accessibility settings.
+
+### 5. Strict Implementation Guidelines
+
+- **Do not hallucinate or make assumptions.**
+- Do not invent animations, cursor effects, visual elements, or interactions that are not supported by the references.
+- Do not redesign, simplify, or modify the intended UI.
+- Preserve existing content, functionality, and interactions unless changes are explicitly required by the references.
+- Reuse existing assets, styles, and scripts wherever appropriate.
+- Avoid unnecessary dependencies or animation libraries.
+- Maintain clean, reusable, and maintainable code.
+- Do not introduce unrelated changes to other sections or functionality.
+
+### 6. Implementation Workflow
+
+1. Inspect the existing project structure and identify the landing page components, styles, scripts, and assets.
+2. Thoroughly analyse `GIT-landing-scroll-intro.html` to understand the exact initial animation.
+3. Inspect both desktop and mobile Figma references, including their animation and cursor specifications where available.
+4. Compare the existing implementation against the references and identify the required changes.
+5. Implement the initial loading animation first, followed by the Figma UI, scroll animations, hover interactions, and custom cursors.
+6. Test the complete experience across different screen sizes and browsers.
+7. Verify that the initial animation, subsequent page transitions, scrolling, hover interactions, and cursor behaviour work without flickering or layout jumps.
+
+**Important:** If any animation, interaction, cursor behaviour, or design detail is unclear or unavailable in the references, do not guess. Ask for clarification before implementing that specific behaviour.
+
+### Expected Result
+
+A fully implemented, responsive GIT landing page that:
+- Matches the desktop and mobile Figma designs accurately.
+- Reproduces the initial loading animation exactly as shown in the reference HTML.
+- Includes the intended scroll animations, hover effects, and custom cursor designs.
+- Delivers a smooth, consistent experience across supported browsers and devices.
+- Has no unexpected layout shifts, flickering, animation glitches, or broken interactions.
+
+After implementation, provide a concise summary of the files modified, features implemented, and browser/device testing results. Do not claim any tests passed unless they were actually performed.

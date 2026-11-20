@@ -1,0 +1,5909 @@
+/* ==========================================
+   1. GLOBAL VARIABLES / DESIGN TOKENS
+   (values extracted from Figma node 130:3985)
+========================================== */
+
+:root {
+  /* Colors — brand */
+  --color-primary: #153772;
+  /* navy: buttons, labels, dark sections */
+  --color-accent-start: #16aee5;
+  /* "Enter Now" gradient */
+  --color-accent-end: #1bbcc2;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Colors — text */
+  --color-text-heading: #110c2d;
+  --color-text-body: #595959;
+  --color-text-muted: #737477;
+  --color-text-label: #777777;
+  --color-text-placeholder: #8e8e93;
+  --color-text-white-muted: rgba(255, 255, 255, 0.74);
+  --color-text-soft: rgba(0, 0, 0, 0.7);
+
+  /* Colors — surfaces */
+  --color-bg-light: #f6f6f6;
+  --color-bg-input: #f6f7f9;
+  --color-bg-map: #f0f0f0;
+  --color-bg-circulars: rgba(16, 86, 206, 0.24);
+
+  /* Colors — borders */
+  --color-border-header: #e8e8e8;
+  --color-border-logo: #737477;
+  --color-border-card-button: #ececec;
+  --color-border-input: #acb8cc;
+  --color-border-list: #e0e0e0;
+  --color-border-map: #e2e2e2;
+  --color-border-chip-light: rgba(21, 55, 114, 0.12);
+  --color-border-circulars: rgba(226, 230, 238, 0.08);
+  --color-border-link-light: #e2e6ee;
+  --color-divider: rgba(194, 194, 194, 0.54);
+
+  /* Typography — families */
+  --font-primary: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-heading: "Canela Trial", "Canela", "Playfair Display", Georgia, serif;
+  --font-display: "Playfair Display", Georgia, serif;
+
+  /* Typography — weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Typography — sizes */
+  --font-size-xs: 14px;
+  --font-size-sm: 16px;
+  --font-size-md: 18px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+  --font-size-hero: 80px;
+  --font-size-display: 64px;
+  --font-size-section-title: 48px;
+  --font-size-stat: 62px;
+  --font-size-card-title: 34px;
+
+  /* Typography — line heights */
+  --line-height-body: 28.8px;
+  --line-height-relaxed: 1.85;
+  --line-height-hero: 84px;
+  --line-height-display: 1.08;
+
+  /* Letter spacing */
+  --tracking-label: 1.68px;
+  --tracking-display: -0.64px;
+
+  /* Layout */
+  --container-width: 1424px;
+  --container-gutter: 40px;
+  --section-padding-y: 120px;
+  --header-height: 120px;
+  /* sticky header (used for anchor offset) */
+  --utility-bar-height: 61px;
+  /* blue bar above the header; js/main.js overwrites --hero-offset with the measured total */
+
+  /* Components */
+  --button-height: 54px;
+  --button-padding-x: 24px;
+  --button-padding-y: 14px;
+  --button-gap: 8px;
+  --button-font-size: 16px;
+  --button-sweep-duration: 0.35s;
+  --radius-pill: 100px;
+  --radius-circle: 50%;
+  --icon-size: 24px;
+
+  /* Logo frames (partners / recruiters) */
+  --logo-scale: 1;
+
+  /* Motion */
+  --transition-base: 0.2s ease;
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  /* custom cursor + intro (reference easing) */
+  --dark-surface-grid-color: rgba(255, 255, 255, 0.035);
+  /* faint grid on .dark-surface sections */
+}
+
+/* ==========================================
+   2. GLOBAL RESET & BASE STYLES
+========================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-height);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body);
+  color: var(--color-text-heading);
+  background-color: var(--color-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+svg,
+iframe {
+  display: block;
+  max-width: 100%;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+address {
+  font-style: normal;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: var(--font-weight-regular);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-start);
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   3. GLOBAL REUSABLE COMPONENTS
+========================================== */
+
+/* --- Container --- */
+.container {
+  width: 100%;
+  max-width: calc(var(--container-width) + var(--container-gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--container-gutter);
+}
+
+/* --- Icon (single-colour SVG used as a mask so it follows currentColor) --- */
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  background-color: currentColor;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Icons are inlined as data URIs: mask-image is fetched in CORS mode, so external
+   SVG files are blocked when the page is opened via file://. */
+.icon--arrow-outward {
+  --icon-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16 8.4L7.1 17.3C6.917 17.483 6.683 17.575 6.4 17.575C6.117 17.575 5.883 17.483 5.7 17.3C5.517 17.117 5.425 16.883 5.425 16.6C5.425 16.317 5.517 16.083 5.7 15.9L14.6 7H7C6.717 7 6.479 6.904 6.288 6.713C6.096 6.521 6 6.283 6 6C6 5.717 6.096 5.479 6.288 5.288C6.479 5.096 6.717 5 7 5H17C17.283 5 17.521 5.096 17.713 5.288C17.904 5.479 18 5.717 18 6V16C18 16.283 17.904 16.521 17.713 16.713C17.521 16.904 17.283 17 17 17C16.717 17 16.479 16.904 16.288 16.713C16.096 16.521 16 16.283 16 16V8.4Z'/%3E%3C/svg%3E");
+}
+
+.icon--arrow-forward {
+  --icon-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M13.988 10.231L3.499 10.231C3.283 10.231 3.092 10.148 2.925 9.981C2.758 9.814 2.675 9.622 2.675 9.406C2.675 9.19 2.758 8.999 2.925 8.832C3.092 8.665 3.283 8.581 3.499 8.581L13.988 8.581L9.51 4.103C9.343 3.936 9.259 3.74 9.259 3.514C9.259 3.288 9.343 3.091 9.51 2.925C9.677 2.758 9.873 2.674 10.099 2.674C10.325 2.674 10.522 2.758 10.688 2.925L16.581 8.817C16.748 8.984 16.831 9.18 16.831 9.406C16.831 9.632 16.748 9.829 16.581 9.996L10.688 15.888C10.522 16.055 10.325 16.139 10.099 16.139C9.873 16.139 9.677 16.055 9.51 15.888C9.343 15.721 9.259 15.525 9.259 15.299C9.259 15.073 9.343 14.877 9.51 14.71L13.988 10.231Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: var(--icon-image);
+  mask-image: var(--icon-image);
+}
+
+/* --- Outward arrow: hover swap (old arrow exits up-right, new one enters from bottom-left) ---
+   The span is a clipped viewport; ::before and ::after are two copies of the arrow.
+   Only `transform` is animated (GPU-composited) so the motion stays smooth. */
+.icon--arrow-outward {
+  position: relative;
+  background-color: transparent;
+  /* Clip all sides; --icon-clip-x lets rotated icons (e.g. footer) overflow sideways */
+  clip-path: inset(0 calc(-1 * var(--icon-clip-x, 0px)));
+}
+
+.icon--arrow-outward::before,
+.icon--arrow-outward::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  -webkit-mask: var(--icon-image) center / contain no-repeat;
+  mask: var(--icon-image) center / contain no-repeat;
+  transform: translate3d(0, 0, 0) rotate(var(--icon-rotate, 0deg));
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.icon--arrow-outward::after {
+  transform: translate3d(-100%, 100%, 0) rotate(var(--icon-rotate, 0deg));
+}
+
+:is(a, button):focus-visible .icon--arrow-outward::before {
+  transform: translate3d(100%, -100%, 0) rotate(var(--icon-rotate, 0deg));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :is(a, button):hover .icon--arrow-outward::before {
+    transform: translate3d(100%, -100%, 0) rotate(var(--icon-rotate, 0deg));
+  }
+}
+
+:is(a, button):focus-visible .icon--arrow-outward::after {
+  transform: translate3d(0, 0, 0) rotate(var(--icon-rotate, 0deg));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :is(a, button):hover .icon--arrow-outward::after {
+    transform: translate3d(0, 0, 0) rotate(var(--icon-rotate, 0deg));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+
+  .icon--arrow-outward::before,
+  .icon--arrow-outward::after {
+    transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+}
+
+/* --- Section "View All": header button on tablet/desktop; full-width button
+   under the content on mobile (the --bottom copy, shown in the ≤576px block) --- */
+.button.section-view-all--bottom {
+  display: none;
+}
+
+/* --- Section heading group (label + title) --- */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 34px;
+}
+
+.section-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.section-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: normal;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--section-label-color, var(--color-primary));
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: var(--section-title-size, var(--font-size-section-title));
+  font-weight: var(--font-weight-regular);
+  line-height: var(--section-title-line-height, 48px);
+  letter-spacing: var(--section-title-tracking, normal);
+  color: var(--section-title-color, var(--color-text-heading));
+}
+
+.display-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--display-title-line-height, var(--line-height-display));
+  letter-spacing: var(--tracking-display);
+  color: var(--display-title-color, var(--color-primary));
+}
+
+.section-description {
+  font-size: var(--section-description-size, var(--font-size-sm));
+  line-height: var(--section-description-line-height, var(--line-height-body));
+  color: var(--section-description-color, var(--color-text-body));
+}
+
+/* --- Buttons --- */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--button-gap);
+  min-height: var(--button-height);
+  padding: var(--button-padding-y) var(--button-padding-x);
+  font-size: var(--button-font-size);
+  font-weight: var(--font-weight-medium);
+  line-height: normal;
+  white-space: nowrap;
+  color: var(--button-color, var(--color-white));
+  background: var(--button-background, transparent);
+  border: 1px solid var(--button-border-color, transparent);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: color var(--button-sweep-duration) ease, border-color var(--button-sweep-duration) ease;
+}
+
+/* Hover sweep: fill grows left → right on hover, retracts right → left on leave.
+   Each variant sets --button-hover-fill / --button-hover-color / --button-hover-border. */
+.button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--button-hover-fill, var(--color-primary));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--button-sweep-duration) ease;
+}
+
+.button:focus-visible {
+  color: var(--button-hover-color, var(--color-white));
+  border-color: var(--button-hover-border, var(--button-border-color, transparent));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button:hover {
+    color: var(--button-hover-color, var(--color-white));
+    border-color: var(--button-hover-border, var(--button-border-color, transparent));
+  }
+}
+
+.button:focus-visible::before {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button:hover::before {
+    transform: scaleX(1);
+  }
+}
+
+/* Navy button → white sweep, navy text (border stays navy) */
+.button--primary {
+  --button-background: var(--color-primary);
+  --button-border-color: var(--color-primary);
+  --button-color: var(--color-white);
+  --button-hover-fill: var(--color-white);
+  --button-hover-color: var(--color-primary);
+}
+
+/* Navy outline → navy sweep, white text */
+.button--outline {
+  --button-border-color: var(--color-primary);
+  --button-color: var(--color-primary);
+  --button-hover-fill: var(--color-primary);
+  --button-hover-color: var(--color-white);
+}
+
+/* White outline (dark backgrounds) → white sweep, navy text */
+.button--outline-light {
+  --button-border-color: var(--color-white);
+  --button-color: var(--color-white);
+  --button-hover-fill: var(--color-white);
+  --button-hover-color: var(--color-primary);
+}
+
+/* Cyan gradient + light sheen, white text. No colour sweep: a diagonal light band
+   glides across instead. Hover and the viewport entry use separate layers so
+   neither restarts or cancels the other:
+     hover/focus → sheen on ::before
+     entry (once) → faint drop-shadow pulse + sheen on ::after */
+.button--gradient {
+  --button-background: linear-gradient(to right, var(--color-accent-start), var(--color-accent-end));
+  --button-color: var(--color-white);
+  --button-hover-color: var(--color-white);
+  border: 0;
+}
+
+/* Sheen layers: a white band parked off the left edge until animated across */
+.button--gradient::before,
+.button--gradient::after {
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.3) 50%, transparent 65%);
+  transform: translateX(-100%);
+  transition: none;
+  pointer-events: none;
+}
+
+.button--gradient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.button--gradient:focus-visible::before {
+  transform: translateX(-100%);
+  animation: button-sheen 0.8s ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* Plays each time the pointer enters; no reverse sweep on leave */
+  .button--gradient:hover::before {
+    transform: translateX(-100%);
+    animation: button-sheen 0.8s ease-out;
+  }
+}
+
+/* Viewport entry: js/main.js adds .is-in-view once (never removed), so it runs one time */
+.button--gradient.is-in-view {
+  animation: button-glow-pulse 1.6s ease-out;
+  /* the drop-shadow pulse can't run on the GPU: keep its repaint on its own layer */
+  will-change: filter;
+}
+
+.button--gradient.is-in-view::after {
+  animation: button-sheen 1s ease-out 0.15s;
+}
+
+@keyframes button-sheen {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes button-glow-pulse {
+
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(22, 174, 229, 0));
+  }
+
+  45% {
+    filter: drop-shadow(0 0 10px rgba(22, 174, 229, 0.5));
+  }
+}
+
+/* White card button → navy sweep, white text, navy border */
+.button--block {
+  --button-background: var(--color-white);
+  --button-border-color: var(--color-border-card-button);
+  --button-color: var(--color-primary);
+  --button-hover-fill: var(--color-primary);
+  --button-hover-color: var(--color-white);
+  --button-hover-border: var(--color-primary);
+  width: 100%;
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .button,
+  .button::before {
+    transition: none;
+  }
+
+  /* The moving sheen and entry pulse are skipped */
+  .button--gradient.is-in-view,
+  .button--gradient.is-in-view::after,
+  .button--gradient:hover::before,
+  .button--gradient:focus-visible::before {
+    animation: none;
+  }
+}
+
+/* --- Text button (label + arrow, no frame) --- */
+.text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: normal;
+  color: var(--text-button-color, var(--color-primary));
+  transition: opacity var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .text-button:hover {
+    opacity: 0.75;
+  }
+}
+
+/* --- Underlined text link with small arrow --- */
+.text-link {
+  --icon-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--text-link-gap, 4px);
+  padding-bottom: var(--text-link-padding-bottom, 4px);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--text-link-line-height, 26px);
+  white-space: nowrap;
+  color: var(--text-link-color, var(--color-primary));
+  border-bottom: 1px solid var(--text-link-border-color, var(--color-primary));
+  transition: opacity var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .text-link:hover {
+    opacity: 0.75;
+  }
+}
+
+/* --- Pill chip --- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  font-size: var(--chip-font-size, var(--font-size-sm));
+  font-weight: var(--font-weight-medium);
+  line-height: normal;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--chip-color, var(--color-white));
+  background: var(--chip-background, transparent);
+  border: 1px solid var(--chip-border-color, transparent);
+  border-radius: var(--radius-pill);
+}
+
+/* --- Visibility utilities: swap mobile-only text (Figma mobile copy) ---
+   .u-mobile-only shows only at ≤ 576px; .u-hide-mobile hides there. */
+.u-mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 576px) {
+  .u-mobile-only {
+    display: revert !important;
+  }
+
+  .u-hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Hidden on screen but still read by screen readers and search engines
+   (e.g. a heading that the design does not show) */
+.u-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* --- Swiper sliders ---
+   Swiper's CSS gives .swiper auto side margins; inside a flex column that turns
+   off stretching and the slider sizes to its own content (runaway width).
+   An explicit width keeps every slider tied to its container. */
+.institutions-section__slider,
+.campus-life-section__slider,
+.testimonials-section__slider {
+  width: 100%;
+  min-width: 0;
+}
+
+/* --- Logo frame (Figma frame with the logo cropped inside) ---
+   Frame: 172.8 × 100 by default (per-logo --logo-frame-width/-height from Figma),
+   scaled by --logo-scale on smaller screens. The image is placed with the Figma
+   crop values (--logo-x/-y/-width/-height, % of the frame), so the crop scales
+   with the frame. The images are the exact source files used in Figma. */
+.logo-frame {
+  position: relative;
+  flex-shrink: 0;
+  width: calc(var(--logo-frame-width, 172.8px) * var(--logo-scale));
+  height: calc(var(--logo-frame-height, 100px) * var(--logo-scale));
+  overflow: hidden;
+}
+
+.logo-frame__image {
+  position: absolute;
+  left: var(--logo-x, 0%);
+  top: var(--logo-y, 0%);
+  width: var(--logo-width, 100%);
+  height: var(--logo-height, 100%);
+  max-width: none;
+  object-fit: cover;
+}
+
+/* --- Dark surface (Figma 550:3962 "Motion + Dark BG"): News, Life at GIT, footer ---
+   Each section sets --dark-surface-background (navy gradient + glows, measured from the
+   Figma render); ::before draws the faint 96px grid, strongest in the centre.
+   ≤ 576px keeps the flat navy of the mobile design (see section 18). */
+.dark-surface {
+  position: relative;
+  isolation: isolate;
+  background: var(--dark-surface-background, var(--color-primary));
+}
+
+.dark-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(90deg, var(--dark-surface-grid-color) 1px, transparent 1px),
+    linear-gradient(var(--dark-surface-grid-color) 1px, transparent 1px);
+  background-size: 96px 96px;
+  -webkit-mask-image: var(--dark-surface-grid-mask, radial-gradient(ellipse 45% 60% at 50% 50%, #000, transparent));
+  mask-image: var(--dark-surface-grid-mask, radial-gradient(ellipse 45% 60% at 50% 50%, #000, transparent));
+}
+
+/* --- Custom cursor (reference/GIT-landing-scroll-intro.html) ---
+   Fine pointers only, set up by js/main.js (body.has-custom-cursor). A white dot
+   (difference blend) follows the pointer with easing; over links/buttons it becomes a
+   46px ring; over cards with data-cursor="…" it morphs into a wobbling labelled blob
+   (navy, or frosted glass with data-cursor-glass). */
+@media (pointer: fine) {
+
+  body.has-custom-cursor,
+  body.has-custom-cursor * {
+    cursor: none !important;
+  }
+}
+
+.custom-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.custom-cursor__dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--color-white);
+  mix-blend-mode: difference;
+  transition: width 0.35s var(--ease-out-expo), height 0.35s var(--ease-out-expo), margin 0.35s var(--ease-out-expo), background 0.25s, border 0.25s, opacity 0.2s;
+}
+
+.custom-cursor.is-link .custom-cursor__dot {
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  background: transparent;
+  border: 1.5px solid var(--color-white);
+}
+
+/* mix-blend-mode on the dot stops the blob's backdrop-filter from blurring the
+   page (Chrome), so the blend is dropped while the blob is showing */
+.custom-cursor.is-blob .custom-cursor__dot {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  opacity: 0;
+  mix-blend-mode: normal;
+}
+
+.custom-cursor__blob {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  /* Figma hover "Cursor blob": 96 × 90 */
+  width: 96px;
+  height: 90px;
+  margin: -45px 0 0 -48px;
+  opacity: 0;
+  transform: scale(0.15) rotate(30deg);
+  transition: transform 0.45s var(--ease-out-expo), opacity 0.25s ease;
+}
+
+.custom-cursor__blob::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Figma "Blob": #153772 @ 92%, background blur 8 (Figma blur ÷ 2 = CSS px) */
+  background: rgba(21, 55, 114, 0.92);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border-radius: 58% 42% 55% 45% / 47% 58% 42% 53%;
+  animation: custom-cursor-wobble 4s ease-in-out infinite;
+}
+
+/* Figma glass "Blob" (Visit / Read / Play / About): white @ 24%, background blur 20, no stroke */
+.custom-cursor.is-glass .custom-cursor__blob::before {
+  background: rgba(255, 255, 255, 0.24);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.custom-cursor__label {
+  position: relative;
+  font-size: 15px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.2px;
+  color: var(--color-white);
+  opacity: 0;
+  transition: opacity 0.2s ease 0.12s;
+}
+
+.custom-cursor.is-blob .custom-cursor__blob {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+}
+
+.custom-cursor.is-blob .custom-cursor__label {
+  opacity: 1;
+}
+
+.custom-cursor.is-hidden {
+  opacity: 0;
+}
+
+@keyframes custom-cursor-wobble {
+
+  0%,
+  100% {
+    border-radius: 58% 42% 55% 45% / 47% 58% 42% 53%;
+  }
+
+  33% {
+    border-radius: 44% 56% 41% 59% / 58% 44% 56% 42%;
+  }
+
+  66% {
+    border-radius: 52% 48% 62% 38% / 41% 54% 46% 59%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-cursor {
+    display: none;
+  }
+
+  body.has-custom-cursor,
+  body.has-custom-cursor * {
+    cursor: auto !important;
+  }
+}
+
+/* ==========================================
+   3b. PAGE WRAPPER + HERO ENTRANCE  (home.html: .page, html.hero-entrance-pending)
+========================================== */
+.page {
+  position: relative;
+  z-index: 1;
+}
+
+/* Dark backing behind the utility bar + header. Always covered by the bars; it only
+   shows while they fade in during the hero entrance, so they arrive over dark (as in
+   Figma) instead of over a white band. */
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  height: var(--hero-offset, calc(var(--utility-bar-height) + var(--header-height)));
+  background: #0a1a3d;
+  pointer-events: none;
+}
+
+/* --- Hero entrance (Figma 698:2955 motion timeline, played by js/main.js) ---
+   home.html starts with html.hero-entrance-pending: until the entrance starts these
+   sit in their first-keyframe state, so nothing pops when the animations begin.
+   (Without JS, a <noscript> style in home.html shows them; with reduced motion the
+   class is removed at once and the CSS below keeps them visible anyway.) */
+.hero-entrance-pending .utility-bar,
+.hero-entrance-pending .site-header__main,
+.hero-entrance-pending .hero-section__title,
+.hero-entrance-pending .hero-section__description,
+.hero-entrance-pending .hero-section__chip,
+.hero-entrance-pending .hero-section__actions > *,
+.hero-entrance-pending .hero-section__media {
+  opacity: 0;
+}
+
+.hero-entrance-pending .hero-section__media {
+  transform: scale(1.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .hero-entrance-pending .utility-bar,
+  .hero-entrance-pending .site-header__main,
+  .hero-entrance-pending .hero-section__title,
+  .hero-entrance-pending .hero-section__description,
+  .hero-entrance-pending .hero-section__chip,
+  .hero-entrance-pending .hero-section__actions > *,
+  .hero-entrance-pending .hero-section__media {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Title words / description words wrapped by js/main.js so each can move on its own */
+.hero-word {
+  display: inline-block;
+}
+
+/* ==========================================
+   3c. WELCOME SCREEN  (index.html: #welcome-screen / .welcome-screen)
+   Figma 824:1410 ("Image"). One full-viewport screen, no scrolling. Background =
+   the campus banner (sky + campus cut-out, exported from Figma; can be swapped for a
+   video) under Figma's static gradient overlay (node 824:1429). Chips and button use
+   the site's normal sizes; layout, gaps and type follow Figma. js/main.js runs the
+   30 s countdown / Enter key / Enter Now navigation and the pointer parallax.
+========================================== */
+html.is-welcome,
+html.is-welcome body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.welcome-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100vh;
+  height: 100dvh;
+  padding: 0 var(--container-gutter) clamp(40px, 7.5vh, 77px);
+  overflow: hidden;
+  color: var(--color-white);
+  background-color: #0a1a3d;
+}
+
+/* Static background (no pointer movement) */
+.welcome-screen__media {
+  position: absolute;
+  inset: 0;
+}
+
+.welcome-screen__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+/* Optional background video over the photo, under the gradient (::after); invisible
+   until it is actually playing (.is-playing, js/main.js), then fades in */
+.welcome-screen__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.welcome-screen__video.is-playing {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-screen__video {
+    transition: none;
+  }
+}
+
+/* Figma "Overlay (static gradient)" 824:1429 */
+.welcome-screen__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(1.2667deg, rgba(0, 0, 0, 0.72) 24.19%, rgba(0, 0, 0, 0) 60.422%);
+}
+
+.welcome-screen__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 55px;
+  width: min(776px, 100%);
+  text-align: center;
+}
+
+.welcome-screen__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  width: 100%;
+}
+
+/* Abhaya Libre 69.6px, tracking 0.696px, horizontally condensed to 91 % (Figma) */
+.welcome-screen__title {
+  width: 100%;
+  font-family: "Abhaya Libre", var(--font-heading);
+  font-size: clamp(40px, 3.625vw, 69.6px);
+  font-weight: var(--font-weight-regular);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  transform: scaleX(0.91);
+}
+
+.welcome-screen__chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Same glass chip as the hero (Figma: white 10 %, border white 12 %, blur) */
+.welcome-screen__chip {
+  --chip-background: rgba(255, 255, 255, 0.1);
+  --chip-border-color: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.welcome-screen__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 19px;
+}
+
+/* "ENTERING IN 30s – OR PRESS ENTER": uppercase, wide tracking (0.488 em), 91 % width */
+.welcome-screen__countdown {
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  letter-spacing: 0.488em;
+  text-transform: uppercase;
+  /* the last letter's tracking would push the centred line left */
+  margin-right: -0.488em;
+  transform: scaleX(0.91);
+}
+
+.welcome-screen__countdown-value {
+  display: inline-block;
+  min-width: 2ch;
+  color: #007aff;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Leaving for home.html: a short fade so the hand-over isn't a hard cut */
+.welcome-screen.is-leaving {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+@media (max-width: 576px) {
+  .welcome-screen__content {
+    gap: 40px;
+  }
+
+  .welcome-screen__intro {
+    gap: 20px;
+  }
+
+  .welcome-screen__countdown {
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.3em;
+    margin-right: -0.3em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .welcome-screen.is-leaving {
+    transition: none;
+  }
+}
+
+/* ==========================================
+   4. HEADER SECTION  (#utility-bar / .utility-bar, #site-header / .site-header)
+========================================== */
+
+/* --- Utility bar (scrolls away) --- */
+.utility-bar {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.utility-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-block: 16px;
+}
+
+.utility-bar__list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 12px;
+}
+
+.utility-bar__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-body);
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.utility-bar__item+.utility-bar__item::before {
+  content: "";
+  width: 1px;
+  height: 13px;
+  background-color: var(--color-white);
+}
+
+.utility-bar__muted {
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-white-muted);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .utility-bar__link:hover {
+    text-decoration: underline;
+  }
+}
+
+/* --- Main header bar (sticks to the top on scroll) --- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.site-header__main {
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-border-header);
+}
+
+.site-header__main-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 119px;
+  padding-block: 8px;
+}
+
+.site-header__brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.site-header__logo-wrap {
+  padding-right: 11.2px;
+  border-right: 1px solid var(--color-border-logo);
+}
+
+.site-header__logo {
+  width: 170px;
+  height: 65px;
+  object-fit: contain;
+}
+
+.site-header__nba-wrap {
+  padding-left: 16px;
+}
+
+.site-header__nba {
+  width: 69px;
+  height: 64px;
+  object-fit: contain;
+}
+
+/* Desktop / tablet (≥ 768px): compact 96px header, logos scaled to fit (~0.92×).
+   Smaller screens keep their own header sizes (see the ≤ 767.98px / ≤ 576px blocks). */
+@media (min-width: 768px) {
+  :root {
+    --header-height: 96px;
+  }
+
+  .site-header__main-inner {
+    min-height: 95px; /* + 1px border-bottom = 96px */
+  }
+
+  .site-header__logo-wrap {
+    padding-right: 10px;
+  }
+
+  .site-header__logo {
+    width: 157px;
+    height: 60px;
+  }
+
+  .site-header__nba-wrap {
+    padding-left: 15px;
+  }
+
+  .site-header__nba {
+    width: 64px;
+    height: 59px;
+  }
+}
+
+/* Hamburger (Figma 426:7775) — only displayed on mobile (see ≤ 576px block) */
+.site-header__menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+  color: var(--color-primary);
+}
+
+.site-header__menu-bar {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: currentColor;
+}
+
+/* Mobile slide-in menu (Figma 447:9113). A native <dialog> (showModal) gives the
+   focus trap, Esc to close and an inert page behind it; main.js adds the
+   open/close slide. Never shown above 576px — main.js closes it on resize. */
+.mobile-menu {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: var(--color-white);
+  color: var(--color-black);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.mobile-menu.is-visible {
+  transform: translateX(0);
+}
+
+.mobile-menu::backdrop {
+  background-color: transparent;
+}
+
+.mobile-menu__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 20px 60px;
+}
+
+.mobile-menu__top {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Close "X": two 24 × 2px bars crossed in a 41px box */
+.mobile-menu__close {
+  position: relative;
+  width: 41px;
+  height: 41px;
+  color: var(--color-primary);
+}
+
+.mobile-menu__close::before,
+.mobile-menu__close::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 2px;
+  background-color: currentColor;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.mobile-menu__close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.mobile-menu__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mobile-menu__links {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border-header);
+}
+
+.mobile-menu__link {
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.4;
+}
+
+.mobile-menu__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+
+.mobile-menu__button {
+  width: 100%;
+  --button-height: 52px;
+}
+
+html.has-mobile-menu {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu {
+    transition: none;
+  }
+}
+
+/* ==========================================
+   5. HERO SECTION  (#hero / .hero-section)
+========================================== */
+
+.hero-section {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  /* First screen = utility bar + header + hero. min-height (not height) so the hero grows
+     instead of clipping its text on short screens. svh = stable height on mobile browsers. */
+  min-height: calc(100vh - var(--hero-offset, (var(--utility-bar-height) + var(--header-height))));
+  min-height: calc(100svh - var(--hero-offset, (var(--utility-bar-height) + var(--header-height))));
+  overflow: hidden;
+  color: var(--color-white);
+  background-color: var(--color-primary);
+}
+
+.hero-section__media {
+  position: absolute;
+  inset: 0;
+}
+
+/* <picture> wrapper fills the media box so the image's 100% height resolves */
+.hero-section__picture {
+  display: block;
+  height: 100%;
+}
+
+.hero-section__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* campus banner (Figma 698:2955 hero): anchored to its bottom edge */
+  object-position: 50% 100%;
+}
+
+/* Background video sits over the photo (which stays as poster/fallback) and under the
+   dark gradient overlay below; fades in only once it is actually playing (.is-playing) */
+.hero-section__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* same crop as .hero-section__image, so the frame lines up with the photo under it */
+  object-position: 50% 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.hero-section__video.is-playing {
+  opacity: 1;
+}
+
+.hero-section__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(11.385deg, rgba(0, 0, 0, 0.76) 22.742%, rgba(0, 0, 0, 0) 51.106%);
+}
+
+/* Pause/play button for the background video: glass circle like the hero chips */
+.hero-section__video-toggle {
+  position: absolute;
+  bottom: 24px;
+  right: var(--container-gutter);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--color-white);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background-color var(--transition-base);
+}
+
+.hero-section__video-toggle[hidden] {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-section__video-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.hero-section__video-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Shows pause while playing, play while paused */
+.hero-section__video-icon--play,
+.hero-section__video-toggle.is-paused .hero-section__video-icon--pause {
+  display: none;
+}
+
+.hero-section__video-toggle.is-paused .hero-section__video-icon--play {
+  display: block;
+}
+
+.hero-section__container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  padding-top: 120px;
+  padding-bottom: 83px;
+  padding-left: calc(var(--container-gutter) + 1px);
+}
+
+.hero-section__content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 896px;
+}
+
+.hero-section__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-hero);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-hero);
+  text-transform: capitalize;
+}
+
+.hero-section__description {
+  max-width: 801px;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+}
+
+.hero-section__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 852px;
+}
+
+/* Figma "Glass" effect, frost radius 10 → CSS blur(10px) (matched visually against Figma render) */
+.hero-section__chip {
+  --chip-background: rgba(255, 255, 255, 0.1);
+  --chip-border-color: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.hero-section__chip--more {
+  --chip-background: transparent;
+  --chip-border-color: var(--color-white);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.hero-section__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-section__video {
+    transition: none;
+  }
+}
+
+/* ==========================================
+   6. INSTITUTIONS SECTION  (#institutions / .institutions-section)
+========================================== */
+
+.institutions-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-white);
+}
+
+/* Desktop: 4-column grid (Figma). ≤1199.98px: Swiper slider (see js/main.js).
+   The grid is also the no-JS fallback; Swiper's flex track only applies once initialised. */
+.institutions-section__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.institutions-section__slider.swiper-initialized .institutions-section__grid {
+  display: flex;
+  gap: 0;
+}
+
+.institutions-section__card.swiper-slide {
+  height: auto;
+}
+
+.institutions-section__card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-light);
+}
+
+.institutions-section__media {
+  position: relative;
+  aspect-ratio: 320.71 / 242.91;
+  overflow: hidden;
+}
+
+.institutions-section__media--shade::after,
+.institutions-section__media--shade-strong::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to bottom, rgba(4, 4, 4, 0) 50.266%, rgba(0, 0, 0, 0.6));
+}
+
+.institutions-section__media--shade-strong::after {
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 54.771%, rgba(0, 0, 0, 0.67));
+}
+
+.institutions-section__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+a.institutions-section__media {
+  display: block;
+  color: inherit;
+}
+
+/* Image link: slow zoom-in on hover (pointer devices only). The card's
+   media box clips the scaled image so the card size never changes. */
+@media (hover: hover) and (pointer: fine) {
+
+  .institutions-section__media:hover .institutions-section__image,
+  .institutions-section__card:has(.button:hover) .institutions-section__image {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .institutions-section__image {
+    transition: none;
+  }
+}
+
+.institutions-section__image--bottom {
+  object-position: center bottom;
+}
+
+.institutions-section__image--right {
+  object-position: 100% 0;
+}
+
+.institutions-section__body {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px;
+  max-width: calc(283px + 48px);
+}
+
+.institutions-section__meta {
+  margin-bottom: 6px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: 32px;
+  color: var(--color-text-body);
+}
+
+.institutions-section__title {
+  margin-bottom: 8px;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: 32px;
+  color: var(--color-text-heading);
+}
+
+.institutions-section__description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  font-size: var(--font-size-xs);
+  line-height: 24.8px;
+  color: var(--color-text-body);
+}
+
+.institutions-section__footer {
+  margin-top: auto;
+  padding: 0 24px 24px;
+}
+
+/* ==========================================
+   7. ABOUT SECTION  (#about / .about-section)
+========================================== */
+
+.about-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-bg-light);
+}
+
+.about-section__container {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.about-section__intro {
+  display: flex;
+  align-items: center;
+  gap: 80px;
+}
+
+.about-section__media {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 502px;
+}
+
+.about-section__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-section__story {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 42px;
+  flex: 0 1 637px;
+  min-width: 0;
+}
+
+.about-section__text {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.about-section__heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.about-section__heading .section-label {
+  padding-inline: 4px;
+}
+
+.about-section__title {
+  max-width: 544px;
+}
+
+.about-section__paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about-section__stats {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.about-section__stat {
+  width: 300px;
+  padding: 35px 40px 35px 0;
+}
+
+.about-section__stat:last-child {
+  width: 260px;
+  padding-right: 0;
+}
+
+.about-section__stat-value {
+  margin-bottom: 4px;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-stat);
+  line-height: var(--font-size-stat);
+  white-space: nowrap;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+  /* equal-width digits keep the counter from jittering */
+}
+
+.about-section__stat-label {
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-body);
+  color: var(--color-primary);
+}
+
+.about-section__stat-label--semibold {
+  font-weight: var(--font-weight-semibold);
+}
+
+.about-section__stat-text {
+  max-width: 260px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid var(--color-black);
+  line-height: var(--line-height-body);
+  color: var(--color-text-heading);
+}
+
+/* ==========================================
+   8. WELCOME SECTION  (#welcome / .welcome-section)
+========================================== */
+
+.welcome-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-white);
+}
+
+.welcome-section__container {
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;
+}
+
+.welcome-section__content {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 710px;
+  padding-block: 47px;
+}
+
+.welcome-section__heading,
+.welcome-section__text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.welcome-section__description {
+  --section-description-size: var(--font-size-md);
+  --section-description-line-height: var(--line-height-relaxed);
+  --section-description-color: var(--color-text-muted);
+  max-width: 620px;
+}
+
+.welcome-section__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 427px;
+}
+
+.welcome-section__chip {
+  --chip-background: var(--color-bg-light);
+  --chip-border-color: var(--color-border-chip-light);
+  --chip-color: var(--color-primary);
+  --chip-font-size: var(--font-size-xs);
+  transition: background-color var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .welcome-section__chip:hover {
+    background-color: var(--color-white);
+  }
+}
+
+.welcome-section__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  flex: 0 0 700px;
+  max-width: 700px;
+}
+
+.welcome-section__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 42px;
+  background-color: var(--color-bg-light);
+}
+
+.welcome-section__icon {
+  width: 42px;
+  height: 42px;
+}
+
+.welcome-section__card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.welcome-section__card-label {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-body);
+  color: var(--color-black);
+}
+
+.welcome-section__card-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-card-title);
+  line-height: 1.3;
+  color: var(--color-primary);
+}
+
+.welcome-section__card-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.welcome-section__card-description--narrow {
+  max-width: 244px;
+}
+
+/* Whole card is the link: hovering anywhere on it drives the label + arrow */
+@media (hover: hover) and (pointer: fine) {
+  .welcome-section__card:hover .text-button {
+    opacity: 0.75;
+  }
+}
+
+/* --- Card hover: background turns white, navy bar sweeps along the bottom,
+   icon floats up. The card itself never moves, so the hover area stays stable. */
+.welcome-section__card {
+  --card-hover-duration: 0.45s;
+  --card-hover-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  isolation: isolate;
+  transition: background-color var(--card-hover-duration) var(--card-hover-ease);
+}
+
+/* Border layer: drawn on a pseudo-element so it never changes the card's size */
+.welcome-section__card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--color-primary);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--card-hover-duration) var(--card-hover-ease);
+}
+
+.welcome-section__card:focus-visible::before {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .welcome-section__card:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Bottom accent bar: grows left → right, retracts on leave */
+.welcome-section__card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background-color: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+  transition: transform var(--card-hover-duration) var(--card-hover-ease);
+}
+
+.welcome-section__card .welcome-section__icon {
+  transition: transform var(--card-hover-duration) var(--card-hover-ease);
+}
+
+.welcome-section__card:focus-visible {
+  background-color: var(--color-white);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .welcome-section__card:hover {
+    background-color: var(--color-white);
+  }
+}
+
+.welcome-section__card:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .welcome-section__card:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+.welcome-section__card:focus-visible .welcome-section__icon {
+  transform: translateY(-4px) scale(1.06);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .welcome-section__card:hover .welcome-section__icon {
+    transform: translateY(-4px) scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .welcome-section__card,
+  .welcome-section__card::before,
+  .welcome-section__card::after,
+  .welcome-section__card .welcome-section__icon {
+    transition: none;
+  }
+}
+
+.welcome-section__card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   9. NEWS SECTION  (#news / .news-section)
+========================================== */
+
+.news-section {
+  --section-label-color: var(--color-white);
+  --section-title-color: var(--color-white);
+  padding-block: var(--section-padding-y);
+  color: var(--color-white);
+  /* .dark-surface: glow top-right, teal glow bottom-left, navy → blue diagonal */
+  --dark-surface-background:
+    radial-gradient(ellipse 36% 42% at 92% 20%, rgba(44, 104, 200, 0.7), transparent 70%),
+    radial-gradient(ellipse 40% 50% at 0% 100%, rgba(26, 92, 140, 0.85), transparent 75%),
+    linear-gradient(140deg, #0d2350 0%, #0d2350 18%, #174085 60%, #1a4590 100%);
+}
+
+.news-section__container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.news-section__body {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+.news-section__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 40px;
+}
+
+.news-section__tab {
+  padding-block: 12px;
+  font-size: var(--font-size-lg);
+  line-height: normal;
+  white-space: nowrap;
+  color: var(--color-white);
+  border-bottom: 2px solid transparent;
+  transition: border-color var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .news-section__tab:hover {
+    border-bottom-color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+.news-section__tab--active {
+  font-weight: var(--font-weight-medium);
+  border-bottom-color: var(--color-white);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .news-section__tab--active:hover {
+    font-weight: var(--font-weight-medium);
+    border-bottom-color: var(--color-white);
+  }
+}
+
+.news-section__grid {
+  display: flex;
+  gap: 24px;
+  height: 666px;
+}
+
+/* Tab panels — inactive panels are removed from layout; the active one fades in */
+.news-section__panel[hidden] {
+  display: none;
+}
+
+.news-section__panel:focus-visible {
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .news-section__panel {
+    animation: news-panel-in 0.35s ease;
+  }
+}
+
+@keyframes news-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.news-section__side {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.news-section__card {
+  --news-shade-height: 361px;
+  --news-shade-color: rgba(12, 12, 15, 0.64);
+  --news-tint: transparent;
+  position: relative;
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--color-white);
+}
+
+/* Side cards: top and bottom (shade values from Figma) */
+.news-section__card--side-top {
+  --news-shade-height: 192px;
+  --news-shade-color: rgba(12, 12, 15, 0.56);
+}
+
+.news-section__card--side-bottom {
+  --news-shade-height: 168px;
+  --news-shade-color: rgba(12, 12, 15, 0.72);
+  --news-tint: rgba(0, 0, 0, 0.08);
+}
+
+.news-section__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Hover zoom uses the standalone `scale` property so it stacks on top of any
+     crop `transform` (e.g. .news-section__image--zoom) instead of replacing it. */
+  scale: 1;
+  backface-visibility: hidden;
+  will-change: scale;
+  transition: scale 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.news-section__card:focus-visible .news-section__image {
+  scale: 1.03;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .news-section__card:hover .news-section__image {
+    scale: 1.03;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .news-section__image {
+    transition: none;
+  }
+}
+
+/* Figma crop for the GIT Polytechnic building photo */
+.news-section__image--building {
+  object-position: 50% 66.5%;
+}
+
+/* Figma zooms this photo ~2.73x into the group of students */
+.news-section__image--zoom {
+  inset: auto;
+  left: -83%;
+  top: 50%;
+  width: 273.16%;
+  max-width: none;
+  height: auto;
+  transform: translateY(-55.2%);
+}
+
+/* Figma "Hover tint" (#153772 at 22%) sits between the photo and the shade, so it
+   is a background layer under the shade gradient. Registered as a <color> so the
+   fade (smart animate 350ms ease-out) can transition it. */
+@property --news-hover-tint {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(21, 55, 114, 0);
+}
+
+.news-section__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(12, 12, 15, 0), var(--news-shade-color) 75.83%) bottom / 100% var(--news-shade-height) no-repeat,
+    linear-gradient(var(--news-hover-tint), var(--news-hover-tint)),
+    linear-gradient(var(--news-tint), var(--news-tint));
+  transition: --news-hover-tint 0.35s ease-out;
+}
+
+.news-section__card--featured .news-section__overlay {
+  background:
+    linear-gradient(to bottom, rgba(12, 12, 15, 0), var(--news-shade-color) 75.83%) bottom / 100% var(--news-shade-height) no-repeat,
+    linear-gradient(to bottom, rgba(0, 0, 0, 0) 76.011%, rgba(0, 0, 0, 0.3)),
+    linear-gradient(var(--news-hover-tint), var(--news-hover-tint));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .news-section__card:hover .news-section__overlay {
+    --news-hover-tint: rgba(21, 55, 114, 0.22);
+  }
+}
+
+.news-section__card-text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  font-weight: var(--font-weight-medium);
+}
+
+.news-section__card--featured .news-section__card-text {
+  left: 37px;
+  bottom: 29px;
+  right: auto;
+  max-width: min(605px, calc(100% - 74px));
+  padding: 0;
+}
+
+.news-section__date {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-body);
+}
+
+.news-section__card-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  max-width: 486px;
+  font-size: var(--font-size-xl);
+  line-height: 32px;
+  text-transform: capitalize;
+}
+
+.news-section__card--side-bottom .news-section__card-title {
+  max-width: 480px;
+}
+
+.news-section__card--featured .news-section__card-title {
+  max-width: 517px;
+  font-size: 32px;
+  line-height: 42px;
+  letter-spacing: -1px;
+}
+
+.news-section__circulars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  padding: 34px 28px;
+  background-color: var(--color-bg-circulars);
+  border: 1px solid var(--color-border-circulars);
+}
+
+.news-section__circulars-label {
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.news-section__circulars-list,
+.news-section__circulars-list li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px 34px;
+}
+
+.news-section__circular-link {
+  --text-link-color: var(--color-white);
+  --text-link-border-color: var(--color-border-link-light);
+  --text-link-gap: 6px;
+  --text-link-padding-bottom: 0;
+  --text-link-line-height: normal;
+}
+
+/* ==========================================
+   10. APPROVALS & PARTNERSHIPS SECTION  (#approvals / .approvals-section)
+========================================== */
+
+.approvals-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-bg-light);
+}
+
+.approvals-section__container {
+  display: flex;
+  flex-direction: column;
+  gap: 90px;
+}
+
+.approvals-section__approvals {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+}
+
+/* View More is a mobile-only control (see section 18, mobile) */
+.approvals-section__load-more {
+  display: none;
+}
+
+.approvals-section__title {
+  --section-title-size: 36px;
+  --section-title-line-height: 54px;
+  --section-title-tracking: 1px;
+  text-align: center;
+}
+
+.approvals-section__columns {
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;
+  width: 100%;
+}
+
+.approvals-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.approvals-section__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: relative;
+  padding: 34px 24px;
+  background-color: var(--color-white);
+  overflow: hidden;
+}
+
+/* Accent bar that grows in from the left edge on hover */
+.approvals-section__item::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background-color: var(--color-primary);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Stretched link: the "Know More" link covers the whole card, so the card is clickable */
+.approvals-section__item .text-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.approvals-section__item:focus-within::before {
+  transform: scaleY(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .approvals-section__item:hover::before {
+    transform: scaleY(1);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .approvals-section__item:hover .text-link {
+    opacity: 1;
+  }
+}
+
+.approvals-section__item-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body);
+  color: var(--color-text-heading);
+  transition: color var(--transition-base);
+}
+
+.approvals-section__item:focus-within .approvals-section__item-title {
+  color: var(--color-primary);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .approvals-section__item:hover .approvals-section__item-title {
+    color: var(--color-primary);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .approvals-section__item::before {
+    transition: none;
+  }
+}
+
+.approvals-section__partners {
+  display: flex;
+  align-items: center;
+  /* padding-top: 60px; */
+  /* border-top: 1px solid var(--color-divider); */
+}
+
+.approvals-section__partners-title {
+  flex: 0 0 275px;
+  font-family: var(--font-heading);
+  font-size: 32px;
+  line-height: 1.3;
+  color: var(--color-primary);
+}
+
+.approvals-section__logos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px 16px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Partnerships logos: the whole image is shown at its natural shape, scaled down
+   to fit the Figma frame (max 100% × 100%) and centred — no crop or positioning.
+   Q2D keeps its 173 × 75 Figma frame. */
+.approvals-section__partners .logo-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.approvals-section__partners .logo-frame__image {
+  position: static;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.approvals-section__logo--q2d {
+  --logo-frame-width: 173px;
+  --logo-frame-height: 75px;
+  --logo-ratio: 173 / 75;
+}
+
+/* --- Partners logo marquee (Figma 550:3962: the row runs past the edge and fades out) ---
+   js/main.js (Logo marquees) clones the set and moves it right → left; hover pauses,
+   drag/swipe moves it. ≥ 577px only — the mobile design keeps its 3 × 2 grid. */
+.approvals-section__marquee {
+  --partners-logo-gap: 22px;
+  /* ≈ Figma spacing: 172.8px frames, one every ~195px */
+  --partners-fade: 80px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+@media (min-width: 577px) {
+  .approvals-section__marquee.is-ready {
+    overflow: hidden;
+    cursor: grab;
+    touch-action: pan-y;
+    /* vertical page scroll stays native; horizontal swipes drive the row */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--partners-fade), #000 calc(100% - var(--partners-fade)), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 var(--partners-fade), #000 calc(100% - var(--partners-fade)), transparent);
+  }
+
+  .approvals-section__marquee.is-dragging {
+    cursor: grabbing;
+  }
+
+  /* One nowrap row at the Figma frame size (overrides the static grid/row layouts) */
+  .approvals-section__marquee.is-ready .approvals-section__logos {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 0 var(--partners-logo-gap);
+    width: max-content;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .approvals-section__marquee.is-ready .logo-frame {
+    flex-shrink: 0;
+    width: calc(var(--logo-frame-width, 172.8px) * var(--logo-scale));
+    max-width: none;
+    height: calc(var(--logo-frame-height, 100px) * var(--logo-scale));
+    aspect-ratio: auto;
+  }
+
+  .approvals-section__marquee img {
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+}
+
+/* Title above the logos (≤ 1280px): the strip spans the full width */
+@media (max-width: 1280px) {
+  .approvals-section__marquee {
+    flex: none;
+    width: 100%;
+  }
+}
+
+/* Mobile: no marquee — the wrapper steps aside for the 3 × 2 grid */
+@media (max-width: 576px) {
+  .approvals-section__marquee {
+    display: contents;
+  }
+}
+
+/* ==========================================
+   11. CAMPUS LIFE SECTION  (#campus-life / .campus-life-section)
+========================================== */
+
+.campus-life-section {
+  padding-block: 100px;
+  /* .dark-surface: glow top-left, darker top-centre, broad glow bottom-right */
+  --dark-surface-background:
+    radial-gradient(ellipse 26% 70% at 11% 0%, rgba(46, 98, 184, 0.85), transparent 70%),
+    radial-gradient(ellipse 35% 75% at 42% 0%, rgba(13, 35, 80, 0.75), transparent 72%),
+    radial-gradient(ellipse 65% 120% at 100% 100%, rgba(30, 104, 176, 0.9), transparent 75%),
+    linear-gradient(0deg, rgba(30, 84, 160, 0.45), transparent 30%),
+    #13336b;
+}
+
+.campus-life-section__container {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.campus-life-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.campus-life-section__title {
+  --section-title-color: var(--color-white);
+  --section-title-line-height: 54px;
+  --section-title-tracking: 1px;
+}
+
+.campus-life-section__controls {
+  display: flex;
+  gap: 16px;
+}
+
+/* Hidden when there are ≤3 slides (JS) or when every slide already fits (Swiper lock) */
+.campus-life-section__controls[hidden],
+.campus-life-section__control.swiper-button-lock {
+  display: none;
+}
+
+.campus-life-section__control {
+  --icon-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  color: var(--color-white);
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-white);
+  border-radius: var(--radius-circle);
+  transition: background-color var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .campus-life-section__control:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.campus-life-section__control--prev .icon {
+  transform: scaleX(-1);
+}
+
+
+/* Swiper slider at every width (3 / 2 / 1.1 cards visible). Grid = no-JS fallback. */
+.campus-life-section__cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.campus-life-section__slider.swiper-initialized .campus-life-section__cards {
+  display: flex;
+  gap: 0;
+}
+
+.campus-life-section__card.swiper-slide {
+  height: auto;
+}
+
+.campus-life-section__card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  padding: 42px;
+  background-color: var(--color-white);
+}
+
+/* Figma "Accent": #EABC33, 4px along the bottom edge, grows left → right on hover
+   (smart animate 350ms ease-out) */
+.campus-life-section__card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background-color: #eabc33;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.35s ease-out;
+  pointer-events: none;
+}
+
+.campus-life-section__card:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .campus-life-section__card:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campus-life-section__card::after {
+    transition: none;
+  }
+}
+
+.campus-life-section__card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.campus-life-section__logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 83px;
+  height: 83px;
+}
+
+/* Logo sits at its natural size, scaled down only if it exceeds the box */
+.campus-life-section__logo {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Wide partner logos: 83px tall, same 1.728 ratio as the Partnerships frames */
+.campus-life-section__logo-wrap--wide {
+  width: 143.4px;
+}
+
+/* Q2D's Figma frame is 173 × 75 → 191.45 × 83 at this height */
+.campus-life-section__logo-wrap--q2d {
+  width: 191.45px;
+}
+
+
+.campus-life-section__card-icon {
+  color: var(--color-primary);
+}
+
+/* "Learn more ↗" — only in the Figma mobile design (see section 18) */
+.campus-life-section__card-more {
+  display: none;
+}
+
+.campus-life-section__card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.campus-life-section__card-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+  color: var(--color-primary);
+}
+
+.campus-life-section__card-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+  line-height: 1.8;
+  color: var(--color-text-body);
+}
+
+/* ==========================================
+   12. RECRUITERS SECTION  (#recruiters / .recruiters-section)
+========================================== */
+
+.recruiters-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-white);
+}
+
+.recruiters-section__container {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+.recruiters-section__logos {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.recruiters-section__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px 16px;
+}
+
+.recruiters-section__divider {
+  border: 0;
+  border-top: 1px solid var(--color-divider);
+}
+
+/* --- Infinite logo marquee (js/main.js adds .is-ready) ---
+   Row 1 moves left → right, row 2 right → left. Hover pauses; drag/swipe moves
+   it manually. Only `transform` changes per frame, so it stays on the GPU. */
+.recruiters-section__marquee {
+  --recruiters-logo-gap: 78px;
+  /* ≈ the space-between gap in the Figma rows at 1424px */
+}
+
+.recruiters-section__marquee.is-ready {
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+  /* vertical page scroll stays native; horizontal swipes drive the row */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.recruiters-section__marquee.is-dragging {
+  cursor: grabbing;
+}
+
+/* Logos fade in/out at both ends, like the partners strip (≥ 577px; the mobile
+   design is a static grid) */
+@media (min-width: 577px) {
+  .recruiters-section__marquee.is-ready {
+    --recruiters-fade: 80px;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--recruiters-fade), #000 calc(100% - var(--recruiters-fade)), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 var(--recruiters-fade), #000 calc(100% - var(--recruiters-fade)), transparent);
+  }
+}
+
+.recruiters-section__marquee.is-ready .recruiters-section__row {
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 0 var(--recruiters-logo-gap);
+  width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Crop box around each logo: no box on desktop (display: contents keeps the
+   image positioned against the .logo-frame); the mobile grid gives it a frame. */
+.recruiters-section__logo-box {
+  display: contents;
+}
+
+.recruiters-section__marquee img {
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Frame sizes + crop values from Figma (node 130:4613). Infosys, Deloitte,
+   Cognizant and Lenovo fill their 172.8 × 100 frame (object-fit: cover, no crop). */
+.recruiters-section__logo--tcs {
+  --logo-width: 100.12%;
+  --logo-height: 65.33%;
+  --logo-x: 0%;
+  --logo-y: 17.33%;
+}
+
+.recruiters-section__logo--tech-mahindra {
+  --logo-width: 100.12%;
+  --logo-height: 90.58%;
+  --logo-x: -0.14%;
+  --logo-y: 4.71%;
+}
+
+.recruiters-section__logo--jsw {
+  --logo-frame-width: 129px;
+  --logo-width: 134.11%;
+  --logo-height: 86.5%;
+  --logo-x: -17.05%;
+  --logo-y: 6.62%;
+}
+
+.recruiters-section__logo--ey {
+  --logo-frame-width: 211px;
+  --logo-width: 82.94%;
+  --logo-height: 100%;
+  --logo-x: 8.64%;
+  --logo-y: -0.39%;
+}
+
+.recruiters-section__logo--accenture {
+  --logo-width: 112.44%;
+  --logo-height: 129.65%;
+  --logo-x: -6.22%;
+  --logo-y: -15.27%;
+}
+
+.recruiters-section__logo--sib {
+  --logo-width: 116.86%;
+  --logo-height: 258.68%;
+  --logo-x: -8.54%;
+  --logo-y: -78.85%;
+}
+
+.recruiters-section__logo--tata-elxsi {
+  --logo-width: 61.34%;
+  --logo-height: 106%;
+  --logo-x: 19.33%;
+  --logo-y: 0%;
+}
+
+.recruiters-section__logo--icici {
+  --logo-width: 110.19%;
+  --logo-height: 190.4%;
+  --logo-x: -5.09%;
+  --logo-y: -45.2%;
+}
+
+/* ==========================================
+   13. TESTIMONIALS SECTION  (#testimonials / .testimonials-section)
+========================================== */
+
+.testimonials-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-bg-light);
+}
+
+/* Desktop: 3-column grid (Figma). ≤1199.98px: Swiper slider. Grid = no-JS fallback. */
+.testimonials-section__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.testimonials-section__slider.swiper-initialized .testimonials-section__grid {
+  display: flex;
+  gap: 0;
+}
+
+.testimonials-section__card.swiper-slide {
+  height: auto;
+}
+
+.testimonials-section__card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.testimonials-section__media {
+  position: relative;
+  aspect-ratio: 453.33 / 486;
+  overflow: hidden;
+}
+
+/* Figma "Hover tint": #153772 at 22% over the photo, under the bottom shade
+   (::after) and the play button; fades in on card hover (smart animate 350ms ease-out) */
+.testimonials-section__media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Explicit layers: photo (zoomed on hover, so it gets its own layer) < tint (1)
+     < bottom shade (1, later in the DOM) < play button (2) */
+  z-index: 1;
+  background-color: var(--color-primary);
+  opacity: 0;
+  transition: opacity 0.35s ease-out;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .testimonials-section__card:hover .testimonials-section__media::before {
+    opacity: 0.22;
+  }
+}
+
+.testimonials-section__media--shade::after,
+.testimonials-section__media--shade-strong::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: linear-gradient(to bottom, rgba(4, 4, 4, 0) 50.266%, rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+}
+
+.testimonials-section__media--shade-strong::after {
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 54.771%, rgba(0, 0, 0, 0.67));
+}
+
+.testimonials-section__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  /* Hover zoom (same feel as the news cards); the media box clips it */
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.testimonials-section__card:focus-within .testimonials-section__image {
+  transform: scale(1.05);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .testimonials-section__card:hover .testimonials-section__image {
+    transform: scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonials-section__image {
+    transition: none;
+  }
+}
+
+.testimonials-section__image--cover {
+  object-position: center;
+}
+
+.testimonials-section__play {
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  z-index: 2;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  background-color: var(--color-white);
+  border-radius: var(--radius-circle);
+}
+
+/* Play triangle (inline SVG, same shape as the Figma icon); the circle itself
+   stays still and only the icon zooms on hover */
+.testimonials-section__play-icon {
+  width: 13px;
+  height: 16px;
+  fill: currentColor;
+  transition: transform var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .testimonials-section__play:hover .testimonials-section__play-icon {
+    transform: scale(1.15);
+  }
+}
+
+.testimonials-section__text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.testimonials-section__name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+  line-height: 32px;
+  color: var(--color-primary);
+}
+
+.testimonials-section__program {
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body);
+  color: var(--color-black);
+}
+
+.testimonials-section__quote {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  max-width: 378px;
+  line-height: var(--line-height-body);
+  color: var(--color-text-body);
+}
+
+.testimonials-section__quote--narrow {
+  max-width: 367px;
+}
+
+.testimonials-section__quote--narrower {
+  max-width: 322px;
+}
+
+/* ==========================================
+   14. ADMISSIONS SECTION  (#admissions / .admissions-section)
+========================================== */
+
+.admissions-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-white);
+}
+
+.admissions-section__container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+.admissions-section__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 0 1 615px;
+  min-width: 0;
+}
+
+.admissions-section__heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.admissions-section__heading .section-label {
+  padding-inline: 4px;
+}
+
+.admissions-section__title {
+  --display-title-line-height: 1.18;
+}
+
+.admissions-section__description {
+  max-width: 467px;
+}
+
+.admissions-section__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+/* "Enquire About Admissions" — only in the Figma mobile design (see section 18) */
+.admissions-section__form-title {
+  display: none;
+}
+
+.admissions-section__form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  flex: 0 1 686.89px;
+  min-width: 0;
+  padding-top: 12px;
+}
+
+.admissions-section__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 16px;
+  width: 100%;
+  padding-left: 8px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.form-field--full {
+  grid-column: 1 / -1;
+  padding-bottom: 8.8px;
+}
+
+.form-field__label {
+  height: 30px;
+  padding-top: 8.5px;
+  font-size: var(--font-size-xs);
+  line-height: 14px;
+  white-space: nowrap;
+  color: var(--color-text-label);
+}
+
+.form-field__control {
+  width: 100%;
+  height: 56px;
+  padding: 17px 35px 17px 16px;
+  font-size: var(--font-size-sm);
+  line-height: normal;
+  color: var(--color-text-heading);
+  background-color: var(--color-bg-input);
+  border: 0;
+  border-bottom: 1px solid var(--color-border-input);
+  border-radius: 0;
+  /* Focus line: a 2px primary-colour bar drawn as a background, grown from left to right on focus */
+  background-image: linear-gradient(var(--color-primary), var(--color-primary));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0% 2px;
+  transition: background-size 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Focus: line sweeps in instead of an outline (the phone field reacts when anything inside it is focused) */
+.form-field__control:focus,
+.form-field__control:focus-visible,
+.form-field__control--phone:focus-within {
+  outline: 0;
+  background-size: 100% 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-field__control {
+    transition: none;
+  }
+}
+
+.form-field__control--phone :focus,
+.form-field__control--phone :focus-visible {
+  outline: 0;
+}
+
+.form-field__control::placeholder {
+  color: var(--color-text-placeholder);
+  opacity: 1;
+}
+
+.form-field__control--phone {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 16px 0 0.89px;
+}
+
+.form-field__country {
+  flex-shrink: 0;
+  width: 54.6px;
+  height: 54px;
+}
+
+.form-field__dial-code {
+  flex-shrink: 0;
+  color: var(--color-text-heading);
+}
+
+.form-field__phone-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-left: 5px;
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.form-field__phone-input::placeholder {
+  color: var(--color-text-placeholder);
+  opacity: 1;
+}
+
+.form-field__select-wrap {
+  position: relative;
+}
+
+.form-field__control--select {
+  padding-block: 0;
+  padding-left: 15.89px;
+  line-height: var(--line-height-body);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-field__chevron {
+  position: absolute;
+  top: 16px;
+  right: 14.5px;
+  width: 24px;
+  height: 24px;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.form-field__control--textarea {
+  height: 135px;
+  line-height: var(--line-height-body);
+  resize: none;
+}
+
+.admissions-section__consent {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.admissions-section__checkbox {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.admissions-section__checkbox-box {
+  position: relative;
+  flex-shrink: 0;
+  width: 25px;
+  height: 25px;
+  padding: 7px 0 0 7px;
+}
+
+/* Checked: navy filled box (covers the 18px outline icon at 7px,7px) with a white tick */
+.admissions-section__checkbox-box::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 7px;
+  width: 18px;
+  height: 18px;
+  background-color: var(--color-primary);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.admissions-section__checkbox:checked+.admissions-section__checkbox-box::before {
+  opacity: 1;
+}
+
+.admissions-section__checkbox:checked+.admissions-section__checkbox-box::after {
+  content: "";
+  position: absolute;
+  left: 13px;
+  top: 10px;
+  width: 6px;
+  height: 10px;
+  border: solid var(--color-white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.admissions-section__checkbox:focus-visible+.admissions-section__checkbox-box {
+  outline: 2px solid var(--color-accent-start);
+  outline-offset: 2px;
+}
+
+.admissions-section__consent-text {
+  flex: 1 1 0;
+  font-size: var(--font-size-xs);
+  line-height: 25.2px;
+  color: var(--color-text-body);
+}
+
+/* ==========================================
+   15. CONTACT SECTION  (#contact / .contact-section)
+========================================== */
+
+.contact-section {
+  padding-block: var(--section-padding-y);
+  background-color: var(--color-bg-light);
+}
+
+.contact-section__container {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+.contact-section__info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 0 1 615px;
+  min-width: 0;
+}
+
+.contact-section__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-section__heading .section-label {
+  padding-inline: 4px;
+}
+
+.contact-section__description {
+  max-width: 516px;
+}
+
+.contact-section__list {
+  max-width: 516px;
+}
+
+.contact-section__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding-block: 24px;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body);
+  border-bottom: 1px solid var(--color-border-list);
+}
+
+.contact-section__term {
+  color: var(--color-text-soft);
+}
+
+.contact-section__value {
+  color: var(--color-black);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact-section__value a:hover {
+    text-decoration: underline;
+  }
+}
+
+.contact-section__map {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 481px;
+  overflow: hidden;
+  background-color: var(--color-bg-map);
+  border: 1px solid var(--color-border-map);
+}
+
+.contact-section__map-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ==========================================
+   16. FOOTER SECTION  (#site-footer / .site-footer)
+========================================== */
+
+.site-footer {
+  padding-top: 100px;
+  color: var(--color-white);
+  /* .dark-surface (fitted to the Figma 550:3962 render): glow right-centre,
+     teal glow bottom-left, navy → blue diagonal; grid strongest in the centre */
+  --dark-surface-background:
+    radial-gradient(ellipse 30.75% 75% at 91% 47%, rgba(44, 99, 192, 0.82), transparent 70%),
+    radial-gradient(ellipse 46% 87.5% at 0% 100%, rgba(24, 96, 146, 0.53), transparent 75%),
+    linear-gradient(153.75deg, #0d2350 0%, #0d2350 18%, #194185 70%, #1f4fa4 100%);
+  --dark-surface-grid-color: rgba(255, 255, 255, 0.055);
+  --dark-surface-grid-mask: radial-gradient(ellipse 52% 52.5% at 50% 50.75%, #000, transparent);
+}
+
+.site-footer__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 48px;
+  padding-bottom: 120px;
+}
+
+.site-footer__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  flex: 0 0 270px;
+}
+
+.site-footer__logo {
+  width: 196px;
+  height: 83px;
+  object-fit: contain;
+}
+
+.site-footer__brand-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 34px;
+}
+
+.site-footer__address {
+  max-width: 269px;
+  line-height: 29.8px;
+}
+
+.site-footer__direction {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-body);
+  border: 1px solid var(--color-white);
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-footer__direction:hover {
+    color: var(--color-primary);
+    background-color: var(--color-white);
+  }
+}
+
+.site-footer__direction-icon {
+  --icon-size: 8px;
+  /* Tight-cropped arrow, inlined as a data URI (see .icon note) */
+  --icon-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath d='M6.728 2.163L1.066 7.825C0.949 7.942 0.801 8 0.62 8C0.44 8 0.292 7.942 0.175 7.825C0.058 7.708 0 7.56 0 7.38C0 7.199 0.058 7.051 0.175 6.934L5.837 1.272H1.002C0.822 1.272 0.671 1.211 0.549 1.089C0.427 0.968 0.366 0.816 0.366 0.636C0.366 0.456 0.427 0.305 0.549 0.183C0.671 0.061 0.822 0 1.002 0H7.364C7.544 0 7.695 0.061 7.817 0.183C7.939 0.305 8 0.456 8 0.636V6.998C8 7.178 7.939 7.329 7.817 7.451C7.695 7.573 7.544 7.634 7.364 7.634C7.184 7.634 7.032 7.573 6.911 7.451C6.789 7.329 6.728 7.178 6.728 6.998V2.163Z'/%3E%3C/svg%3E");
+  margin-inline: 1.66px;
+  --icon-rotate: 45deg;
+  --icon-clip-x: 1.66px;
+}
+
+.site-footer__nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 48px;
+  flex: 0 1 1055px;
+  min-width: 0;
+  min-height: 366px;
+}
+
+.site-footer__columns {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  width: 100%;
+}
+
+.site-footer__column--admissions {
+  flex: 0 1 233px;
+}
+
+.site-footer__column--email {
+  flex: 0 1 226px;
+}
+
+.site-footer__column--office {
+  flex: 0 1 269px;
+}
+
+.site-footer__column--quick {
+  flex: 0 0 auto;
+}
+
+.site-footer__heading {
+  position: relative;
+  padding-bottom: 18px;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: 26px;
+  white-space: nowrap;
+}
+
+.site-footer__heading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 28px;
+  width: var(--footer-heading-line, 100px);
+  height: 1px;
+  background-color: var(--color-white);
+}
+
+.site-footer__heading--admissions {
+  --footer-heading-line: 117.64px;
+}
+
+.site-footer__heading--email {
+  --footer-heading-line: 110.84px;
+}
+
+.site-footer__heading--office {
+  --footer-heading-line: 147px;
+}
+
+.site-footer__heading--quick {
+  --footer-heading-line: 99px;
+  padding-bottom: 20px;
+}
+
+.site-footer__list li {
+  display: flex;
+  padding-block: 8px;
+}
+
+.site-footer__link {
+  display: inline-block;
+  line-height: 25px;
+  transition: opacity var(--transition-base);
+}
+
+/* Hover: fade the link (applies to real links only, not the opening-hours text) */
+a.site-footer__link:focus-visible {
+  opacity: 0.7;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  a.site-footer__link:hover {
+    opacity: 0.7;
+  }
+}
+
+.site-footer__link--underline {
+  text-decoration: underline;
+  text-underline-position: from-font;
+}
+
+.site-footer__address--office {
+  padding-top: 7px;
+}
+
+.site-footer__social {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  min-height: 46px;
+  padding-inline: 6px;
+}
+
+.site-footer__social-link {
+  display: block;
+  padding: 4px;
+  transition: opacity var(--transition-base);
+}
+
+.site-footer__credit-link {
+  transition: opacity var(--transition-base);
+}
+
+.site-footer__credit-link:focus-visible {
+  opacity: 0.7;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-footer__credit-link:hover {
+    opacity: 0.7;
+  }
+}
+
+.site-footer__social-link:focus-visible {
+  opacity: 0.7;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-footer__social-link:hover {
+    opacity: 0.7;
+  }
+}
+
+.site-footer__social-link img {
+  width: 32px;
+  height: 32px;
+}
+
+.site-footer__bottom {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding-bottom: 52px;
+  font-size: var(--font-size-xs);
+  line-height: 16.8px;
+}
+
+/* ==========================================
+   16b. VIDEO MODAL  (.video-modal — opened from the Students speak play buttons)
+   Native <dialog> (focus trap, Esc to close, top layer). Desktop: centred 16:9
+   player, close button above it. ≤576px: full screen (see RESPONSIVE).
+========================================== */
+.video-modal {
+  /* Centre in the viewport. The global reset (* { margin: 0 }) removes the
+     dialog's default margin: auto, which is what centres a modal <dialog>. */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(960px, 100vw - 64px);
+  height: fit-content;
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  overflow: visible;
+  color: var(--color-white);
+  background: transparent;
+  border: 0;
+}
+
+.video-modal::backdrop {
+  background: rgba(6, 14, 32, 0.86);
+}
+
+.video-modal__panel {
+  position: relative;
+  padding-block: 60px;
+  /* room for the close button above; equal space below keeps the video itself centred */
+}
+
+.video-modal__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  max-height: calc(100vh - 140px);
+  margin-inline: auto;
+  overflow: hidden;
+  background-color: var(--color-black);
+}
+
+.video-modal__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.video-modal__controls {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  display: flex;
+  gap: 12px;
+}
+
+.video-modal__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: var(--color-white);
+  background-color: rgba(21, 55, 114, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-circle);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background-color var(--transition-base);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .video-modal__button:hover {
+    background-color: var(--color-primary);
+  }
+}
+
+.video-modal__button:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 3px;
+}
+
+.video-modal__icon {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+/* Icon state: JS sets data-paused / data-muted on the dialog */
+.video-modal__icon--play,
+.video-modal__icon--muted,
+.video-modal[data-paused] .video-modal__icon--pause,
+.video-modal[data-muted] .video-modal__icon--sound {
+  display: none;
+}
+
+.video-modal[data-paused] .video-modal__icon--play,
+.video-modal[data-muted] .video-modal__icon--muted {
+  display: block;
+}
+
+.video-modal__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+/* Open animation */
+.video-modal[open] {
+  animation: video-modal-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.video-modal[open]::backdrop {
+  animation: video-modal-fade 0.3s ease;
+}
+
+@keyframes video-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes video-modal-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .video-modal[open],
+  .video-modal[open]::backdrop {
+    animation: none;
+  }
+}
+
+/* Page behind the open modal doesn't scroll. Hiding the scrollbar would widen the
+   page and shift it right, so main.js sets --scrollbar-compensation to the
+   scrollbar's width and the same space is added back as padding (0 on touch
+   devices / overlay scrollbars, where nothing shifts). */
+html.has-video-modal {
+  overflow: hidden;
+  padding-right: var(--scrollbar-compensation, 0px);
+}
+
+/* ==========================================
+   17. RESPONSIVE STYLES
+========================================== */
+
+/* ---------- Small desktop / laptop (≤ 1280px) ---------- */
+@media (max-width: 1280px) {
+  :root {
+    --container-gutter: 32px;
+    --font-size-display: 52px;
+    --font-size-hero: 72px;
+    --line-height-hero: 1.08;
+  }
+
+  /* About */
+  .about-section__intro {
+    gap: 48px;
+  }
+
+  .about-section__stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 32px;
+  }
+
+  .about-section__stat,
+  .about-section__stat:last-child {
+    width: auto;
+    padding-right: 0;
+  }
+
+  /* Welcome */
+  .welcome-section__container {
+    gap: 40px;
+  }
+
+  .welcome-section__grid {
+    flex-basis: 58%;
+  }
+
+  .welcome-section__card {
+    padding: 32px;
+  }
+
+  /* Approvals */
+  .approvals-section__partners {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 40px;
+  }
+
+  .approvals-section__partners-title {
+    flex-basis: auto;
+  }
+
+  .approvals-section__logos {
+    width: 100%;
+  }
+
+  /* Footer */
+  .site-footer__brand {
+    flex-basis: 240px;
+  }
+
+  .site-footer__columns {
+    flex-wrap: wrap;
+    gap: 32px 40px;
+  }
+}
+
+/* ---------- Tablet → laptop (768px – 1599.98px): approvals logos ----------
+   The Figma frames (172.8 × 100) don't fit six across here (from 1281px the title also sits
+   beside them), so a 6-column grid
+   keeps them on one row: each frame shrinks to its column (never above its Figma
+   size) and keeps the Figma aspect ratio; the crop inside is in percentages, so
+   it scales with the frame. */
+@media (min-width: 768px) and (max-width: 1599.98px) {
+  .approvals-section__logos {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 16px;
+    justify-items: center;
+    align-items: center;
+  }
+
+  .approvals-section__logos .logo-frame {
+    width: 100%;
+    max-width: calc(var(--logo-frame-width, 172.8px) * var(--logo-scale));
+    height: auto;
+    aspect-ratio: var(--logo-ratio, 1.728);
+  }
+}
+
+/* ---------- Tablet only (577px – 1199.98px): news card gap ---------- */
+@media (min-width: 577px) and (max-width: 1199.98px) {
+
+  .news-section__grid,
+  .news-section__side {
+    gap: 18px;
+  }
+}
+
+/* ---------- Tablet spacing (768px – 1199.98px; ≤767.98px blocks below refine it) ---------- */
+@media (max-width: 1199.98px) {
+  .recruiters-section__marquee {
+    --recruiters-logo-gap: 60px;
+  }
+
+  /* --- Section spacing (tablet: ≤1199.98px) ---
+     Scale: major blocks 48 · stacked pairs 40 · sub-groups 28–40 · card grids 24 */
+  .about-section__container {
+    gap: 48px;
+  }
+
+  .about-section__intro {
+    gap: 40px;
+  }
+
+  .about-section__story {
+    gap: 32px;
+  }
+
+  .welcome-section__content {
+    gap: 28px;
+  }
+
+  .news-section__body {
+    gap: 28px;
+  }
+
+  .approvals-section__container {
+    gap: 72px;
+  }
+
+  .approvals-section__approvals {
+    gap: 40px;
+  }
+
+  .approvals-section__columns {
+    gap: 32px;
+  }
+
+  .approvals-section__partners {
+    padding-top: 48px;
+  }
+
+  .campus-life-section__container {
+    gap: 48px;
+  }
+
+  .recruiters-section__container {
+    gap: 48px;
+  }
+
+  .testimonials-section__grid {
+    gap: 18px;
+  }
+
+  .admissions-section__container {
+    gap: 40px;
+  }
+
+  .contact-section__container {
+    gap: 48px;
+  }
+
+  .site-footer__nav {
+    gap: 40px;
+  }
+}
+
+/* ---------- Tablet (768px – 1199.98px) ---------- */
+@media (max-width: 1199.98px) {
+  :root {
+    --section-padding-y: 88px;
+    --font-size-hero: 60px;
+    --font-size-display: 46px;
+    --font-size-section-title: 40px;
+    --font-size-stat: 52px;
+    --font-size-card-title: 30px;
+  }
+
+  .section-title {
+    --section-title-line-height: 1.15;
+  }
+
+  /* Institutions */
+  .institutions-section__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .institutions-section__body {
+    max-width: none;
+  }
+
+  /* About */
+  .about-section__intro {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .about-section__media {
+    flex: none;
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+
+  .about-section__story {
+    flex-basis: auto;
+  }
+
+  .about-section__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Welcome */
+  .welcome-section__container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .welcome-section__content {
+    flex: none;
+    min-height: 0;
+    padding-block: 0;
+  }
+
+  .welcome-section__grid {
+    flex: none;
+    max-width: none;
+  }
+
+  /* News */
+  .news-section__grid {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .news-section__card {
+    flex: none;
+    aspect-ratio: 700 / 321;
+  }
+
+  .news-section__card--featured {
+    aspect-ratio: 4 / 3;
+  }
+
+  /* Approvals */
+  .approvals-section__columns {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .approvals-section__list {
+    width: 100%;
+  }
+
+  /* Campus life */
+  .campus-life-section {
+    padding-block: 80px;
+  }
+
+  .campus-life-section__cards {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .campus-life-section__card {
+    padding: 32px;
+  }
+
+  /* Recruiters */
+  .recruiters-section__row {
+    justify-content: space-around;
+  }
+
+  /* Testimonials */
+  .testimonials-section__grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px 24px;
+  }
+
+  /* Admissions */
+  .admissions-section__container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admissions-section__intro,
+  .admissions-section__form {
+    flex-basis: auto;
+  }
+
+  .admissions-section__actions {
+    margin-top: 10px;
+  }
+
+  /* Contact */
+  .contact-section__container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .contact-section__info {
+    flex-basis: auto;
+  }
+
+  .contact-section__map {
+    flex: none;
+    height: 400px;
+  }
+
+  /* Footer */
+  .site-footer__top {
+    flex-direction: column;
+    padding-bottom: 72px;
+  }
+
+  .site-footer__brand {
+    flex-basis: auto;
+  }
+
+  .site-footer__nav {
+    flex-basis: auto;
+    align-items: flex-start;
+    width: 100%;
+    min-height: 0;
+  }
+
+  .site-footer__columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-footer__social {
+    justify-content: flex-start;
+    padding-inline: 0;
+    margin-left: -4px;
+  }
+}
+
+/* ---------- Laptop (1200px – 1499.98px) ---------- */
+@media (min-width: 1200px) and (max-width: 1499.98px) {
+  .approvals-section__columns {
+    gap: 40px;
+  }
+}
+
+/* ---------- Tablet About (768px – 1199.98px): desktop layout ----------
+   Image and story side by side, stats in a single row of four. */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .about-section__intro {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .about-section__media {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 420px;
+    aspect-ratio: auto;
+  }
+
+  .about-section__story {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+
+  .about-section__stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 24px;
+  }
+
+  /* Welcome — content beside the 2 × 2 card grid */
+  .welcome-section__container {
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .welcome-section__content {
+    flex: 1 1 0;
+    padding-block: 0;
+  }
+
+  .welcome-section__grid {
+    flex: 0 0 56%;
+    max-width: 56%;
+    gap: 16px;
+  }
+
+  .welcome-section__card {
+    padding: 24px 20px;
+  }
+
+  /* News — featured card beside the two stacked side cards */
+  .news-section__grid {
+    flex-direction: row;
+    height: clamp(480px, 56vw, 666px);
+  }
+
+  .news-section__card,
+  .news-section__card--featured {
+    flex: 1 1 0;
+    aspect-ratio: auto;
+  }
+
+  .news-section__card--featured .news-section__card-title {
+    font-size: 26px;
+    line-height: 1.3;
+  }
+
+  /* Approvals — the two approval lists side by side */
+  .approvals-section__columns {
+    flex-direction: row;
+    gap: 24px;
+  }
+
+  .approvals-section__list {
+    flex: 1 1 0;
+    width: auto;
+  }
+
+  /* Contact — details beside the map, equal halves, map matches their height */
+  .contact-section__container {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 32px;
+  }
+
+  .contact-section__info {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+
+  .contact-section__map {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 420px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  :root {
+    --font-size-stat: 42px;
+  }
+}
+
+/* ---------- Large mobile (577px – 767.98px) ---------- */
+@media (max-width: 767.98px) {
+  :root {
+    --container-gutter: 24px;
+    --section-padding-y: 80px;
+    --font-size-hero: 48px;
+    --font-size-display: 40px;
+    --font-size-section-title: 34px;
+    --font-size-stat: 46px;
+    --font-size-card-title: 28px;
+    --logo-scale: 0.85;
+    --header-height: 97px;
+    --utility-bar-height: 45px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-heading {
+    gap: 16px;
+  }
+
+  /* Header */
+  .utility-bar__inner {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-block: 8px;
+  }
+
+  .utility-bar__list {
+    justify-content: center;
+  }
+
+  .site-header__main-inner {
+    min-height: 96px;
+  }
+
+  /* Hero */
+  .hero-section__container {
+    gap: 36px;
+    padding-bottom: 64px;
+  }
+
+  .hero-section__description {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Welcome */
+  .welcome-section__grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* News */
+  .news-section__card--featured .news-section__card-text {
+    left: 24px;
+    bottom: 24px;
+    max-width: calc(100% - 48px);
+  }
+
+  .news-section__card--featured .news-section__card-title {
+    font-size: 26px;
+    line-height: 34px;
+  }
+
+  .news-section__card,
+  .news-section__card--featured {
+    aspect-ratio: 4 / 3;
+  }
+
+  .news-section__circulars {
+    flex-direction: column;
+    padding: 28px 20px;
+  }
+
+  .news-section__circulars-label {
+    margin-right: 0;
+  }
+
+  /* Campus life */
+  .campus-life-section__title {
+    --section-title-line-height: 1.15;
+  }
+
+  /* Approvals */
+  .approvals-section__item {
+    padding: 24px 20px;
+  }
+
+  .approvals-section__item-title {
+    font-size: var(--font-size-md);
+  }
+
+  /* Recruiters */
+  .recruiters-section__container {
+    gap: 40px;
+  }
+
+  .recruiters-section__logos {
+    gap: 40px;
+  }
+
+  .recruiters-section__marquee {
+    --recruiters-logo-gap: 48px;
+  }
+
+  /* Footer */
+  .site-footer {
+    padding-top: 72px;
+  }
+
+  /* --- Section spacing (large mobile / small tablet) ---
+     Scale: major blocks 40 · stacked pairs 32 · sub-groups 28 */
+  .section-header {
+    padding-bottom: 28px;
+  }
+
+  .about-section__container {
+    gap: 40px;
+  }
+
+  .about-section__intro {
+    gap: 32px;
+  }
+
+  .about-section__story {
+    gap: 28px;
+  }
+
+  .approvals-section__container {
+    gap: 56px;
+  }
+
+  .approvals-section__partners {
+    padding-top: 40px;
+  }
+
+  .campus-life-section__container {
+    gap: 40px;
+  }
+
+  .testimonials-section__grid {
+    gap: 32px 24px;
+  }
+
+  /* Sliders: full-bleed so cards scroll edge to edge.
+     Negative margins break out of the container; inline padding keeps the first
+     and last cards aligned with the content (Swiper subtracts padding from its
+     size, and overflow is clipped at the padding edge, so slides reach the
+     screen edge while scrolling). */
+  .institutions-section__slider,
+  .campus-life-section__slider,
+  .testimonials-section__slider {
+    width: auto;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding-inline: var(--container-gutter);
+  }
+
+  /* Recruiters marquee is an endless loop (no first/last item), so it only
+     needs to reach the screen edges — no start/end padding. */
+  .recruiters-section__marquee {
+    margin-inline: calc(-1 * var(--container-gutter));
+  }
+
+  .contact-section__container {
+    gap: 40px;
+  }
+
+  .site-footer__nav {
+    gap: 40px;
+  }
+}
+
+/* ---------- Mobile (≤ 576px) ---------- */
+@media (max-width: 576px) {
+  :root {
+    --container-gutter: 16px;
+    --section-padding-y: 64px;
+    --font-size-hero: 40px;
+    --font-size-display: 34px;
+    --font-size-section-title: 30px;
+    --font-size-stat: 42px;
+    --font-size-card-title: 26px;
+    --button-height: 50px;
+    --button-padding-x: 20px;
+    --logo-scale: 0.75;
+    --header-height: 81px;
+  }
+
+  /* Portrait mobile photo (Hero-mobile.png): show it whole, centred */
+  .hero-section__image,
+  .hero-section__video {
+    object-position: center;
+  }
+
+  /* Institutions */
+  .institutions-section__grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* About — stats stay in a 2 × 2 grid on mobile */
+  .about-section__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 24px;
+  }
+
+  .about-section__stat {
+    padding-block: 20px;
+  }
+
+  .about-section__stat-value {
+    margin-bottom: 8px;
+  }
+
+  .about-section__stat-text {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  /* Welcome */
+  .welcome-section__card,
+  .campus-life-section__card {
+    padding: 28px 24px;
+  }
+
+  /* News — tabs become one horizontally scrollable row (edge to edge, first/last
+     tab aligned with the content). main.js centres the active tab in the row. */
+  .news-section__tabs {
+    flex-wrap: nowrap;
+    gap: 0 24px;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding-inline: var(--container-gutter);
+    scroll-padding-inline: var(--container-gutter);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .news-section__tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .news-section__tab {
+    flex-shrink: 0;
+  }
+
+  .news-section__card {
+    aspect-ratio: 1 / 1;
+  }
+
+  .news-section__card--featured .news-section__card-title {
+    font-size: 22px;
+    line-height: 30px;
+    letter-spacing: -0.5px;
+  }
+
+  .news-section__date {
+    font-size: var(--font-size-sm);
+  }
+
+  .news-section__card-title {
+    font-size: var(--font-size-lg);
+    line-height: 28px;
+  }
+
+  /* Approvals */
+  .approvals-section__item {
+    /* flex-direction: column; */
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .approvals-section__partners-title {
+    font-size: 28px;
+  }
+
+  .recruiters-section__row {
+    justify-content: center;
+    gap: 16px 8px;
+  }
+
+  /* Approvals logos: one horizontally scrollable row, edge to edge, with the
+     first/last logo aligned to the content (no visible scrollbar) */
+  .approvals-section__logos {
+    flex: none;
+    /* parent is a column here; basis 0 would collapse a scroll container's height */
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 16px;
+    width: calc(100% + 2 * var(--container-gutter));
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding-inline: var(--container-gutter);
+    scroll-padding-inline: var(--container-gutter);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .approvals-section__logos::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 3.5 logos visible: the visible strip = content width (100%) + right gutter;
+     it holds 3.5 frames + 3 gaps of 16px. Height follows the Figma frame ratio. */
+  .approvals-section__logos .logo-frame {
+    flex-shrink: 0;
+    width: calc((100% + var(--container-gutter) - 3 * 16px) / 3.5);
+    height: auto;
+    aspect-ratio: var(--logo-ratio, 1.728);
+  }
+
+  .recruiters-section__marquee {
+    --recruiters-logo-gap: 32px;
+  }
+
+  .recruiters-section__container {
+    gap: 32px;
+  }
+
+  /* Campus life */
+  .campus-life-section {
+    padding-block: 64px;
+  }
+
+  /* Admissions */
+  .admissions-section__fields {
+    grid-template-columns: 1fr;
+    padding-left: 0;
+  }
+
+  /* Submit button spans the form (the form column uses align-items: flex-start) */
+  .admissions-section__submit {
+    align-self: stretch;
+    width: 100%;
+  }
+
+  /* Contact */
+  .contact-section__row {
+    font-size: var(--font-size-sm);
+    padding-block: 18px;
+  }
+
+  .contact-section__map {
+    height: 320px;
+  }
+
+  /* Footer */
+  .site-footer__columns {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .site-footer__top {
+    gap: 40px;
+    padding-bottom: 56px;
+  }
+
+  .site-footer__bottom {
+    flex-direction: column;
+    padding-bottom: 40px;
+  }
+
+  /* --- Section spacing (mobile) ---
+     Scale: major blocks 32 · stacked pairs 24 · sub-groups 24 · card grids 16 */
+  .section-header {
+    padding-bottom: 24px;
+  }
+
+  /* View All moves from the section header to a full-width button under the content */
+  .section-header .section-view-all {
+    display: none;
+  }
+
+  .button.section-view-all--bottom {
+    display: flex;
+    width: 100%;
+    margin-top: 32px;
+  }
+
+  /* Recruiters container is a flex column whose gap already spaces the button */
+  .recruiters-section__container>.section-view-all--bottom {
+    margin-top: 0;
+  }
+
+  .hero-section__container {
+    gap: 32px;
+  }
+
+  .institutions-section__grid {
+    gap: 16px;
+  }
+
+  .about-section__container {
+    gap: 32px;
+  }
+
+  .about-section__intro {
+    gap: 24px;
+  }
+
+  .about-section__story {
+    gap: 24px;
+  }
+
+  .about-section__text {
+    gap: 24px;
+  }
+
+  .welcome-section__container {
+    gap: 32px;
+  }
+
+  .welcome-section__content {
+    gap: 24px;
+  }
+
+  .welcome-section__grid {
+    gap: 16px;
+  }
+
+  .news-section__body {
+    gap: 24px;
+  }
+
+  .news-section__grid,
+  .news-section__side {
+    gap: 16px;
+  }
+
+  .approvals-section__container {
+    gap: 48px;
+  }
+
+  .approvals-section__approvals {
+    gap: 32px;
+  }
+
+  .approvals-section__partners {
+    padding-top: 32px;
+    gap: 24px;
+  }
+
+  .campus-life-section__container {
+    gap: 32px;
+  }
+
+  .campus-life-section__cards {
+    gap: 16px;
+  }
+
+  .testimonials-section__grid {
+    gap: 24px 16px;
+  }
+
+  .admissions-section__container {
+    gap: 32px;
+  }
+
+  .contact-section__container {
+    gap: 32px;
+  }
+
+  .site-footer {
+    padding-top: 56px;
+  }
+
+  .site-footer__nav {
+    gap: 32px;
+  }
+
+  /* Video modal: full screen; video letterboxed on black, controls kept clear
+     of the notch / home indicator via safe-area insets */
+  .video-modal {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    margin: 0;
+    background-color: var(--color-black);
+  }
+
+  .video-modal__panel {
+    height: 100%;
+    padding-block: 0;
+  }
+
+  .video-modal__frame {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
+  }
+
+  .video-modal__controls {
+    left: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+
+  .video-modal__close {
+    top: calc(16px + env(safe-area-inset-top));
+    right: 16px;
+  }
+}
+
+/* ==========================================
+   18. MOBILE — FIGMA MOBILE DESIGN (≤ 576px)
+   Figma node 426:7098 ("GIT Responsive Homepage", 393px frame) and the menu
+   node 447:9113. Kept last so it settles every earlier mobile rule. Text that
+   differs on mobile is swapped with .u-hide-mobile / .u-mobile-only.
+========================================== */
+@media (max-width: 576px) {
+  :root {
+    --container-gutter: 20px;
+    --header-height: 75px;
+    --utility-bar-height: 0px;
+  }
+
+  /* Mobile design keeps flat navy for News / Life at GIT / footer (no glows, no grid) */
+  .dark-surface {
+    --dark-surface-background: var(--color-primary);
+  }
+
+  .dark-surface::before {
+    display: none;
+  }
+
+  /* ---------- Header (Figma 426:7766): no utility bar, hamburger replaces Apply Online ---------- */
+  .utility-bar,
+  .site-header__button {
+    display: none;
+  }
+
+  .site-header__main-inner {
+    min-height: 74px;
+    padding-block: 0;
+    gap: 30px;
+  }
+
+  .site-header__logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 8px;
+    border-right: 0;
+  }
+
+  /* 1 × 35px divider between the two logos */
+  .site-header__logo-wrap::after {
+    content: "";
+    width: 1px;
+    height: 35px;
+    background-color: #bbbbbb;
+  }
+
+  .site-header__logo {
+    width: 118px;
+    height: 46px;
+  }
+
+  .site-header__nba-wrap {
+    padding-left: 0;
+  }
+
+  .site-header__nba {
+    width: 46px;
+    height: 40px;
+  }
+
+  .site-header__menu-toggle {
+    display: flex;
+  }
+
+  /* ---------- Hero (Figma 426:7101) ---------- */
+  .hero-section__media::after {
+    background-image: linear-gradient(183.256deg, rgba(0, 0, 0, 0) 25.025%, rgba(0, 0, 0, 0.82) 98.494%);
+  }
+
+  .hero-section__container {
+    gap: 24px;
+    padding-top: 80px;
+    padding-bottom: 60px;
+    padding-left: var(--container-gutter);
+  }
+
+  .hero-section__content {
+    gap: 16px;
+  }
+
+  .hero-section__title {
+    font-size: 48px;
+    line-height: 1;
+    text-transform: none;
+  }
+
+  .hero-section__description {
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+  }
+
+  /* 20px between the paragraph and the chips (content gap is 16px) */
+  .hero-section__chips {
+    margin-top: 4px;
+  }
+
+  .hero-section__chip {
+    --chip-font-size: var(--font-size-xs);
+    height: 36px;
+    padding: 8px 12px;
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.4;
+  }
+
+  .hero-section__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hero-section__actions .button {
+    --button-height: 52px;
+    width: 100%;
+    padding-inline: 24px;
+  }
+
+  /* Full-width buttons reach the right edge here, so drop the video toggle into the
+     60px bottom padding (8px gap below Contact Us) instead of overlapping it */
+  .hero-section__video-toggle {
+    bottom: 8px;
+  }
+}
+
+/* ---------- Mobile (≤ 576px), continued: section headings + Find Your Path ---------- */
+@media (max-width: 576px) {
+  :root {
+    --section-padding-y: 60px;
+  }
+
+  /* Section heading (Figma mobile): 14px label, 20px gap, 36px Canela title in brand blue */
+  .section-header {
+    padding-bottom: 32px;
+  }
+
+  .section-heading {
+    gap: 20px;
+  }
+
+  .section-label {
+    line-height: 1.4;
+  }
+
+  .section-title {
+    --section-title-size: 36px;
+    --section-title-line-height: 1;
+    --section-title-color: var(--color-primary);
+  }
+
+  /* …except on the blue sections (News, Life at GIT), where titles stay white */
+  .news-section .section-title,
+  .campus-life-section .section-title {
+    --section-title-color: var(--color-white);
+  }
+
+  /* "View All" below the content, full width (Figma mobile "Mobile" buttons 541:3763,
+     541:3887, 541:3906, 541:3897): 52px tall, 14px × 24px padding (stroke inside), 16px medium label
+     + 24px arrow, 8px apart. 32px under Find Your Path / Students speak, 24px under
+     News / Our Recruiters. (The heading-row View All stays hidden on mobile.) */
+  .button.section-view-all--bottom {
+    --button-height: 52px;
+    --button-padding-x: 24px;
+    /* Figma's 14px includes its inside 1px stroke; CSS adds the border outside */
+    --button-padding-y: 13px;
+    --button-gap: 8px;
+    --button-font-size: 16px;
+    --icon-size: 24px;
+    display: flex;
+    width: 100%;
+    margin-top: 32px;
+  }
+
+  .news-section .section-view-all--bottom,
+  .recruiters-section__container > .section-view-all--bottom {
+    margin-top: 24px;
+  }
+
+  /* ---------- Find Your Path (Figma 426:7121): static 2 × 2 grid ---------- */
+  .institutions-section__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .institutions-section__media {
+    aspect-ratio: 170.5 / 162.375;
+  }
+
+  .institutions-section__media--shade::after,
+  .institutions-section__media--shade-strong::after {
+    content: none;
+  }
+
+  .institutions-section__image,
+  .institutions-section__image--bottom,
+  .institutions-section__image--right {
+    object-position: center;
+  }
+
+  .institutions-section__body {
+    gap: 2px;
+    padding: 12px 15px 0;
+  }
+
+  .institutions-section__meta {
+    margin-bottom: 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #6f6f6f;
+  }
+
+  .institutions-section__title {
+    margin-bottom: 0;
+    overflow: hidden;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .institutions-section__description {
+    display: none;
+  }
+
+  .institutions-section__footer {
+    padding: 20px 12px 12px;
+  }
+
+  .institutions-section__footer .button--block {
+    --button-border-color: #e6e6e6;
+    --button-font-size: var(--font-size-xs);
+    --button-gap: 2px;
+    --icon-size: 9px;
+    padding: 11px 5px;
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+  }
+}
+
+/* ---------- Mobile (≤ 576px), continued: About + Welcome ---------- */
+@media (max-width: 576px) {
+  /* Shared mobile type (Figma): 36px Canela titles, 16px / 1.4 body copy */
+  .display-title {
+    font-family: var(--font-heading);
+    font-size: 36px;
+    letter-spacing: normal;
+    --display-title-line-height: 1;
+  }
+
+  .section-description {
+    --section-description-size: var(--font-size-sm);
+    --section-description-line-height: 1.4;
+  }
+
+  /* ---------- About (Figma 426:7191) ---------- */
+  .about-section__container {
+    gap: 40px;
+  }
+
+  .about-section__intro {
+    gap: 40px;
+  }
+
+  .about-section__media {
+    aspect-ratio: auto;
+    height: 310px;
+  }
+
+  .about-section__story {
+    gap: 32px;
+  }
+
+  .about-section__text {
+    gap: 24px;
+  }
+
+  .about-section__heading {
+    gap: 20px;
+  }
+
+  .about-section__heading .section-label {
+    padding-inline: 0;
+  }
+
+  .about-section__story .button {
+    --button-height: 52px;
+  }
+
+  /* Stats: 2 × 2, 22px column gap, 40px between the rows */
+  .about-section__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 22px;
+  }
+
+  .about-section__stat,
+  .about-section__stat:last-child {
+    padding: 0;
+  }
+
+  .about-section__stat-value {
+    margin-bottom: 4px;
+    font-size: 40px;
+    line-height: 1;
+  }
+
+  .about-section__stat-label,
+  .about-section__stat-label--semibold {
+    font-weight: var(--font-weight-bold);
+    line-height: 1.4;
+  }
+
+  .about-section__stat-text {
+    max-width: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top-color: #333333;
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+    color: var(--color-text-heading);
+  }
+
+  /* ---------- Welcome (Figma 426:7254) ---------- */
+  .welcome-section__container {
+    gap: 40px;
+  }
+
+  .welcome-section__content {
+    gap: 24px;
+  }
+
+  .welcome-section__heading {
+    gap: 20px;
+  }
+
+  .welcome-section__text {
+    gap: 24px;
+  }
+
+  .welcome-section__links {
+    gap: 12px 10px;
+  }
+
+  .welcome-section__chip {
+    padding: 11px 20px;
+    border-color: rgba(21, 55, 114, 0.13);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+  }
+
+  .welcome-section__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .welcome-section__card {
+    gap: 8px;
+    min-height: 211px;
+    padding: 22px 18px;
+  }
+
+  .welcome-section__icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .welcome-section__card-text {
+    gap: 8px;
+  }
+
+  .welcome-section__card-label {
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+    color: var(--color-text-heading);
+  }
+
+  .welcome-section__card-title {
+    font-size: 20px;
+    line-height: 1.4;
+  }
+
+  .welcome-section__card-description {
+    display: none;
+  }
+
+  /* "Learn more ↗" pinned to the bottom of each card */
+  .welcome-section__card .text-button {
+    --icon-size: 16px;
+    gap: 4px;
+    margin-top: auto;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- Mobile (≤ 576px), continued: News (Figma 488:2582) ---------- */
+@media (max-width: 576px) {
+  .news-section__container {
+    gap: 40px;
+  }
+
+  .news-section__header {
+    padding-bottom: 16px;
+  }
+
+  .news-section__body {
+    gap: 24px;
+  }
+
+  .news-section__tabs {
+    gap: 0 20px;
+  }
+
+  .news-section__tab {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+  }
+
+  .news-section__tab--active {
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Cards: one swipeable row of 303.578 × 360 cards (24px apart), edge to edge with
+     the first card aligned to the content; the side column's two cards join the row. */
+  .news-section__grid {
+    flex-direction: row;
+    gap: 24px;
+    height: auto;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding-inline: var(--container-gutter);
+    scroll-padding-inline: var(--container-gutter);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .news-section__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .news-section__side {
+    display: contents;
+  }
+
+  .news-section__card,
+  .news-section__card--featured {
+    flex: 0 0 303.578px;
+    max-width: calc(100vw - 2 * var(--container-gutter));
+    height: 360px;
+    aspect-ratio: auto;
+    scroll-snap-align: start;
+  }
+
+  /* Plain photo crop on mobile (object-fit: cover, centred) */
+  .news-section__image--zoom {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: none;
+  }
+
+  .news-section__image--building {
+    object-position: center;
+  }
+
+  /* Bottom 234px fades from transparent to #0c0c0f */
+  .news-section__overlay,
+  .news-section__card--featured .news-section__overlay {
+    background: linear-gradient(to bottom, rgba(12, 12, 15, 0), #0c0c0f) bottom / 100% 234px no-repeat;
+  }
+
+  .news-section__card-text,
+  .news-section__card--featured .news-section__card-text {
+    inset: auto 0 0 0;
+    gap: 7px;
+    max-width: none;
+    padding: 26px;
+  }
+
+  .news-section__date {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+  }
+
+  .news-section__card-title,
+  .news-section__card--featured .news-section__card-title,
+  .news-section__card--side-bottom .news-section__card-title {
+    display: block;
+    max-width: 252px;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.4;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  /* Sentence case, as in Figma ("Why opt for polytechnic courses…") */
+  .news-section__card-title::first-letter {
+    text-transform: uppercase;
+  }
+
+  /* Circulars (Figma 488:2623): full-bleed box, vertical list of links */
+  .news-section__circulars {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+    width: auto;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding: 24px 21px;
+    background-color: rgba(33, 97, 203, 0.24);
+    border-color: rgba(226, 230, 238, 0.09);
+  }
+
+  .news-section__circulars-label {
+    margin-right: 0;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+    letter-spacing: normal;
+  }
+
+  .news-section__circulars-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .news-section__circulars-list li {
+    display: flex;
+  }
+
+  .news-section__circular-link {
+    --text-link-border-color: var(--color-white);
+    --text-link-gap: 4px;
+    --text-link-padding-bottom: 0;
+    --icon-size: 14px;
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+  }
+}
+
+/* ---------- Mobile (≤ 576px), continued: Approvals + Partnerships ---------- */
+@media (max-width: 576px) {
+  /* The grey approvals block ends 60px below View More; Partnerships sits in its
+     own white band (Figma 484:2355: 48px top, 60px bottom padding). */
+  .approvals-section {
+    padding-bottom: 0;
+  }
+
+  .approvals-section__container {
+    gap: 60px;
+  }
+
+  /* ---------- AICTE Approvals (Figma 484:2408) ---------- */
+  .approvals-section__approvals {
+    align-items: stretch;
+    gap: 32px;
+  }
+
+  .approvals-section__title {
+    --section-title-tracking: normal;
+    text-align: left;
+  }
+
+  /* One column, in the interleaved order set by main.js (CSS order) */
+  .approvals-section__columns {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .approvals-section__list {
+    display: contents;
+  }
+
+  .approvals-section__item {
+    align-items: center;
+    gap: 16px;
+    min-height: 68px;
+    padding: 0 16px;
+  }
+
+  .approvals-section__item-title {
+    max-width: 193px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+  }
+
+  .approvals-section__item .text-link {
+    --text-link-gap: 2px;
+    --text-link-padding-bottom: 0;
+    --text-link-line-height: 1.4;
+    --icon-size: 14px;
+    flex-shrink: 0;
+    font-size: var(--font-size-xs);
+  }
+
+  .approvals-section__columns:not(.is-expanded) .approvals-section__item--extra {
+    display: none;
+  }
+
+  /* View More: filled, full width, 12px under the last card */
+  .approvals-section__load-more {
+    --button-height: 52px;
+    display: flex;
+    width: 100%;
+    margin-top: -20px;
+  }
+
+  .approvals-section__load-more[hidden] {
+    display: none;
+  }
+
+  /* ---------- Partnerships & Affiliations (Figma 484:2355): 3 × 2 logo grid ---------- */
+  .approvals-section__partners {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 36px;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding: 48px var(--container-gutter) 60px;
+    background-color: var(--color-white);
+    border-top: 0;
+  }
+
+  .approvals-section__partners-title {
+    flex: none;
+    font-size: 36px;
+    line-height: 1;
+  }
+
+  .approvals-section__logos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .approvals-section__logos .logo-frame,
+  .approvals-section__logo--q2d {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    height: 65px;
+    aspect-ratio: auto;
+    overflow: hidden;
+  }
+
+  /* Each logo fills its 107.664 × 65 frame (contain); KTU, Q2D and WSC use the
+     Figma mobile crops (node 484:2392) */
+  .approvals-section__partners .logo-frame__image {
+    position: absolute;
+    left: var(--partner-x, 0%);
+    top: var(--partner-y, 0%);
+    width: var(--partner-w, 100%);
+    height: var(--partner-h, 100%);
+    max-width: none;
+    max-height: none;
+    object-fit: var(--partner-fit, contain);
+  }
+
+  .approvals-section__logo--ktu {
+    --partner-x: 1.68%;
+    --partner-y: -28.26%;
+    --partner-w: 94.81%;
+    --partner-h: 154.25%;
+    --partner-fit: cover;
+  }
+
+  .approvals-section__logo--q2d {
+    --partner-x: -21.72%;
+    --partner-y: -29.59%;
+    --partner-w: 143.18%;
+    --partner-h: 158.3%;
+    --partner-fit: cover;
+  }
+
+  .approvals-section__logo--wsc {
+    --partner-x: 10.41%;
+    --partner-y: -16.53%;
+    --partner-w: 79.58%;
+    --partner-h: 131.81%;
+    --partner-fit: cover;
+  }
+}
+
+/* ---------- Mobile (≤ 576px), continued: Life at GIT + Recruiters ---------- */
+@media (max-width: 576px) {
+  /* ---------- Life at GIT (Figma 426:7462) ---------- */
+  .campus-life-section {
+    padding-block: var(--section-padding-y);
+  }
+
+  .campus-life-section__container {
+    gap: 36px;
+  }
+
+  .campus-life-section__header {
+    align-items: flex-start;
+  }
+
+  .campus-life-section__title {
+    --section-title-line-height: 1;
+    --section-title-tracking: normal;
+    --section-title-color: var(--color-white);
+  }
+
+  /* 36px round arrows beside the title */
+  .campus-life-section__controls {
+    display: flex;
+    gap: 12px;
+  }
+
+  .campus-life-section__control {
+    --icon-size: 16px;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255, 255, 255, 0.09);
+  }
+
+  /* 322.26 × 329 cards (shrinks on phones narrower than 393px) */
+  .campus-life-section__card,
+  .campus-life-section__card.swiper-slide {
+    width: min(322.26px, calc(100vw - 2 * var(--container-gutter) - 30.74px));
+    min-height: 329px;
+    gap: 24px;
+    padding: 28px;
+  }
+
+  .campus-life-section__card-icon {
+    display: none;
+  }
+
+  .campus-life-section__logo-wrap {
+    width: 72px;
+    height: 72px;
+  }
+
+  .campus-life-section__logo-wrap--wide {
+    width: 124.4px;
+  }
+
+  .campus-life-section__logo-wrap--q2d {
+    width: 166.07px;
+  }
+
+  .campus-life-section__card-title {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.4;
+  }
+
+  .campus-life-section__card-description {
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+    color: var(--color-text-body);
+  }
+
+  .campus-life-section__card-more {
+    --icon-size: 16px;
+    display: inline-flex;
+    gap: 4px;
+    margin-top: auto;
+    line-height: 1.4;
+  }
+
+  /* ---------- Our Recruiters (Figma 426:7506): static 3 × 4 grid ---------- */
+  .recruiters-section__container {
+    gap: 0;
+  }
+
+  .recruiters-section__header {
+    padding-bottom: 24px;
+  }
+
+  .recruiters-section__logos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+  }
+
+  .recruiters-section__marquee,
+  .recruiters-section__row,
+  .recruiters-section__marquee.is-ready .recruiters-section__row {
+    display: contents;
+  }
+
+  .recruiters-section__divider,
+  .recruiters-section__logos [data-marquee-clone] {
+    display: none;
+  }
+
+  /* Cell: 95px tall, #eee rule under each row except the last */
+  .recruiters-section__logos .logo-frame {
+    position: static;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: 95px;
+    overflow: visible;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .recruiters-section__marquee:last-of-type .logo-frame:nth-last-child(-n + 3) {
+    border-bottom: 0;
+  }
+
+  /* Logo frame: 87.664 × 75 (scales with the column on narrower phones) */
+  .recruiters-section__logo-box {
+    position: relative;
+    display: block;
+    width: calc(100% - 30px);
+    height: 75px;
+    overflow: hidden;
+  }
+
+  /* Most logos sit whole inside the frame (object-fit: contain) … */
+  .recruiters-section__logos .logo-frame {
+    --logo-x: 0%;
+    --logo-y: 0%;
+    --logo-width: 100%;
+    --logo-height: 100%;
+  }
+
+  .recruiters-section__logos .logo-frame__image {
+    object-fit: contain;
+  }
+
+  /* … the rest use the Figma mobile crops */
+  .recruiters-section__logos .recruiters-section__logo--cognizant {
+    --logo-x: 0.37%;
+    --logo-y: -8.01%;
+    --logo-width: 99.25%;
+    --logo-height: 116.01%;
+  }
+
+  .recruiters-section__logos .recruiters-section__logo--ey {
+    --logo-x: -17.16%;
+    --logo-y: -6.22%;
+    --logo-width: 141.88%;
+    --logo-height: 94.76%;
+  }
+
+  .recruiters-section__logos .recruiters-section__logo--accenture {
+    --logo-x: -8.87%;
+    --logo-y: 4.08%;
+    --logo-width: 117.74%;
+    --logo-height: 91.83%;
+  }
+
+  .recruiters-section__logos .recruiters-section__logo--sib {
+    --logo-x: -18.63%;
+    --logo-y: -52.77%;
+    --logo-width: 137.27%;
+    --logo-height: 205.54%;
+  }
+
+  .recruiters-section__logos .recruiters-section__logo--icici {
+    --logo-x: -0.01%;
+    --logo-y: -8.45%;
+    --logo-width: 100.02%;
+    --logo-height: 116.91%;
+  }
+
+  .recruiters-section__logos .recruiters-section__logo--cognizant .logo-frame__image,
+  .recruiters-section__logos .recruiters-section__logo--ey .logo-frame__image,
+  .recruiters-section__logos .recruiters-section__logo--accenture .logo-frame__image,
+  .recruiters-section__logos .recruiters-section__logo--sib .logo-frame__image,
+  .recruiters-section__logos .recruiters-section__logo--icici .logo-frame__image {
+    object-fit: cover;
+  }
+}
+
+/* ---------- Mobile (≤ 576px), continued: Students speak, Admissions, Contact, Footer ---------- */
+@media (max-width: 576px) {
+  /* ---------- Students speak (Figma 426:7543): 313.313px cards, square photo ---------- */
+  .testimonials-section__card,
+  .testimonials-section__card.swiper-slide {
+    width: min(313.313px, calc(100vw - 2 * var(--container-gutter) - 39.687px));
+    gap: 20px;
+  }
+
+  .testimonials-section__media {
+    aspect-ratio: 1 / 1;
+  }
+
+  .testimonials-section__media--shade::after,
+  .testimonials-section__media--shade-strong::after {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7));
+  }
+
+  .testimonials-section__image {
+    object-position: center;
+  }
+
+  .testimonials-section__play {
+    left: 22px;
+    bottom: 22px;
+  }
+
+  .testimonials-section__text {
+    gap: 0;
+  }
+
+  .testimonials-section__name {
+    font-size: var(--font-size-lg);
+    line-height: 1.4;
+  }
+
+  .testimonials-section__program {
+    line-height: 1.4;
+    color: var(--color-text-heading);
+  }
+
+  .testimonials-section__quote,
+  .testimonials-section__quote--narrow,
+  .testimonials-section__quote--narrower {
+    max-width: none;
+    margin-top: 16px;
+    line-height: 1.4;
+  }
+
+  /* ---------- Admissions intro (Figma 426:7595) + form band (Figma 484:2193) ---------- */
+  .admissions-section {
+    padding-bottom: 0;
+  }
+
+  .admissions-section__container {
+    gap: 0;
+  }
+
+  .admissions-section__intro {
+    gap: 24px;
+    padding-bottom: 40px;
+  }
+
+  .admissions-section__heading {
+    gap: 20px;
+  }
+
+  .admissions-section__heading .section-label {
+    padding-inline: 0;
+  }
+
+  .admissions-section__actions {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .admissions-section__actions .button {
+    --button-height: 52px;
+    width: 100%;
+  }
+
+  /* Grey full-bleed band: 32px top, 60px bottom */
+  .admissions-section__form {
+    gap: 18px;
+    width: auto;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding: 32px var(--container-gutter) 60px;
+    background-color: var(--color-bg-light);
+  }
+
+  .admissions-section__form-title {
+    display: block;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.4;
+    color: var(--color-text-heading);
+  }
+
+  .admissions-section__fields {
+    gap: 18px;
+  }
+
+  .form-field--full {
+    padding-bottom: 0;
+  }
+
+  .form-field__label {
+    height: auto;
+    padding: 0 0 10px;
+    line-height: 1.4;
+    color: #515151;
+  }
+
+  .form-field__control {
+    padding: 15px 16px;
+    line-height: 1.4;
+    background-color: var(--color-white);
+  }
+
+  .form-field__control::placeholder,
+  .form-field__phone-input::placeholder {
+    color: #6e6e6e;
+  }
+
+  /* Phone: plain "+91  Enter mobile" (no flag in the mobile design) */
+  .form-field__control--phone {
+    gap: 0;
+    padding: 0 16px;
+  }
+
+  .form-field__country {
+    display: none;
+  }
+
+  .form-field__dial-code {
+    color: #6e6e6e;
+  }
+
+  .form-field__phone-input {
+    margin-left: 8px;
+  }
+
+  .form-field__control--select {
+    padding-inline: 16px 36px;
+  }
+
+  .form-field__control--textarea {
+    height: 130px;
+  }
+
+  /* Consent: 16px square checkbox, 12px from the text */
+  .admissions-section__checkbox {
+    top: 2px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .admissions-section__checkbox-box {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    padding: 0;
+    background-color: var(--color-white);
+    border: 1px solid #767676;
+    border-radius: 2px;
+  }
+
+  .admissions-section__checkbox-box img {
+    display: none;
+  }
+
+  .admissions-section__checkbox-box::before {
+    inset: -1px;
+    width: auto;
+    height: auto;
+  }
+
+  .admissions-section__checkbox:checked+.admissions-section__checkbox-box::after {
+    left: 4px;
+    top: 1px;
+    width: 5px;
+    height: 9px;
+  }
+
+  .admissions-section__consent-text {
+    line-height: 1.4;
+    color: #515151;
+  }
+
+  .admissions-section__submit {
+    --button-height: 52px;
+    align-self: flex-start;
+    width: auto;
+  }
+
+  /* ---------- Contact (Figma 426:7678) ---------- */
+  .contact-section {
+    background-color: var(--color-white);
+  }
+
+  .contact-section__container {
+    gap: 40px;
+  }
+
+  .contact-section__info {
+    gap: 20px;
+  }
+
+  .contact-section__heading {
+    gap: 24px;
+  }
+
+  .contact-section__heading .section-label {
+    padding-inline: 0;
+  }
+
+  /* The Contact title is Playfair Display in the mobile design */
+  .contact-section .section-title {
+    --section-title-size: 37.6px;
+    --section-title-line-height: 40.608px;
+    --section-title-tracking: -0.752px;
+    font-family: var(--font-display);
+  }
+
+  .contact-section__row {
+    flex-wrap: nowrap;
+    padding-block: 20px;
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+    border-bottom-color: #dddddd;
+  }
+
+  .contact-section__term {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-heading);
+  }
+
+  .contact-section__value {
+    font-weight: var(--font-weight-regular);
+    text-align: right;
+    color: var(--color-text-heading);
+  }
+
+  .contact-section__map {
+    height: 330px;
+    border: 0;
+  }
+
+  /* ---------- Footer (Figma 426:7713) ---------- */
+  .site-footer {
+    padding-top: 80px;
+  }
+
+  .site-footer__top {
+    gap: 36px;
+    padding-bottom: 60px;
+  }
+
+  .site-footer__brand {
+    gap: 24px;
+  }
+
+  .site-footer__logo {
+    width: 150px;
+    height: 64px;
+  }
+
+  .site-footer__brand-body {
+    gap: 20px;
+  }
+
+  .site-footer__address {
+    max-width: none;
+    line-height: 1.4;
+  }
+
+  .site-footer__direction {
+    min-height: 52px;
+    padding: 14px 24px;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: normal;
+  }
+
+  /* Same tight arrow, scaled to read like the 24px arrow_outward icon */
+  .site-footer__direction-icon {
+    --icon-size: 12px;
+    --icon-rotate: 0deg;
+    --icon-clip-x: 0px;
+    margin-inline: 6px;
+  }
+
+  .site-footer__nav {
+    align-items: stretch;
+    gap: 20px;
+    min-height: 0;
+  }
+
+  .site-footer__columns {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  .site-footer__column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: none;
+    gap: 20px;
+    width: 100%;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.17);
+  }
+
+  .site-footer__column.site-footer__column--office {
+    display: none;
+  }
+
+  /* Heading underlined to its own width */
+  .site-footer__heading,
+  .site-footer__heading--quick {
+    padding: 1px 0;
+    line-height: 1.4;
+    border-bottom: 1px solid var(--color-white);
+  }
+
+  .site-footer__heading::after {
+    content: none;
+  }
+
+  .site-footer__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .site-footer__list li {
+    padding-block: 0;
+  }
+
+  .site-footer__link {
+    line-height: 1.4;
+  }
+
+  .site-footer__link--underline {
+    text-decoration: none;
+  }
+
+  /* Social icons sit under Quick Links */
+  .site-footer__social {
+    justify-content: flex-start;
+    gap: 0;
+    min-height: 0;
+    margin-left: 0;
+    padding-inline: 0;
+  }
+
+  .site-footer__social-link img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .site-footer__bottom {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 25px 0 35px;
+    font-size: 12px;
+    line-height: 1.4;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+}

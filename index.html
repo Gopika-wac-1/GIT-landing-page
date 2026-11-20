@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" class="is-welcome">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gregorian Institute of Technology, Kottayam</title>
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/images/favicon.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon.png">
+  <meta name="description" content="Gregorian Group of Institutions — Engineering, Polytechnic, BCA and BBA on one green campus at Kangazha, Kottayam.">
+
+  <!-- Social share preview (Open Graph + Twitter/X).
+       Most platforms need an absolute image URL: when the site is live, change
+       "assets/images/og-image.png" to the full address, e.g. https://<your-domain>/assets/images/og-image.png -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Gregorian Institute of Technology, Kottayam">
+  <meta property="og:title" content="Gregorian Institute of Technology, Kottayam">
+  <meta property="og:description" content="Gregorian Group of Institutions — Engineering, Polytechnic, BCA and BBA on one green campus at Kangazha, Kottayam.">
+  <meta property="og:image" content="assets/images/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="GIT Kottayam — Gregorian Institute of Technology logo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Gregorian Institute of Technology, Kottayam">
+  <meta name="twitter:description" content="Gregorian Group of Institutions — Engineering, Polytechnic, BCA and BBA on one green campus at Kangazha, Kottayam.">
+  <meta name="twitter:image" content="assets/images/og-image.png">
+  <meta name="twitter:image:alt" content="GIT Kottayam — Gregorian Institute of Technology logo">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Inter (UI) + Abhaya Libre (welcome title, Figma 824:1469) -->
+  <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/main.js" defer></script>
+  <!-- Fetch the main page in the background so entering it is quick -->
+  <link rel="prefetch" href="home.html">
+</head>
+<body>
+
+  <!-- ==================== WELCOME SCREEN (Figma 824:1410) ====================
+       Full-viewport, no scrolling. Goes to home.html when Enter Now is clicked, Enter is pressed
+       or the 30 s countdown ends (js/main.js, navigates once). -->
+  <main id="welcome-screen" class="welcome-screen" data-welcome>
+    <div class="welcome-screen__media" aria-hidden="true">
+      <!-- Campus banner (Figma sky + campus cut-out): shows first, and stays as the fallback -->
+      <!-- <img src="assets/images/campus-banner.jpg" alt="" class="welcome-screen__image" width="1920" height="1026" fetchpriority="high"> -->
+      <!-- Background video, drawn over the photo. To use one, put the file path in data-src
+           (e.g. data-src="assets/videos/welcome.mp4"); optional data-src-mobile="…" for a
+           portrait clip on phones (≤ 576px). js/main.js loads it after the page has loaded and
+           fades it in once it's playing. Empty data-src, reduced motion, data saver, a missing
+           file or blocked autoplay → the photo simply stays. -->
+      <video class="welcome-screen__video" data-welcome-video data-src="assets/videos/introduction-video.mp4" muted loop playsinline preload="none" disablepictureinpicture></video>
+    </div>
+
+    <div class="welcome-screen__content" data-welcome-content>
+      <div class="welcome-screen__intro">
+        <h1 class="welcome-screen__title">Gregorian Group of Institutions</h1>
+        <ul class="welcome-screen__chips">
+          <li class="chip welcome-screen__chip">NBA Accredited Diplomas</li>
+          <li class="chip welcome-screen__chip">AICTE Approved</li>
+          <li class="chip welcome-screen__chip">KTU Affiliated</li>
+        </ul>
+      </div>
+
+      <div class="welcome-screen__actions">
+        <!-- Countdown text is updated every second by js/main.js (aria-live off: it would be read out every second) -->
+        <p class="welcome-screen__countdown" role="timer" aria-live="off">
+          Entering in <span class="welcome-screen__countdown-value" data-welcome-countdown>30</span>s - or press enter
+        </p>
+        <a href="home.html" class="button button--gradient" data-welcome-enter>
+          Enter Now
+          <span class="icon icon--arrow-outward" aria-hidden="true"></span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Custom cursor (fine pointers only; js/main.js). Dot by default, ring over links/buttons. -->
+  <div class="custom-cursor is-hidden" data-cursor-root aria-hidden="true"><div class="custom-cursor__dot"></div><div class="custom-cursor__blob"><span class="custom-cursor__label"></span></div></div>
+
+</body>
+</html>

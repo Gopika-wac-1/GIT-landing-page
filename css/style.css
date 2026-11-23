@@ -357,16 +357,21 @@ h6 {
 }
 
 /* Hover sweep: fill grows left → right on hover, retracts right → left on leave.
-   Each variant sets --button-hover-fill / --button-hover-color / --button-hover-border. */
+   Each variant sets --button-hover-fill / --button-hover-color / --button-hover-border.
+   Animated with clip-path, not transform: a transformed layer is composited and
+   rounded to whole pixels on its own, so on a button at a fractional position
+   (e.g. the header's "Apply Online" under the 60.8px utility bar) the fill spilled
+   over the 1px border and hid it. clip-path is painted with the border, so they
+   always line up. */
 .button::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
   background: var(--button-hover-fill, var(--color-primary));
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform var(--button-sweep-duration) ease;
+  -webkit-clip-path: inset(0 100% 0 0);
+  clip-path: inset(0 100% 0 0);
+  transition: -webkit-clip-path var(--button-sweep-duration) ease, clip-path var(--button-sweep-duration) ease;
 }
 
 .button:focus-visible {
@@ -382,12 +387,14 @@ h6 {
 }
 
 .button:focus-visible::before {
-  transform: scaleX(1);
+  -webkit-clip-path: inset(0);
+  clip-path: inset(0);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .button:hover::before {
-    transform: scaleX(1);
+    -webkit-clip-path: inset(0);
+    clip-path: inset(0);
   }
 }
 
@@ -433,6 +440,9 @@ h6 {
 .button--gradient::after {
   background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.3) 50%, transparent 65%);
   transform: translateX(-100%);
+  /* The sheen slides with transform: no colour-sweep clip here */
+  -webkit-clip-path: none;
+  clip-path: none;
   transition: none;
   pointer-events: none;
 }
@@ -950,11 +960,18 @@ html.is-welcome body {
 .welcome-screen__title {
   width: 100%;
   font-family: "Abhaya Libre", var(--font-heading);
-  font-size: clamp(40px, 3.625vw, 69.6px);
+  font-size: clamp(48px, 3.625vw, 69.6px);
   font-weight: var(--font-weight-regular);
   line-height: 1;
   letter-spacing: 0.01em;
   transform: scaleX(0.91);
+}
+
+/* Desktop: 80px (two lines, fits the 776px content box) */
+@media (min-width: 1200px) {
+  .welcome-screen__title {
+    font-size: 80px;
+  }
 }
 
 .welcome-screen__chips {
@@ -2374,7 +2391,7 @@ a.institutions-section__media {
 
 /* --- Partners logo marquee (Figma 550:3962: the row runs past the edge and fades out) ---
    js/main.js (Logo marquees) clones the set and moves it right → left; hover pauses,
-   drag/swipe moves it. ≥ 577px only — the mobile design keeps its 3 × 2 grid. */
+   drag/swipe moves it. Runs at every width (data-marquee-mobile keeps it on phones). */
 .approvals-section__marquee {
   --partners-logo-gap: 22px;
   /* ≈ Figma spacing: 172.8px frames, one every ~195px */
@@ -2383,48 +2400,46 @@ a.institutions-section__media {
   min-width: 0;
 }
 
-@media (min-width: 577px) {
-  .approvals-section__marquee.is-ready {
-    overflow: hidden;
-    cursor: grab;
-    touch-action: pan-y;
-    /* vertical page scroll stays native; horizontal swipes drive the row */
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--partners-fade), #000 calc(100% - var(--partners-fade)), transparent);
-    mask-image: linear-gradient(to right, transparent, #000 var(--partners-fade), #000 calc(100% - var(--partners-fade)), transparent);
-  }
+.approvals-section__marquee.is-ready {
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+  /* vertical page scroll stays native; horizontal swipes drive the row */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--partners-fade), #000 calc(100% - var(--partners-fade)), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 var(--partners-fade), #000 calc(100% - var(--partners-fade)), transparent);
+}
 
-  .approvals-section__marquee.is-dragging {
-    cursor: grabbing;
-  }
+.approvals-section__marquee.is-dragging {
+  cursor: grabbing;
+}
 
-  /* One nowrap row at the Figma frame size (overrides the static grid/row layouts) */
-  .approvals-section__marquee.is-ready .approvals-section__logos {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    gap: 0 var(--partners-logo-gap);
-    width: max-content;
-    margin: 0;
-    padding: 0;
-    overflow: visible;
-    will-change: transform;
-    backface-visibility: hidden;
-  }
+/* One nowrap row at the Figma frame size (overrides the static grid/row layouts) */
+.approvals-section__marquee.is-ready .approvals-section__logos {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 0 var(--partners-logo-gap);
+  width: max-content;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  will-change: transform;
+  backface-visibility: hidden;
+}
 
-  .approvals-section__marquee.is-ready .logo-frame {
-    flex-shrink: 0;
-    width: calc(var(--logo-frame-width, 172.8px) * var(--logo-scale));
-    max-width: none;
-    height: calc(var(--logo-frame-height, 100px) * var(--logo-scale));
-    aspect-ratio: auto;
-  }
+.approvals-section__marquee.is-ready .logo-frame {
+  flex-shrink: 0;
+  width: calc(var(--logo-frame-width, 172.8px) * var(--logo-scale));
+  max-width: none;
+  height: calc(var(--logo-frame-height, 100px) * var(--logo-scale));
+  aspect-ratio: auto;
+}
 
-  .approvals-section__marquee img {
-    -webkit-user-drag: none;
-    pointer-events: none;
-  }
+.approvals-section__marquee img {
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 /* Title above the logos (≤ 1280px): the strip spans the full width */
@@ -2435,10 +2450,20 @@ a.institutions-section__media {
   }
 }
 
-/* Mobile: no marquee — the wrapper steps aside for the 3 × 2 grid */
+/* Mobile: the row runs edge to edge (past the container gutters, fading out at both
+   sides) with logos in the Figma mobile frame (107.66 × 65, 16px apart; the mobile
+   crops for KTU / Q2D / WSC still apply) */
 @media (max-width: 576px) {
   .approvals-section__marquee {
-    display: contents;
+    --partners-logo-gap: 16px;
+    --partners-fade: 40px;
+    width: calc(100% + 2 * var(--container-gutter));
+    margin-inline: calc(-1 * var(--container-gutter));
+  }
+
+  .approvals-section__marquee.is-ready .logo-frame {
+    width: 107.66px;
+    height: 65px;
   }
 }
 
@@ -2689,14 +2714,10 @@ a.institutions-section__media {
   cursor: grabbing;
 }
 
-/* Logos fade in/out at both ends, like the partners strip (≥ 577px; the mobile
-   design is a static grid) */
-@media (min-width: 577px) {
-  .recruiters-section__marquee.is-ready {
-    --recruiters-fade: 80px;
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--recruiters-fade), #000 calc(100% - var(--recruiters-fade)), transparent);
-    mask-image: linear-gradient(to right, transparent, #000 var(--recruiters-fade), #000 calc(100% - var(--recruiters-fade)), transparent);
-  }
+/* Logos fade in/out at both ends, like the partners strip (40px fade on mobile) */
+.recruiters-section__marquee.is-ready {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--recruiters-fade, 80px), #000 calc(100% - var(--recruiters-fade, 80px)), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 var(--recruiters-fade, 80px), #000 calc(100% - var(--recruiters-fade, 80px)), transparent);
 }
 
 .recruiters-section__marquee.is-ready .recruiters-section__row {
@@ -5193,7 +5214,7 @@ html.has-video-modal {
   /* The grey approvals block ends 60px below View More; Partnerships sits in its
      own white band (Figma 484:2355: 48px top, 60px bottom padding). */
   .approvals-section {
-    padding-bottom: 0;
+    padding: 0;
   }
 
   .approvals-section__container {
@@ -5417,7 +5438,7 @@ html.has-video-modal {
     line-height: 1.4;
   }
 
-  /* ---------- Our Recruiters (Figma 426:7506): static 3 × 4 grid ---------- */
+  /* ---------- Our Recruiters (Figma 426:7506 logo frames/crops), as scrolling rows ---------- */
   .recruiters-section__container {
     gap: 0;
   }
@@ -5426,45 +5447,44 @@ html.has-video-modal {
     padding-bottom: 24px;
   }
 
+  /* Two scrolling rows like desktop (row 1 → right, row 2 → left; data-marquee-mobile),
+     edge to edge past the gutters and fading out at both sides */
   .recruiters-section__logos {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 
-  .recruiters-section__marquee,
-  .recruiters-section__row,
-  .recruiters-section__marquee.is-ready .recruiters-section__row {
-    display: contents;
-  }
-
-  .recruiters-section__divider,
-  .recruiters-section__logos [data-marquee-clone] {
+  .recruiters-section__divider {
     display: none;
   }
 
-  /* Cell: 95px tall, #eee rule under each row except the last */
+  .recruiters-section__marquee {
+    --recruiters-logo-gap: 28px;
+    --recruiters-fade: 40px;
+    width: calc(100% + 2 * var(--container-gutter));
+    margin-inline: calc(-1 * var(--container-gutter));
+  }
+
+  /* Each logo in its Figma mobile frame (87.664 × 75) */
   .recruiters-section__logos .logo-frame {
     position: static;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: auto;
-    height: 95px;
+    flex-shrink: 0;
+    width: 87.664px;
+    max-width: none;
+    height: 75px;
+    aspect-ratio: auto;
     overflow: visible;
-    border-bottom: 1px solid #eeeeee;
   }
 
-  .recruiters-section__marquee:last-of-type .logo-frame:nth-last-child(-n + 3) {
-    border-bottom: 0;
-  }
-
-  /* Logo frame: 87.664 × 75 (scales with the column on narrower phones) */
   .recruiters-section__logo-box {
     position: relative;
     display: block;
-    width: calc(100% - 30px);
-    height: 75px;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
   }
 

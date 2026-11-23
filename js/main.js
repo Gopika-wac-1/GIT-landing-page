@@ -776,8 +776,9 @@ const introGate = (() => {
    - Hover: eases to a stop. Drag / swipe: moves the row 1:1 with the pointer;
      on release it carries the swipe momentum and eases back to auto speed.
    - Pauses while off-screen; no jump after switching browser tabs.
-   - Mobile (≤ 576px): the Figma mobile design shows a static 3 × 4 logo grid
-     (CSS), so the marquee stands down there — no clones, no transform, no loop.
+   - Mobile (≤ 576px): a marquee stands down there (static layout from CSS — no
+     clones, no transform, no loop) unless it has data-marquee-mobile. Both
+     Our recruiters rows and Partnerships have it, so they scroll on phones too.
 ========================================== */
 (function () {
   const marquees = document.querySelectorAll("[data-marquee]");
@@ -795,6 +796,9 @@ const introGate = (() => {
 
     const direction = root.dataset.marqueeDirection === "right" ? 1 : -1;
     const originals = Array.from(track.children);
+    // Static grid instead of a marquee on mobile, unless this one opts in to scrolling there
+    const keepsMobile = root.hasAttribute("data-marquee-mobile");
+    const isStatic = () => staticGrid.matches && !keepsMobile;
 
     let setWidth = 0;        // width of one full logo set incl. trailing gap
     let x = 0;               // current translateX, kept in (-setWidth, 0]
@@ -816,7 +820,7 @@ const introGate = (() => {
       track.querySelectorAll("[data-marquee-clone]").forEach((node) => node.remove());
 
       // Static grid on mobile: originals only, no transform
-      if (staticGrid.matches) {
+      if (isStatic()) {
         setWidth = 0;
         x = 0;
         track.style.transform = "";
@@ -873,7 +877,7 @@ const introGate = (() => {
     }
 
     function start() {
-      if (rafId !== null || staticGrid.matches) return;
+      if (rafId !== null || isStatic()) return;
       lastTime = null;
       rafId = requestAnimationFrame(tick);
     }
@@ -894,7 +898,7 @@ const introGate = (() => {
 
     /* --- Drag / swipe --- */
     root.addEventListener("pointerdown", (e) => {
-      if (staticGrid.matches) return;
+      if (isStatic()) return;
       if (e.pointerType === "mouse" && e.button !== 0) return;
       dragging = true;
       pointerId = e.pointerId;
@@ -973,7 +977,7 @@ const introGate = (() => {
     staticGrid.addEventListener("change", () => {
       stop();
       build();
-      if (!staticGrid.matches) start();
+      if (!isStatic()) start();
     });
   });
 })();

@@ -61,7 +61,10 @@
       </ul>
       <ul class="utility-bar__list">
         <li class="utility-bar__item"><a href="assets/images/Gregorian_Group_Bi_Fold_Brochure.pdf" class="utility-bar__link" target="_blank" rel="noopener" type="application/pdf">Brochure</a></li>
-        <li class="utility-bar__item"><a href="https://git.erp.etlab.app/admission/registration" class="utility-bar__link" target="_blank" rel="noopener">IQAC</a></li>
+        <!-- Dummy links: replace the text and href when the pages are ready -->
+        <li class="utility-bar__item"><a href="#" class="utility-bar__link">Careers</a></li>
+        <li class="utility-bar__item"><a href="#" class="utility-bar__link">Alumni</a></li>
+        <li class="utility-bar__item"><a href="#" class="utility-bar__link">Downloads</a></li>
       </ul>
     </div>
   </div>
@@ -78,7 +81,7 @@
             <img src="assets/images/logo-nba.png" alt="National Board of Accreditation logo" class="site-header__nba" width="69" height="64">
           </span>
         </a>
-        <a href="#admissions" class="button button--primary site-header__button">
+        <a href="https://git.erp.etlab.app/admission/registration" class="button button--primary site-header__button" target="_blank" rel="noopener">
           Apply Online
           <span class="icon icon--arrow-outward" aria-hidden="true"></span>
         </a>
@@ -101,7 +104,10 @@
       <div class="mobile-menu__body">
         <ul class="mobile-menu__links">
           <li><a href="assets/images/Gregorian_Group_Bi_Fold_Brochure.pdf" class="mobile-menu__link" target="_blank" rel="noopener" type="application/pdf">Brochure</a></li>
-          <li><a href="https://git.erp.etlab.app/admission/registration" class="mobile-menu__link" target="_blank" rel="noopener">IQAC</a></li>
+          <!-- Dummy links (same as the top bar): replace the text and href when the pages are ready -->
+          <li><a href="#" class="mobile-menu__link">Careers</a></li>
+          <li><a href="#" class="mobile-menu__link">Alumni</a></li>
+          <li><a href="#" class="mobile-menu__link">Downloads</a></li>
           <li><a href="#" class="mobile-menu__link">Privacy Policy</a></li>
           <li><a href="#" class="mobile-menu__link">Terms and Conditions</a></li>
         </ul>
@@ -110,7 +116,7 @@
           <li><a href="mailto:registration@git.ac.in" class="mobile-menu__contact-link">registration@git.ac.in</a></li>
           <li>Mon – Sat, 9:00 am – 5:00 pm</li>
         </ul>
-        <a href="#admissions" class="button button--primary mobile-menu__button">
+        <a href="https://git.erp.etlab.app/admission/registration" class="button button--primary mobile-menu__button" target="_blank" rel="noopener">
           Apply Online
           <span class="icon icon--arrow-outward" aria-hidden="true"></span>
         </a>
@@ -141,19 +147,19 @@
             Engineering, Polytechnic, BCA and BBA on one green campus at Kangazha. The first technical institution in Kerala to earn NBA accreditation within seven years of its founding<span class="u-mobile-only">.</span>
           </p>
           <ul class="hero-section__chips">
-            <li class="chip hero-section__chip">NBA Accredited Diplomas</li>
-            <li class="chip hero-section__chip">AICTE Approved</li>
-            <li class="chip hero-section__chip">KTU Affiliated</li>
-            <li class="chip hero-section__chip hero-section__chip--more">+2</li>
+            <li class="chip hero-section__chip">GIT Engineering</li>
+            <li class="chip hero-section__chip">GIT Polytechnic</li>
+            <li class="chip hero-section__chip">GIT BBA</li>
+            <li class="chip hero-section__chip">GIT BCA</li>
           </ul>
         </div>
-        <div class="hero-section__actions">
+        <!-- <div class="hero-section__actions">
           <a href="#institutions" class="button button--gradient">
             Enter Now
             <span class="icon icon--arrow-outward" aria-hidden="true"></span>
           </a>
           <a href="#contact" class="button button--outline-light">Contact Us</a>
-        </div>
+        </div> -->
       </div>
       <!-- Pause/play for the background video (WCAG 2.2.2); shown by js/main.js once the video plays -->
       <button type="button" class="hero-section__video-toggle" data-hero-video-toggle aria-label="Pause background video" hidden>
@@ -538,8 +544,8 @@
         <div class="approvals-section__partners">
           <h2 class="approvals-section__partners-title">Partnerships &amp; Affiliations</h2>
           <!-- Logo marquee (js/main.js, same as Our recruiters): scrolls right → left, hover pauses,
-               drag/swipe to move; static 3 × 2 grid on mobile (≤ 576px) -->
-          <div class="approvals-section__marquee" data-marquee data-marquee-direction="left">
+               drag/swipe to move; keeps scrolling on mobile too (data-marquee-mobile) -->
+          <div class="approvals-section__marquee" data-marquee data-marquee-direction="left" data-marquee-mobile>
           <ul class="approvals-section__logos" data-marquee-track>
             <li class="logo-frame approvals-section__logo--nba"><img src="assets/images/partner-nba.png" alt="National Board of Accreditation" class="logo-frame__image" loading="lazy"></li>
             <li class="logo-frame approvals-section__logo--ktu"><img src="assets/images/partner-ktu.png" alt="APJ Abdul Kalam Technological University" class="logo-frame__image" loading="lazy"></li>
@@ -670,7 +676,7 @@
         </div>
 
         <div class="recruiters-section__logos">
-          <div class="recruiters-section__marquee" data-marquee data-marquee-direction="right">
+          <div class="recruiters-section__marquee" data-marquee data-marquee-direction="right" data-marquee-mobile>
             <ul class="recruiters-section__row" data-marquee-track>
               <li class="logo-frame recruiters-section__logo--tcs"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-tcs.png" alt="Tata Consultancy Services" class="logo-frame__image" draggable="false"></span></li>
               <li class="logo-frame recruiters-section__logo--tech-mahindra"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-tech-mahindra.png" alt="Tech Mahindra" class="logo-frame__image" draggable="false"></span></li>
@@ -681,7 +687,7 @@
             </ul>
           </div>
           <hr class="recruiters-section__divider">
-          <div class="recruiters-section__marquee" data-marquee data-marquee-direction="left">
+          <div class="recruiters-section__marquee" data-marquee data-marquee-direction="left" data-marquee-mobile>
             <ul class="recruiters-section__row" data-marquee-track>
               <li class="logo-frame recruiters-section__logo--jsw"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-jsw.png" alt="JSW" class="logo-frame__image" draggable="false"></span></li>
               <li class="logo-frame recruiters-section__logo--ey"><span class="recruiters-section__logo-box"><img src="assets/images/recruiter-ey.png" alt="EY" class="logo-frame__image" draggable="false"></span></li>
@@ -766,7 +772,7 @@
     </section>
 
     <!-- ==================== ADMISSIONS ==================== -->
-    <section id="admissions" class="admissions-section">
+    <!-- <section id="admissions" class="admissions-section">
       <div class="container admissions-section__container">
         <div class="admissions-section__intro">
           <div class="admissions-section__heading">
@@ -787,7 +793,6 @@
         </div>
 
         <form class="admissions-section__form" action="#" method="post">
-          <!-- Mobile only (Figma 484:2193) -->
           <h3 class="admissions-section__form-title">Enquire About Admissions</h3>
           <div class="admissions-section__fields">
             <div class="form-field">
@@ -855,7 +860,7 @@
           </button>
         </form>
       </div>
-    </section>
+    </section> -->
 
     <!-- ==================== CONTACT ==================== -->
     <section id="contact" class="contact-section">

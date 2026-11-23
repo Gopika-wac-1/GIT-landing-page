@@ -693,27 +693,31 @@ h6 {
   height: 12px;
   margin: -6px 0 0 -6px;
   border-radius: 50%;
+  /* Plain dot: solid white with a brand-blue outline, so it reads on light and
+     dark backgrounds without blending (a blend would tint the blue outline) */
   background: var(--color-white);
-  mix-blend-mode: difference;
+  border: 1.5px solid var(--color-primary);
   transition: width 0.35s var(--ease-out-expo), height 0.35s var(--ease-out-expo), margin 0.35s var(--ease-out-expo), background 0.25s, border 0.25s, opacity 0.2s;
 }
 
+/* Ring over links/buttons: white outline, inverted against what's under it so it
+   stays visible on white as well as on dark/photo areas */
 .custom-cursor.is-link .custom-cursor__dot {
   width: 46px;
   height: 46px;
   margin: -23px 0 0 -23px;
   background: transparent;
   border: 1.5px solid var(--color-white);
+  mix-blend-mode: difference;
 }
 
-/* mix-blend-mode on the dot stops the blob's backdrop-filter from blurring the
-   page (Chrome), so the blend is dropped while the blob is showing */
+/* No blend while the blob shows: mix-blend-mode on the dot would stop the blob's
+   backdrop-filter from blurring the page (Chrome) */
 .custom-cursor.is-blob .custom-cursor__dot {
   width: 4px;
   height: 4px;
   margin: -2px 0 0 -2px;
   opacity: 0;
-  mix-blend-mode: normal;
 }
 
 .custom-cursor__blob {

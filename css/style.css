@@ -2810,6 +2810,69 @@ a.institutions-section__media {
 }
 
 /* Desktop: 3-column grid (Figma). ≤1199.98px: Swiper slider. Grid = no-JS fallback. */
+/* Header: title left; arrows (+ View All on wider screens) right, on the title's
+   baseline at every width */
+.section-header.testimonials-section__header {
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+.testimonials-section__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+/* Prev / next arrows — Life at GIT's round arrows, in navy for the light section */
+.testimonials-section__controls {
+  display: flex;
+  gap: 16px;
+}
+
+/* Hidden with ≤ 3 videos (JS) or when every card already fits (Swiper lock) */
+.testimonials-section__controls[hidden],
+.testimonials-section__control.swiper-button-lock {
+  display: none;
+}
+
+.testimonials-section__control {
+  --icon-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  color: var(--color-primary);
+  background-color: transparent;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-circle);
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+.testimonials-section__control:focus-visible {
+  color: var(--color-white);
+  background-color: var(--color-primary);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .testimonials-section__control:hover {
+    color: var(--color-white);
+    background-color: var(--color-primary);
+  }
+}
+
+.testimonials-section__control--prev .icon {
+  transform: scaleX(-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonials-section__control {
+    transition: none;
+  }
+}
+
+/* Swiper slider at every width (js/main.js). Grid = no-JS fallback. */
 .testimonials-section__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2876,7 +2939,8 @@ a.institutions-section__media {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center bottom;
+  /* Posters are portrait video frames: keep the student's face in view */
+  object-position: 50% 30%;
   /* Hover zoom (same feel as the news cards); the media box clips it */
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -2895,10 +2959,6 @@ a.institutions-section__media {
   .testimonials-section__image {
     transition: none;
   }
-}
-
-.testimonials-section__image--cover {
-  object-position: center;
 }
 
 .testimonials-section__play {
@@ -5563,13 +5623,14 @@ html.has-video-modal {
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7));
   }
 
-  .testimonials-section__image {
-    object-position: center;
-  }
-
   .testimonials-section__play {
     left: 22px;
     bottom: 22px;
+  }
+
+  /* No prev / next arrows on mobile: the cards are swiped */
+  .testimonials-section__controls {
+    display: none;
   }
 
   .testimonials-section__text {

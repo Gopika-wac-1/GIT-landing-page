@@ -680,10 +680,10 @@ const introGate = (() => {
    1. Life at GIT: slider at every width, driven by the design's prev/next
       arrows. Arrows are hidden when there are 3 slides or fewer, and Swiper
       also hides them whenever every slide already fits (watchOverflow).
-   2. Find Your Path + Students speak: desktop keeps the Figma grid; on tablet
-      (and, for Students speak, mobile) they become swipeable sliders (a peek of
-      the next card shows that the row scrolls). Each is created/destroyed as the
-      viewport enters/leaves its range.
+   2. Students speak: the same at every width, with its own arrows.
+   3. Find Your Path: desktop keeps the Figma grid; on tablet it becomes a
+      swipeable slider (a peek of the next card shows that the row scrolls),
+      created/destroyed as the viewport enters/leaves that range.
 ========================================== */
 (function () {
   if (typeof window.Swiper === "undefined") return; // CDN unavailable: CSS grids remain
@@ -719,28 +719,47 @@ const introGate = (() => {
     });
   }
 
-  /* --- 2. Mobile / tablet sliders --- */
+  /* --- 2. Students speak (5 videos): slider at every width, like Life at GIT ---
+     3 cards on desktop (32px apart, as the old grid), 2.2 on tablet, fixed
+     313.313px cards on mobile (width set in CSS). Arrows only with > 3 videos. */
+  const testimonialsSlider = document.querySelector(".testimonials-section__slider");
+  if (testimonialsSlider) {
+    const slideCount = testimonialsSlider.querySelectorAll(".swiper-slide").length;
+    const controls = document.querySelector(".testimonials-section__controls");
+    const hasEnoughSlides = slideCount > 3;
+
+    if (controls) controls.hidden = !hasEnoughSlides;
+
+    new window.Swiper(testimonialsSlider, {
+      slidesPerView: "auto",
+      spaceBetween: 24,
+      loop: hasEnoughSlides,
+      grabCursor: true,
+      watchOverflow: true,
+      navigation: hasEnoughSlides
+        ? {
+            prevEl: ".testimonials-section__control--prev",
+            nextEl: ".testimonials-section__control--next",
+          }
+        : false,
+      breakpoints: {
+        577: { slidesPerView: 2.2, spaceBetween: 24 },
+        1200: { slidesPerView: 3, spaceBetween: 32 },
+      },
+    });
+  }
+
+  /* --- 3. Tablet-only slider --- */
   const sliderBase = { grabCursor: true, watchOverflow: true };
 
   // Each slider has its own range. Find Your Path is a 2 × 2 grid on mobile
   // (Figma mobile design), so it is only a slider on tablet (577–1199.98px), with
-  // the 18px tablet gap. Students speak slides on tablet and mobile.
+  // the 18px tablet gap.
   const mobileSliders = [
     {
       selector: ".institutions-section__slider",
       query: "(min-width: 577px) and (max-width: 1199.98px)",
       options: { ...sliderBase, slidesPerView: 2.2, spaceBetween: 18 },
-    },
-    {
-      // Mobile (Figma 426:7543): fixed 313.313px cards (width set in CSS), 24px apart
-      selector: ".testimonials-section__slider",
-      query: "(max-width: 1199.98px)",
-      options: {
-        ...sliderBase,
-        slidesPerView: "auto",
-        spaceBetween: 24,
-        breakpoints: { 577: { slidesPerView: 2.2, spaceBetween: 24 } },
-      },
     },
   ];
 
@@ -984,9 +1003,10 @@ const introGate = (() => {
 
 /* ==========================================
    Students speak — video modal
-   Each .testimonials-section__play button carries data-video-src (dummy clip
-   for now) and data-video-title. Clicking opens the shared <dialog>, loads the
-   clip and plays it. Custom controls: play/pause, mute, close.
+   Each .testimonials-section__play button carries data-video-src (the student's
+   clip in assets/videos) and data-video-title. Clicking opens the shared
+   <dialog>, loads the clip (the card's poster shows until it starts) and plays
+   it. Custom controls: play/pause, mute, close.
    Closes on the close button, Esc (native dialog) or a click on the backdrop;
    closing stops the video and unloads it, and focus returns to the play button.
 ========================================== */
